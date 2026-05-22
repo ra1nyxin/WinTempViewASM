@@ -77,6 +77,15 @@ mingw32-make
 mingw32-make -B
 ```
 
+Release 静态构建：
+
+```powershell
+cd src
+windres app.rc -O coff -o app.res.o
+cd ..
+gcc -O2 -s -static -static-libgcc -mwindows -o winTempView.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32
+```
+
 生成文件：
 
 ```text
