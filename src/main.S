@@ -4950,6 +4950,166 @@ nameNodeJModules:  .asciz "J: node_modules cache"
 pathNodeJModules:  .asciz "J:\\node_modules\\.cache"
 nameAndroidJGradle:.asciz "J: Android Gradle cache"
 pathAndroidJGradle:.asciz "J:\\Android\\.gradle"
+nameChromeCUserCache:.asciz "C: Chrome portable cache"
+pathChromeCUserCache:.asciz "C:\\Chrome\\User Data\\Default\\Cache"
+nameChromeDUserCache:.asciz "D: Chrome portable cache"
+pathChromeDUserCache:.asciz "D:\\Chrome\\User Data\\Default\\Cache"
+nameChromeEUserCache:.asciz "E: Chrome portable cache"
+pathChromeEUserCache:.asciz "E:\\Chrome\\User Data\\Default\\Cache"
+nameChromeFUserCache:.asciz "F: Chrome portable cache"
+pathChromeFUserCache:.asciz "F:\\Chrome\\User Data\\Default\\Cache"
+nameChromeGUserCache:.asciz "G: Chrome portable cache"
+pathChromeGUserCache:.asciz "G:\\Chrome\\User Data\\Default\\Cache"
+nameEdgeDUserCache:.asciz "D: Edge portable cache"
+pathEdgeDUserCache:.asciz "D:\\Microsoft Edge\\User Data\\Default\\Cache"
+nameEdgeEUserCache:.asciz "E: Edge portable cache"
+pathEdgeEUserCache:.asciz "E:\\Microsoft Edge\\User Data\\Default\\Cache"
+nameQQBrowserDCache:.asciz "D: QQBrowser cache"
+pathQQBrowserDCache:.asciz "D:\\QQBrowser\\User Data\\Default\\Cache"
+nameQQBrowserECache:.asciz "E: QQBrowser cache"
+pathQQBrowserECache:.asciz "E:\\QQBrowser\\User Data\\Default\\Cache"
+nameBrowser360DCache:.asciz "D: 360 Browser cache"
+pathBrowser360DCache:.asciz "D:\\360Chrome\\Chrome\\User Data\\Default\\Cache"
+nameBrowser360ECache:.asciz "E: 360 Browser cache"
+pathBrowser360ECache:.asciz "E:\\360Chrome\\Chrome\\User Data\\Default\\Cache"
+nameQuarkDCache:   .asciz "D: Quark Browser cache"
+pathQuarkDCache:   .asciz "D:\\Quark\\User Data\\Default\\Cache"
+nameQuarkECache:   .asciz "E: Quark Browser cache"
+pathQuarkECache:   .asciz "E:\\Quark\\User Data\\Default\\Cache"
+nameBaiduNetdiskDCache:.asciz "D: BaiduNetdisk cache"
+pathBaiduNetdiskDCache:.asciz "D:\\BaiduNetdisk\\cache"
+nameBaiduNetdiskDLogs:.asciz "D: BaiduNetdisk logs"
+pathBaiduNetdiskDLogs:.asciz "D:\\BaiduNetdisk\\logs"
+nameBaiduNetdiskECache:.asciz "E: BaiduNetdisk cache"
+pathBaiduNetdiskECache:.asciz "E:\\BaiduNetdisk\\cache"
+nameBaiduNetdiskELogs:.asciz "E: BaiduNetdisk logs"
+pathBaiduNetdiskELogs:.asciz "E:\\BaiduNetdisk\\logs"
+nameBaiduNetdiskFCache:.asciz "F: BaiduNetdisk cache"
+pathBaiduNetdiskFCache:.asciz "F:\\BaiduNetdisk\\cache"
+nameBaiduNetdiskGCache:.asciz "G: BaiduNetdisk cache"
+pathBaiduNetdiskGCache:.asciz "G:\\BaiduNetdisk\\cache"
+nameAliyunDCache:  .asciz "D: AliyunDrive cache"
+pathAliyunDCache:  .asciz "D:\\AliyunDrive\\Cache"
+nameAliyunECache:  .asciz "E: AliyunDrive cache"
+pathAliyunECache:  .asciz "E:\\AliyunDrive\\Cache"
+nameAliyunFCache:  .asciz "F: AliyunDrive cache"
+pathAliyunFCache:  .asciz "F:\\AliyunDrive\\Cache"
+nameQuarkNetdiskDCache:.asciz "D: QuarkNetdisk cache"
+pathQuarkNetdiskDCache:.asciz "D:\\QuarkNetdisk\\Cache"
+nameQuarkNetdiskECache:.asciz "E: QuarkNetdisk cache"
+pathQuarkNetdiskECache:.asciz "E:\\QuarkNetdisk\\Cache"
+nameThunderDCache: .asciz "D: Thunder cache"
+pathThunderDCache: .asciz "D:\\Thunder\\cache"
+nameThunderDTemp:  .asciz "D: Thunder temp"
+pathThunderDTemp:  .asciz "D:\\Thunder\\Temp"
+nameThunderECache: .asciz "E: Thunder cache"
+pathThunderECache: .asciz "E:\\Thunder\\cache"
+nameThunderETemp:  .asciz "E: Thunder temp"
+pathThunderETemp:  .asciz "E:\\Thunder\\Temp"
+nameThunderFCache: .asciz "F: Thunder cache"
+pathThunderFCache: .asciz "F:\\Thunder\\cache"
+nameIDMDTemp:      .asciz "D: IDM temp"
+pathIDMDTemp:      .asciz "D:\\IDM\\Temp"
+nameIDMETemp:      .asciz "E: IDM temp"
+pathIDMETemp:      .asciz "E:\\IDM\\Temp"
+nameQBittorrentDCache:.asciz "D: qBittorrent cache"
+pathQBittorrentDCache:.asciz "D:\\qBittorrent\\cache"
+nameQBittorrentECache:.asciz "E: qBittorrent cache"
+pathQBittorrentECache:.asciz "E:\\qBittorrent\\cache"
+nameWpsDCache:     .asciz "D: WPS cache"
+pathWpsDCache:     .asciz "D:\\WPS Office\\cache"
+nameWpsDLogs:      .asciz "D: WPS logs"
+pathWpsDLogs:      .asciz "D:\\WPS Office\\logs"
+nameWpsECache:     .asciz "E: WPS cache"
+pathWpsECache:     .asciz "E:\\WPS Office\\cache"
+nameDingTalkDCache:.asciz "D: DingTalk cache"
+pathDingTalkDCache:.asciz "D:\\DingTalk\\Cache"
+nameDingTalkECache:.asciz "E: DingTalk cache"
+pathDingTalkECache:.asciz "E:\\DingTalk\\Cache"
+nameFeishuDCache:  .asciz "D: Feishu cache"
+pathFeishuDCache:  .asciz "D:\\Feishu\\Cache"
+nameFeishuECache:  .asciz "E: Feishu cache"
+pathFeishuECache:  .asciz "E:\\Feishu\\Cache"
+nameTencentDocsDCache:.asciz "D: TencentDocs cache"
+pathTencentDocsDCache:.asciz "D:\\TencentDocs\\Cache"
+nameTencentDocsECache:.asciz "E: TencentDocs cache"
+pathTencentDocsECache:.asciz "E:\\TencentDocs\\Cache"
+nameWeChatDLogs:   .asciz "D: WeChat logs"
+pathWeChatDLogs:   .asciz "D:\\WeChat\\logs"
+nameWeChatDCache:  .asciz "D: WeChat cache"
+pathWeChatDCache:  .asciz "D:\\WeChat\\Cache"
+nameWeChatELogs:   .asciz "E: WeChat logs"
+pathWeChatELogs:   .asciz "E:\\WeChat\\logs"
+nameWeChatECache:  .asciz "E: WeChat cache"
+pathWeChatECache:  .asciz "E:\\WeChat\\Cache"
+nameQQDLogs:       .asciz "D: QQ logs"
+pathQQDLogs:       .asciz "D:\\Tencent\\QQ\\logs"
+nameQQDCache:      .asciz "D: QQ cache"
+pathQQDCache:      .asciz "D:\\Tencent\\QQ\\Cache"
+nameQQELogs:       .asciz "E: QQ logs"
+pathQQELogs:       .asciz "E:\\Tencent\\QQ\\logs"
+nameQQECache:      .asciz "E: QQ cache"
+pathQQECache:      .asciz "E:\\Tencent\\QQ\\Cache"
+nameWeComDCache:   .asciz "D: WeCom cache"
+pathWeComDCache:   .asciz "D:\\WeCom\\Cache"
+nameWeComECache:   .asciz "E: WeCom cache"
+pathWeComECache:   .asciz "E:\\WeCom\\Cache"
+nameQQMusicDCache: .asciz "D: QQMusic cache"
+pathQQMusicDCache: .asciz "D:\\QQMusic\\Cache"
+nameQQMusicECache: .asciz "E: QQMusic cache"
+pathQQMusicECache: .asciz "E:\\QQMusic\\Cache"
+nameNeteaseMusicDCache:.asciz "D: Netease Music cache"
+pathNeteaseMusicDCache:.asciz "D:\\CloudMusic\\Cache"
+nameNeteaseMusicECache:.asciz "E: Netease Music cache"
+pathNeteaseMusicECache:.asciz "E:\\CloudMusic\\Cache"
+nameKugouDCache:   .asciz "D: KuGou cache"
+pathKugouDCache:   .asciz "D:\\KuGou\\Cache"
+nameKugouECache:   .asciz "E: KuGou cache"
+pathKugouECache:   .asciz "E:\\KuGou\\Cache"
+nameTencentVideoDCache:.asciz "D: Tencent Video cache"
+pathTencentVideoDCache:.asciz "D:\\TencentVideo\\Cache"
+nameTencentVideoECache:.asciz "E: Tencent Video cache"
+pathTencentVideoECache:.asciz "E:\\TencentVideo\\Cache"
+nameIqiyiDCache:   .asciz "D: iQIYI cache"
+pathIqiyiDCache:   .asciz "D:\\IQIYI Video\\Cache"
+nameIqiyiECache:   .asciz "E: iQIYI cache"
+pathIqiyiECache:   .asciz "E:\\IQIYI Video\\Cache"
+nameYoukuDCache:   .asciz "D: Youku cache"
+pathYoukuDCache:   .asciz "D:\\Youku\\Cache"
+nameYoukuECache:   .asciz "E: Youku cache"
+pathYoukuECache:   .asciz "E:\\Youku\\Cache"
+nameDouyinDCache:  .asciz "D: Douyin cache"
+pathDouyinDCache:  .asciz "D:\\Douyin\\Cache"
+nameDouyinECache:  .asciz "E: Douyin cache"
+pathDouyinECache:  .asciz "E:\\Douyin\\Cache"
+nameHuyaDCache:    .asciz "D: Huya cache"
+pathHuyaDCache:    .asciz "D:\\Huya\\Cache"
+nameDouyuDCache:   .asciz "D: Douyu cache"
+pathDouyuDCache:   .asciz "D:\\Douyu\\Cache"
+nameToDeskDLogs:   .asciz "D: ToDesk logs"
+pathToDeskDLogs:   .asciz "D:\\ToDesk\\Logs"
+nameSunloginDLogs: .asciz "D: Sunlogin logs"
+pathSunloginDLogs: .asciz "D:\\SunloginClient\\log"
+nameClashDLogs:    .asciz "D: Clash logs"
+pathClashDLogs:    .asciz "D:\\Clash\\logs"
+nameClashDCache:   .asciz "D: Clash cache"
+pathClashDCache:   .asciz "D:\\Clash\\Cache"
+nameVSCodeDCache:  .asciz "D: VS Code cache"
+pathVSCodeDCache:  .asciz "D:\\VSCode\\data\\user-data\\Cache"
+nameVSCodeECache:  .asciz "E: VS Code cache"
+pathVSCodeECache:  .asciz "E:\\VSCode\\data\\user-data\\Cache"
+nameJetBrainsDSystem:.asciz "D: JetBrains system cache"
+pathJetBrainsDSystem:.asciz "D:\\JetBrains\\system\\caches"
+nameJetBrainsESystem:.asciz "E: JetBrains system cache"
+pathJetBrainsESystem:.asciz "E:\\JetBrains\\system\\caches"
+namePostmanDCache: .asciz "D: Postman cache"
+pathPostmanDCache: .asciz "D:\\Postman\\Cache"
+namePostmanECache: .asciz "E: Postman cache"
+pathPostmanECache: .asciz "E:\\Postman\\Cache"
+nameApifoxDCache:  .asciz "D: Apifox cache"
+pathApifoxDCache:  .asciz "D:\\Apifox\\Cache"
+nameApifoxECache:  .asciz "E: Apifox cache"
+pathApifoxECache:  .asciz "E:\\Apifox\\Cache"
 nameQQGameCache:   .asciz "QQGame cache"
 pathQQGameCache:   .asciz "%APPDATA%\\Tencent\\QQGame\\Cache"
 nameQQGameLogs:    .asciz "QQGame logs"
@@ -5948,6 +6108,86 @@ targetTable:
     .quad nameUnrealJLogs,  pathUnrealJLogs,  riskLow,    1, CAT_GAME
     .quad nameNodeJModules, pathNodeJModules, riskLow,    1, CAT_DEV
     .quad nameAndroidJGradle,pathAndroidJGradle,riskLow, 1, CAT_DEV
+    .quad nameChromeCUserCache,pathChromeCUserCache,riskLow,1,CAT_BROWSER
+    .quad nameChromeDUserCache,pathChromeDUserCache,riskLow,1,CAT_BROWSER
+    .quad nameChromeEUserCache,pathChromeEUserCache,riskLow,1,CAT_BROWSER
+    .quad nameChromeFUserCache,pathChromeFUserCache,riskLow,1,CAT_BROWSER
+    .quad nameChromeGUserCache,pathChromeGUserCache,riskLow,1,CAT_BROWSER
+    .quad nameEdgeDUserCache,pathEdgeDUserCache,riskLow,1,CAT_BROWSER
+    .quad nameEdgeEUserCache,pathEdgeEUserCache,riskLow,1,CAT_BROWSER
+    .quad nameQQBrowserDCache,pathQQBrowserDCache,riskLow,1,CAT_BROWSER
+    .quad nameQQBrowserECache,pathQQBrowserECache,riskLow,1,CAT_BROWSER
+    .quad nameBrowser360DCache,pathBrowser360DCache,riskLow,1,CAT_BROWSER
+    .quad nameBrowser360ECache,pathBrowser360ECache,riskLow,1,CAT_BROWSER
+    .quad nameQuarkDCache, pathQuarkDCache, riskLow,     1, CAT_BROWSER
+    .quad nameQuarkECache, pathQuarkECache, riskLow,     1, CAT_BROWSER
+    .quad nameBaiduNetdiskDCache,pathBaiduNetdiskDCache,riskLow,1,CAT_APP
+    .quad nameBaiduNetdiskDLogs,pathBaiduNetdiskDLogs,riskLow,1,CAT_APP
+    .quad nameBaiduNetdiskECache,pathBaiduNetdiskECache,riskLow,1,CAT_APP
+    .quad nameBaiduNetdiskELogs,pathBaiduNetdiskELogs,riskLow,1,CAT_APP
+    .quad nameBaiduNetdiskFCache,pathBaiduNetdiskFCache,riskLow,1,CAT_APP
+    .quad nameBaiduNetdiskGCache,pathBaiduNetdiskGCache,riskLow,1,CAT_APP
+    .quad nameAliyunDCache,pathAliyunDCache,riskLow,     1, CAT_APP
+    .quad nameAliyunECache,pathAliyunECache,riskLow,     1, CAT_APP
+    .quad nameAliyunFCache,pathAliyunFCache,riskLow,     1, CAT_APP
+    .quad nameQuarkNetdiskDCache,pathQuarkNetdiskDCache,riskLow,1,CAT_APP
+    .quad nameQuarkNetdiskECache,pathQuarkNetdiskECache,riskLow,1,CAT_APP
+    .quad nameThunderDCache,pathThunderDCache,riskLow,   1, CAT_APP
+    .quad nameThunderDTemp, pathThunderDTemp, riskLow,    1, CAT_APP
+    .quad nameThunderECache,pathThunderECache,riskLow,   1, CAT_APP
+    .quad nameThunderETemp, pathThunderETemp, riskLow,    1, CAT_APP
+    .quad nameThunderFCache,pathThunderFCache,riskLow,   1, CAT_APP
+    .quad nameIDMDTemp,     pathIDMDTemp,     riskLow,    1, CAT_APP
+    .quad nameIDMETemp,     pathIDMETemp,     riskLow,    1, CAT_APP
+    .quad nameQBittorrentDCache,pathQBittorrentDCache,riskLow,1,CAT_APP
+    .quad nameQBittorrentECache,pathQBittorrentECache,riskLow,1,CAT_APP
+    .quad nameWpsDCache,    pathWpsDCache,    riskLow,    1, CAT_APP
+    .quad nameWpsDLogs,     pathWpsDLogs,     riskLow,    1, CAT_APP
+    .quad nameWpsECache,    pathWpsECache,    riskLow,    1, CAT_APP
+    .quad nameDingTalkDCache,pathDingTalkDCache,riskLow, 1, CAT_APP
+    .quad nameDingTalkECache,pathDingTalkECache,riskLow, 1, CAT_APP
+    .quad nameFeishuDCache, pathFeishuDCache, riskLow,    1, CAT_APP
+    .quad nameFeishuECache, pathFeishuECache, riskLow,    1, CAT_APP
+    .quad nameTencentDocsDCache,pathTencentDocsDCache,riskLow,1,CAT_APP
+    .quad nameTencentDocsECache,pathTencentDocsECache,riskLow,1,CAT_APP
+    .quad nameWeChatDLogs,  pathWeChatDLogs,  riskLow,    1, CAT_CHAT
+    .quad nameWeChatDCache, pathWeChatDCache, riskLow,    1, CAT_CHAT
+    .quad nameWeChatELogs,  pathWeChatELogs,  riskLow,    1, CAT_CHAT
+    .quad nameWeChatECache, pathWeChatECache, riskLow,    1, CAT_CHAT
+    .quad nameQQDLogs,      pathQQDLogs,      riskLow,    1, CAT_CHAT
+    .quad nameQQDCache,     pathQQDCache,     riskLow,    1, CAT_CHAT
+    .quad nameQQELogs,      pathQQELogs,      riskLow,    1, CAT_CHAT
+    .quad nameQQECache,     pathQQECache,     riskLow,    1, CAT_CHAT
+    .quad nameWeComDCache,  pathWeComDCache,  riskLow,    1, CAT_CHAT
+    .quad nameWeComECache,  pathWeComECache,  riskLow,    1, CAT_CHAT
+    .quad nameQQMusicDCache,pathQQMusicDCache,riskLow,   1, CAT_MEDIA
+    .quad nameQQMusicECache,pathQQMusicECache,riskLow,   1, CAT_MEDIA
+    .quad nameNeteaseMusicDCache,pathNeteaseMusicDCache,riskLow,1,CAT_MEDIA
+    .quad nameNeteaseMusicECache,pathNeteaseMusicECache,riskLow,1,CAT_MEDIA
+    .quad nameKugouDCache,  pathKugouDCache,  riskLow,    1, CAT_MEDIA
+    .quad nameKugouECache,  pathKugouECache,  riskLow,    1, CAT_MEDIA
+    .quad nameTencentVideoDCache,pathTencentVideoDCache,riskLow,1,CAT_MEDIA
+    .quad nameTencentVideoECache,pathTencentVideoECache,riskLow,1,CAT_MEDIA
+    .quad nameIqiyiDCache,  pathIqiyiDCache,  riskLow,    1, CAT_MEDIA
+    .quad nameIqiyiECache,  pathIqiyiECache,  riskLow,    1, CAT_MEDIA
+    .quad nameYoukuDCache,  pathYoukuDCache,  riskLow,    1, CAT_MEDIA
+    .quad nameYoukuECache,  pathYoukuECache,  riskLow,    1, CAT_MEDIA
+    .quad nameDouyinDCache, pathDouyinDCache, riskLow,    1, CAT_MEDIA
+    .quad nameDouyinECache, pathDouyinECache, riskLow,    1, CAT_MEDIA
+    .quad nameHuyaDCache,   pathHuyaDCache,   riskLow,    1, CAT_MEDIA
+    .quad nameDouyuDCache,  pathDouyuDCache,  riskLow,    1, CAT_MEDIA
+    .quad nameToDeskDLogs,  pathToDeskDLogs,  riskLow,    1, CAT_APP
+    .quad nameSunloginDLogs,pathSunloginDLogs,riskLow,   1, CAT_APP
+    .quad nameClashDLogs,   pathClashDLogs,   riskLow,    1, CAT_APP
+    .quad nameClashDCache,  pathClashDCache,  riskLow,    1, CAT_APP
+    .quad nameVSCodeDCache, pathVSCodeDCache, riskLow,    1, CAT_DEV
+    .quad nameVSCodeECache, pathVSCodeECache, riskLow,    1, CAT_DEV
+    .quad nameJetBrainsDSystem,pathJetBrainsDSystem,riskLow,1,CAT_DEV
+    .quad nameJetBrainsESystem,pathJetBrainsESystem,riskLow,1,CAT_DEV
+    .quad namePostmanDCache,pathPostmanDCache,riskLow,   1, CAT_DEV
+    .quad namePostmanECache,pathPostmanECache,riskLow,   1, CAT_DEV
+    .quad nameApifoxDCache, pathApifoxDCache, riskLow,    1, CAT_DEV
+    .quad nameApifoxECache, pathApifoxECache, riskLow,    1, CAT_DEV
     .quad 0, 0, 0, 0, 0
 
 .section .bss
