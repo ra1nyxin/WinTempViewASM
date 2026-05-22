@@ -3203,16 +3203,36 @@ nameSlackLogs:     .asciz "Slack logs"
 pathSlackLogs:     .asciz "%APPDATA%\\Slack\\logs"
 namePostmanCache:  .asciz "Postman 缓存"
 pathPostmanCache:  .asciz "%APPDATA%\\Postman\\Cache"
+namePostmanCode:   .asciz "Postman Code Cache"
+pathPostmanCode:   .asciz "%APPDATA%\\Postman\\Code Cache"
+namePostmanGpu:    .asciz "Postman GPUCache"
+pathPostmanGpu:    .asciz "%APPDATA%\\Postman\\GPUCache"
+namePostmanLogs:   .asciz "Postman logs"
+pathPostmanLogs:   .asciz "%APPDATA%\\Postman\\logs"
 nameNotionCache:   .asciz "Notion 缓存"
 pathNotionCache:   .asciz "%APPDATA%\\Notion\\Cache"
 nameNotionCode:    .asciz "Notion 代码缓存"
 pathNotionCode:    .asciz "%APPDATA%\\Notion\\Code Cache"
+nameNotionGpu:     .asciz "Notion GPUCache"
+pathNotionGpu:     .asciz "%APPDATA%\\Notion\\GPUCache"
+nameNotionLogs:    .asciz "Notion logs"
+pathNotionLogs:    .asciz "%APPDATA%\\Notion\\logs"
 nameFigmaCache:    .asciz "Figma 缓存"
 pathFigmaCache:    .asciz "%APPDATA%\\Figma\\Cache"
 nameFigmaCode:     .asciz "Figma 代码缓存"
 pathFigmaCode:     .asciz "%APPDATA%\\Figma\\Code Cache"
+nameFigmaGpu:      .asciz "Figma GPUCache"
+pathFigmaGpu:      .asciz "%APPDATA%\\Figma\\GPUCache"
+nameFigmaLogs:     .asciz "Figma logs"
+pathFigmaLogs:     .asciz "%APPDATA%\\Figma\\logs"
+nameObsidianCache: .asciz "Obsidian Cache"
+pathObsidianCache: .asciz "%APPDATA%\\Obsidian\\Cache"
+nameObsidianCode:  .asciz "Obsidian Code Cache"
+pathObsidianCode:  .asciz "%APPDATA%\\Obsidian\\Code Cache"
 nameObsidianGpu:   .asciz "Obsidian GPU 缓存"
 pathObsidianGpu:   .asciz "%APPDATA%\\Obsidian\\GPUCache"
+nameObsidianLogs:  .asciz "Obsidian logs"
+pathObsidianLogs:  .asciz "%APPDATA%\\Obsidian\\logs"
 nameWeComData:     .asciz "企业微信数据"
 pathWeComData:     .asciz "%APPDATA%\\Tencent\\WeCom"
 nameTencentMeeting:.asciz "腾讯会议数据"
@@ -3237,14 +3257,40 @@ nameGithubDesktopCache:.asciz "GitHub Desktop Cache"
 pathGithubDesktopCache:.asciz "%APPDATA%\\GitHub Desktop\\Cache"
 nameGithubDesktopCode:.asciz "GitHub Desktop Code Cache"
 pathGithubDesktopCode:.asciz "%APPDATA%\\GitHub Desktop\\Code Cache"
+nameGithubDesktopGpu:.asciz "GitHub Desktop GPUCache"
+pathGithubDesktopGpu:.asciz "%APPDATA%\\GitHub Desktop\\GPUCache"
+nameGithubDesktopLogs:.asciz "GitHub Desktop logs"
+pathGithubDesktopLogs:.asciz "%APPDATA%\\GitHub Desktop\\logs"
 nameApifoxCache:   .asciz "Apifox Cache"
 pathApifoxCache:   .asciz "%APPDATA%\\Apifox\\Cache"
 nameApifoxCode:    .asciz "Apifox Code Cache"
 pathApifoxCode:    .asciz "%APPDATA%\\Apifox\\Code Cache"
+nameApifoxGpu:     .asciz "Apifox GPUCache"
+pathApifoxGpu:     .asciz "%APPDATA%\\Apifox\\GPUCache"
+nameApifoxLogs:    .asciz "Apifox logs"
+pathApifoxLogs:    .asciz "%APPDATA%\\Apifox\\logs"
 nameClaudeCache:   .asciz "Claude Cache"
 pathClaudeCache:   .asciz "%APPDATA%\\Claude\\Cache"
 nameClaudeCode:    .asciz "Claude Code Cache"
 pathClaudeCode:    .asciz "%APPDATA%\\Claude\\Code Cache"
+nameClaudeGpu:     .asciz "Claude GPUCache"
+pathClaudeGpu:     .asciz "%APPDATA%\\Claude\\GPUCache"
+nameClaudeLogs:    .asciz "Claude logs"
+pathClaudeLogs:    .asciz "%APPDATA%\\Claude\\logs"
+nameChatGptCache:  .asciz "ChatGPT Cache"
+pathChatGptCache:  .asciz "%APPDATA%\\ChatGPT\\Cache"
+nameChatGptCode:   .asciz "ChatGPT Code Cache"
+pathChatGptCode:   .asciz "%APPDATA%\\ChatGPT\\Code Cache"
+nameChatGptGpu:    .asciz "ChatGPT GPUCache"
+pathChatGptGpu:    .asciz "%APPDATA%\\ChatGPT\\GPUCache"
+nameChatGptLogs:   .asciz "ChatGPT logs"
+pathChatGptLogs:   .asciz "%APPDATA%\\ChatGPT\\logs"
+namePerplexityCache:.asciz "Perplexity Cache"
+pathPerplexityCache:.asciz "%APPDATA%\\Perplexity\\Cache"
+namePerplexityCode:.asciz "Perplexity Code Cache"
+pathPerplexityCode:.asciz "%APPDATA%\\Perplexity\\Code Cache"
+namePerplexityGpu: .asciz "Perplexity GPUCache"
+pathPerplexityGpu: .asciz "%APPDATA%\\Perplexity\\GPUCache"
 nameSignalCache:   .asciz "Signal Cache"
 pathSignalCache:   .asciz "%APPDATA%\\Signal\\Cache"
 nameSignalCode:    .asciz "Signal Code Cache"
@@ -3257,10 +3303,30 @@ nameCanvaCache:    .asciz "Canva Cache"
 pathCanvaCache:    .asciz "%APPDATA%\\Canva\\Cache"
 nameCanvaCode:     .asciz "Canva Code Cache"
 pathCanvaCode:     .asciz "%APPDATA%\\Canva\\Code Cache"
+nameCanvaGpu:      .asciz "Canva GPUCache"
+pathCanvaGpu:      .asciz "%APPDATA%\\Canva\\GPUCache"
+nameCanvaLogs:     .asciz "Canva logs"
+pathCanvaLogs:     .asciz "%APPDATA%\\Canva\\logs"
 nameTyporaCache:   .asciz "Typora Cache"
 pathTyporaCache:   .asciz "%APPDATA%\\Typora\\Cache"
+nameTyporaGpu:     .asciz "Typora GPUCache"
+pathTyporaGpu:     .asciz "%APPDATA%\\Typora\\GPUCache"
+nameTyporaLogs:    .asciz "Typora logs"
+pathTyporaLogs:    .asciz "%APPDATA%\\Typora\\logs"
 nameMotrixCache:   .asciz "Motrix Cache"
 pathMotrixCache:   .asciz "%APPDATA%\\Motrix\\Cache"
+nameMotrixLogs:    .asciz "Motrix logs"
+pathMotrixLogs:    .asciz "%APPDATA%\\Motrix\\logs"
+nameDropboxCache:  .asciz "Dropbox cache"
+pathDropboxCache:  .asciz "%LOCALAPPDATA%\\Dropbox\\Cache"
+nameDropboxLogs:   .asciz "Dropbox logs"
+pathDropboxLogs:   .asciz "%LOCALAPPDATA%\\Dropbox\\logs"
+nameGoogleDriveCache:.asciz "Google DriveFS cache"
+pathGoogleDriveCache:.asciz "%LOCALAPPDATA%\\Google\\DriveFS\\Cache"
+nameGoogleDriveLogs:.asciz "Google DriveFS logs"
+pathGoogleDriveLogs:.asciz "%LOCALAPPDATA%\\Google\\DriveFS\\Logs"
+nameGoogleDriveCrash:.asciz "Google DriveFS Crashpad"
+pathGoogleDriveCrash:.asciz "%LOCALAPPDATA%\\Google\\DriveFS\\Crashpad"
 nameAliyunDriveCache:.asciz "Aliyun Drive Cache"
 pathAliyunDriveCache:.asciz "%APPDATA%\\aDrive\\Cache"
 nameAliyunDriveLogs:.asciz "Aliyun Drive logs"
@@ -3279,6 +3345,8 @@ nameQBittorrentLogs:.asciz "qBittorrent logs"
 pathQBittorrentLogs:.asciz "%LOCALAPPDATA%\\qBittorrent\\logs"
 nameEverythingLogs:.asciz "Everything logs"
 pathEverythingLogs:.asciz "%APPDATA%\\Everything\\Logs"
+nameEverythingTemp:.asciz "Everything temp"
+pathEverythingTemp:.asciz "%LOCALAPPDATA%\\Everything\\Temp"
 nameToDeskLogs:    .asciz "ToDesk logs"
 pathToDeskLogs:    .asciz "%APPDATA%\\ToDesk\\logs"
 nameSunloginLogs:  .asciz "Sunlogin logs"
@@ -3379,6 +3447,14 @@ nameSunloginCache: .asciz "Sunlogin cache"
 pathSunloginCache: .asciz "%APPDATA%\\Oray\\SunloginClient\\cache"
 nameSunloginCrash: .asciz "Sunlogin crash"
 pathSunloginCrash: .asciz "%APPDATA%\\Oray\\SunloginClient\\crash"
+nameRustdeskCache: .asciz "RustDesk cache"
+pathRustdeskCache: .asciz "%APPDATA%\\RustDesk\\cache"
+nameRustdeskLogs:  .asciz "RustDesk logs"
+pathRustdeskLogs:  .asciz "%APPDATA%\\RustDesk\\log"
+nameParsecCache:   .asciz "Parsec cache"
+pathParsecCache:   .asciz "%APPDATA%\\Parsec\\cache"
+nameParsecLogs:    .asciz "Parsec logs"
+pathParsecLogs:    .asciz "%APPDATA%\\Parsec\\log"
 nameBaiduPinyinLogs:.asciz "Baidu Pinyin logs"
 pathBaiduPinyinLogs:.asciz "%APPDATA%\\Baidu\\BaiduPinyin\\log"
 nameBaiduPinyinTemp:.asciz "Baidu Pinyin temp"
@@ -3553,6 +3629,32 @@ nameMubuCache:     .asciz "Mubu Cache"
 pathMubuCache:     .asciz "%APPDATA%\\Mubu\\Cache"
 nameMubuLogs:      .asciz "Mubu logs"
 pathMubuLogs:      .asciz "%APPDATA%\\Mubu\\logs"
+nameNeteaseMailCache:.asciz "NetEase MailMaster Cache"
+pathNeteaseMailCache:.asciz "%APPDATA%\\Netease\\MailMaster\\Cache"
+nameNeteaseMailLogs:.asciz "NetEase MailMaster logs"
+pathNeteaseMailLogs:.asciz "%APPDATA%\\Netease\\MailMaster\\logs"
+nameYoudaoTranslateCache:.asciz "Youdao Translate Cache"
+pathYoudaoTranslateCache:.asciz "%APPDATA%\\Youdao\\YoudaoTranslate\\Cache"
+nameYoudaoTranslateLogs:.asciz "Youdao Translate logs"
+pathYoudaoTranslateLogs:.asciz "%APPDATA%\\Youdao\\YoudaoTranslate\\logs"
+nameTickTickCache: .asciz "TickTick Cache"
+pathTickTickCache: .asciz "%APPDATA%\\TickTick\\Cache"
+nameTickTickLogs:  .asciz "TickTick logs"
+pathTickTickLogs:  .asciz "%APPDATA%\\TickTick\\logs"
+nameJoplinCache:   .asciz "Joplin Cache"
+pathJoplinCache:   .asciz "%APPDATA%\\Joplin\\Cache"
+nameJoplinLogs:    .asciz "Joplin logs"
+pathJoplinLogs:    .asciz "%APPDATA%\\Joplin\\logs"
+nameZoteroCache:   .asciz "Zotero cache"
+pathZoteroCache:   .asciz "%LOCALAPPDATA%\\Zotero\\Zotero\\Profiles"
+nameEvernoteCache: .asciz "Evernote cache"
+pathEvernoteCache: .asciz "%APPDATA%\\Evernote\\Cache"
+nameEvernoteLogs:  .asciz "Evernote logs"
+pathEvernoteLogs:  .asciz "%APPDATA%\\Evernote\\logs"
+nameAdobeCcCache:  .asciz "Adobe Creative Cloud cache"
+pathAdobeCcCache:  .asciz "%LOCALAPPDATA%\\Adobe\\Creative Cloud Libraries\\Caches"
+nameAdobeCcLogs:   .asciz "Adobe Creative Cloud logs"
+pathAdobeCcLogs:   .asciz "%LOCALAPPDATA%\\Adobe\\Creative Cloud\\Logs"
 
 nameWeChatFiles:   .asciz "微信文档聊天数据根目录"
 pathWeChatFiles:   .asciz "%USERPROFILE%\\Documents\\WeChat Files"
@@ -3574,6 +3676,8 @@ nameWeChatCefCache:.asciz "WeChat CefCache"
 pathWeChatCefCache:.asciz "%APPDATA%\\Tencent\\WeChat\\CefCache"
 nameQQNTCache:     .asciz "QQNT Cache"
 pathQQNTCache:     .asciz "%APPDATA%\\Tencent\\QQNT\\Cache"
+nameQQNTGpu:       .asciz "QQNT GPUCache"
+pathQQNTGpu:       .asciz "%APPDATA%\\Tencent\\QQNT\\GPUCache"
 nameQQNTLogs:      .asciz "QQNT logs"
 pathQQNTLogs:      .asciz "%APPDATA%\\Tencent\\QQNT\\logs"
 nameQQNTCrashpad:  .asciz "QQNT Crashpad"
@@ -3590,12 +3694,22 @@ nameWeComCache:    .asciz "WeCom cache"
 pathWeComCache:    .asciz "%APPDATA%\\Tencent\\WeCom\\Cache"
 nameWeComLogs:     .asciz "WeCom logs"
 pathWeComLogs:     .asciz "%APPDATA%\\Tencent\\WeCom\\Log"
+nameWeComGpu:      .asciz "WeCom GPUCache"
+pathWeComGpu:      .asciz "%APPDATA%\\Tencent\\WeCom\\GPUCache"
+nameWeComCrash:    .asciz "WeCom Crashpad"
+pathWeComCrash:    .asciz "%APPDATA%\\Tencent\\WeCom\\Crashpad"
 nameTencentMeetingLogs:.asciz "Tencent Meeting logs"
 pathTencentMeetingLogs:.asciz "%APPDATA%\\Tencent\\WeMeet\\Logs"
 nameTencentMeetingCache:.asciz "Tencent Meeting cache"
 pathTencentMeetingCache:.asciz "%LOCALAPPDATA%\\Tencent\\WeMeet\\Cache"
+nameTencentMeetingGpu:.asciz "Tencent Meeting GPUCache"
+pathTencentMeetingGpu:.asciz "%APPDATA%\\Tencent\\WeMeet\\GPUCache"
+nameTencentMeetingCrash:.asciz "Tencent Meeting Crashpad"
+pathTencentMeetingCrash:.asciz "%APPDATA%\\Tencent\\WeMeet\\Crashpad"
 nameWeChatDevToolsCache:.asciz "WeChat DevTools cache"
 pathWeChatDevToolsCache:.asciz "%APPDATA%\\Tencent\\微信开发者工具\\Cache"
+nameWeChatDevToolsCode:.asciz "WeChat DevTools Code Cache"
+pathWeChatDevToolsCode:.asciz "%APPDATA%\\Tencent\\微信开发者工具\\Code Cache"
 nameWeChatDevToolsLogs:.asciz "WeChat DevTools logs"
 pathWeChatDevToolsLogs:.asciz "%APPDATA%\\Tencent\\微信开发者工具\\logs"
 nameWeChatDevToolsGpu:.asciz "WeChat DevTools GPUCache"
@@ -3604,6 +3718,8 @@ nameHBuilderXCache:.asciz "HBuilderX cache"
 pathHBuilderXCache:.asciz "%APPDATA%\\HBuilder X\\Cache"
 nameHBuilderXCode:.asciz "HBuilderX Code Cache"
 pathHBuilderXCode:.asciz "%APPDATA%\\HBuilder X\\Code Cache"
+nameHBuilderXGpu:.asciz "HBuilderX GPUCache"
+pathHBuilderXGpu:.asciz "%APPDATA%\\HBuilder X\\GPUCache"
 nameHBuilderXLogs:.asciz "HBuilderX logs"
 pathHBuilderXLogs:.asciz "%APPDATA%\\HBuilder X\\logs"
 nameDevEcoCache:   .asciz "DevEco Studio cache"
@@ -3617,6 +3733,8 @@ pathUniappCache:   .asciz "%USERPROFILE%\\.dcloud"
 
 nameNpm:           .asciz "npm 缓存"
 pathNpm:           .asciz "%APPDATA%\\npm-cache"
+nameNpmLocal:      .asciz "npm local cache"
+pathNpmLocal:      .asciz "%LOCALAPPDATA%\\npm-cache"
 namePip:           .asciz "pip 缓存"
 pathPip:           .asciz "%LOCALAPPDATA%\\pip\\Cache"
 nameNuget:         .asciz "NuGet 包缓存"
@@ -3649,8 +3767,12 @@ nameMcDevCache:    .asciz "MinecraftDev Gradle 缓存"
 pathMcDevCache:    .asciz "%USERPROFILE%\\.gradle\\caches\\minecraftdev"
 nameMaven:         .asciz "Maven 本地仓库"
 pathMaven:         .asciz "%USERPROFILE%\\.m2\\repository"
+nameMavenWrapper:  .asciz "Maven wrapper cache"
+pathMavenWrapper:  .asciz "%USERPROFILE%\\.m2\\wrapper"
 nameYarn:          .asciz "Yarn 缓存"
 pathYarn:          .asciz "%LOCALAPPDATA%\\Yarn\\Cache"
+nameYarnBerry:     .asciz "Yarn Berry cache"
+pathYarnBerry:     .asciz "%LOCALAPPDATA%\\Yarn\\Berry"
 namePnpm:          .asciz "pnpm store"
 pathPnpm:          .asciz "%LOCALAPPDATA%\\pnpm\\store"
 nameCargo:         .asciz "Cargo registry 缓存"
@@ -3659,6 +3781,8 @@ nameGoBuild:       .asciz "Go build cache"
 pathGoBuild:       .asciz "%LOCALAPPDATA%\\go-build"
 nameDockerDesktop: .asciz "Docker Desktop 本地数据"
 pathDockerDesktop: .asciz "%LOCALAPPDATA%\\Docker"
+nameDockerDesktopLogs:.asciz "Docker Desktop logs"
+pathDockerDesktopLogs:.asciz "%APPDATA%\\Docker Desktop\\logs"
 namePoetryCache:   .asciz "Poetry 缓存"
 pathPoetryCache:   .asciz "%LOCALAPPDATA%\\pypoetry\\Cache"
 nameAndroidBuild:  .asciz "Android build cache"
@@ -3679,8 +3803,16 @@ nameTraeCache:     .asciz "Trae 缓存"
 pathTraeCache:     .asciz "%APPDATA%\\Trae\\Cache"
 nameJetBrainsLocal:.asciz "JetBrains 本地缓存"
 pathJetBrainsLocal:.asciz "%LOCALAPPDATA%\\JetBrains"
+nameJetBrainsToolboxCache:.asciz "JetBrains Toolbox cache"
+pathJetBrainsToolboxCache:.asciz "%LOCALAPPDATA%\\JetBrains\\Toolbox\\cache"
+nameJetBrainsToolboxLogs:.asciz "JetBrains Toolbox logs"
+pathJetBrainsToolboxLogs:.asciz "%LOCALAPPDATA%\\JetBrains\\Toolbox\\logs"
 nameVsCache:       .asciz "Visual Studio 本地缓存"
 pathVsCache:       .asciz "%LOCALAPPDATA%\\Microsoft\\VisualStudio"
+nameVsCodeCachedData:.asciz "VS Code CachedData"
+pathVsCodeCachedData:.asciz "%APPDATA%\\Code\\CachedData"
+nameVsCodeUserLogs:.asciz "VS Code user logs"
+pathVsCodeUserLogs:.asciz "%APPDATA%\\Code\\logs"
 nameNodeGyp:       .asciz "node-gyp 缓存"
 pathNodeGyp:       .asciz "%LOCALAPPDATA%\\node-gyp\\Cache"
 nameElectronCache: .asciz "Electron 缓存"
@@ -3723,10 +3855,20 @@ nameNinjaCache:    .asciz "Ninja build logs"
 pathNinjaCache:    .asciz "%LOCALAPPDATA%\\ninja"
 nameGitKrakenCache:.asciz "GitKraken Cache"
 pathGitKrakenCache:.asciz "%APPDATA%\\gitkraken\\Cache"
+nameGitKrakenGpu:  .asciz "GitKraken GPUCache"
+pathGitKrakenGpu:  .asciz "%APPDATA%\\gitkraken\\GPUCache"
 nameInsomniaCache: .asciz "Insomnia Cache"
 pathInsomniaCache: .asciz "%APPDATA%\\Insomnia\\Cache"
 nameInsomniaCode:  .asciz "Insomnia Code Cache"
 pathInsomniaCode:  .asciz "%APPDATA%\\Insomnia\\Code Cache"
+nameInsomniaGpu:   .asciz "Insomnia GPUCache"
+pathInsomniaGpu:   .asciz "%APPDATA%\\Insomnia\\GPUCache"
+nameApiPostCache:  .asciz "ApiPost Cache"
+pathApiPostCache:  .asciz "%APPDATA%\\ApiPost\\Cache"
+nameApiPostCode:   .asciz "ApiPost Code Cache"
+pathApiPostCode:   .asciz "%APPDATA%\\ApiPost\\Code Cache"
+nameApiPostLogs:   .asciz "ApiPost logs"
+pathApiPostLogs:   .asciz "%APPDATA%\\ApiPost\\logs"
 nameBazelCache:    .asciz "Bazel user cache"
 pathBazelCache:    .asciz "%USERPROFILE%\\_bazel_%USERNAME%"
 nameRustupDownloads:.asciz "rustup downloads"
@@ -3752,6 +3894,8 @@ nameSteamAppCache: .asciz "Steam appcache"
 pathSteamAppCache: .asciz "%PROGRAMFILES(X86)%\\Steam\\appcache"
 nameSteamDepotCache:.asciz "Steam depotcache"
 pathSteamDepotCache:.asciz "%PROGRAMFILES(X86)%\\Steam\\depotcache"
+nameSteamDumps:    .asciz "Steam dumps"
+pathSteamDumps:    .asciz "%PROGRAMFILES(X86)%\\Steam\\dumps"
 nameEpicWebcache:  .asciz "Epic Games Launcher webcache"
 pathEpicWebcache:  .asciz "%LOCALAPPDATA%\\EpicGamesLauncher\\Saved\\webcache"
 nameBattlenet:     .asciz "Battle.net 缓存"
@@ -3776,6 +3920,8 @@ nameGogLogs:       .asciz "GOG Galaxy logs"
 pathGogLogs:       .asciz "%PROGRAMDATA%\\GOG.com\\Galaxy\\logs"
 nameRobloxLogs:    .asciz "Roblox logs"
 pathRobloxLogs:    .asciz "%LOCALAPPDATA%\\Roblox\\logs"
+nameRobloxCache:   .asciz "Roblox cache"
+pathRobloxCache:   .asciz "%LOCALAPPDATA%\\Roblox\\cache"
 nameMinecraftLogs: .asciz "Minecraft logs"
 pathMinecraftLogs: .asciz "%APPDATA%\\.minecraft\\logs"
 nameMinecraftCrash:.asciz "Minecraft crash-reports"
@@ -3808,6 +3954,10 @@ nameMCreatorCache: .asciz "MCreator 缓存"
 pathMCreatorCache: .asciz "%USERPROFILE%\\.mcreator\\cache"
 nameHoYoCache:     .asciz "HoYoPlay Cache"
 pathHoYoCache:     .asciz "%APPDATA%\\Cognosphere\\HYP\\1_0\\Cache"
+nameHoYoLogs:      .asciz "HoYoPlay logs"
+pathHoYoLogs:      .asciz "%APPDATA%\\Cognosphere\\HYP\\1_0\\Logs"
+nameHoYoGpu:       .asciz "HoYoPlay GPUCache"
+pathHoYoGpu:       .asciz "%APPDATA%\\Cognosphere\\HYP\\1_0\\GPUCache"
 nameSteamLogs:     .asciz "Steam logs"
 pathSteamLogs:     .asciz "%PROGRAMFILES(X86)%\\Steam\\logs"
 nameEpicLogs:      .asciz "Epic Games Launcher logs"
@@ -3830,6 +3980,8 @@ nameNeteaseUULogs: .asciz "NetEase UU logs"
 pathNeteaseUULogs: .asciz "%APPDATA%\\Netease\\UU\\Logs"
 nameNeteaseUUCache:.asciz "NetEase UU cache"
 pathNeteaseUUCache:.asciz "%LOCALAPPDATA%\\Netease\\UU\\cache"
+nameNeteaseUUTemp: .asciz "NetEase UU temp"
+pathNeteaseUUTemp: .asciz "%LOCALAPPDATA%\\Netease\\UU\\temp"
 
 nameAdobeMedia:    .asciz "Adobe Media Cache Files"
 pathAdobeMedia:    .asciz "%APPDATA%\\Adobe\\Common\\Media Cache Files"
@@ -3851,10 +4003,22 @@ nameEpicUnrealDDC: .asciz "Epic Unreal DDC"
 pathEpicUnrealDDC: .asciz "%LOCALAPPDATA%\\UnrealEngine\\DerivedDataCache"
 nameBlenderTemp:   .asciz "Blender 临时缓存"
 pathBlenderTemp:   .asciz "%LOCALAPPDATA%\\Temp\\blender"
+nameBlenderCache:  .asciz "Blender cache"
+pathBlenderCache:  .asciz "%APPDATA%\\Blender Foundation\\Blender\\Cache"
 nameObsLogs:       .asciz "OBS 日志"
 pathObsLogs:       .asciz "%APPDATA%\\obs-studio\\logs"
 nameObsCrashDumps: .asciz "OBS crash dumps"
 pathObsCrashDumps: .asciz "%APPDATA%\\obs-studio\\crashes"
+nameAudacityTemp:  .asciz "Audacity temp"
+pathAudacityTemp:  .asciz "%LOCALAPPDATA%\\Audacity\\SessionData"
+nameShotcutCache:  .asciz "Shotcut cache"
+pathShotcutCache:  .asciz "%LOCALAPPDATA%\\Meltytech\\Shotcut\\cache"
+nameKdenliveCache: .asciz "Kdenlive cache"
+pathKdenliveCache: .asciz "%LOCALAPPDATA%\\kdenlive\\cache"
+nameGimpTemp:      .asciz "GIMP temp"
+pathGimpTemp:      .asciz "%LOCALAPPDATA%\\Temp\\gimp"
+nameInkscapeCache: .asciz "Inkscape cache"
+pathInkscapeCache: .asciz "%LOCALAPPDATA%\\inkscape\\cache"
 namePowerToysLogs: .asciz "PowerToys 日志"
 pathPowerToysLogs: .asciz "%LOCALAPPDATA%\\Microsoft\\PowerToys\\Logs"
 nameOneDriveLogs:  .asciz "OneDrive 日志"
@@ -4163,11 +4327,21 @@ targetTable:
     .quad nameSlackGpu,     pathSlackGpu,     riskLow,    1, CAT_APP
     .quad nameSlackLogs,    pathSlackLogs,    riskLow,    1, CAT_APP
     .quad namePostmanCache, pathPostmanCache, riskLow,    1, CAT_DEV
+    .quad namePostmanCode,  pathPostmanCode,  riskLow,    1, CAT_DEV
+    .quad namePostmanGpu,   pathPostmanGpu,   riskLow,    1, CAT_DEV
+    .quad namePostmanLogs,  pathPostmanLogs,  riskLow,    1, CAT_DEV
     .quad nameNotionCache,  pathNotionCache,  riskLow,    1, CAT_APP
     .quad nameNotionCode,   pathNotionCode,   riskLow,    1, CAT_APP
+    .quad nameNotionGpu,    pathNotionGpu,    riskLow,    1, CAT_APP
+    .quad nameNotionLogs,   pathNotionLogs,   riskLow,    1, CAT_APP
     .quad nameFigmaCache,   pathFigmaCache,   riskLow,    1, CAT_APP
     .quad nameFigmaCode,    pathFigmaCode,    riskLow,    1, CAT_APP
+    .quad nameFigmaGpu,     pathFigmaGpu,     riskLow,    1, CAT_APP
+    .quad nameFigmaLogs,    pathFigmaLogs,    riskLow,    1, CAT_APP
+    .quad nameObsidianCache,pathObsidianCache,riskLow,    1, CAT_APP
+    .quad nameObsidianCode, pathObsidianCode, riskLow,    1, CAT_APP
     .quad nameObsidianGpu,  pathObsidianGpu,  riskLow,    1, CAT_APP
+    .quad nameObsidianLogs, pathObsidianLogs, riskLow,    1, CAT_APP
     .quad nameWeComData,    pathWeComData,    riskHigh,   1, CAT_CHAT
     .quad nameTencentMeeting,pathTencentMeeting,riskHigh,  1, CAT_CHAT
     .quad nameBaiduNetdisk, pathBaiduNetdisk, riskHigh,   1, CAT_APP
@@ -4180,18 +4354,41 @@ targetTable:
     .quad nameNeteaseMusicLogs,pathNeteaseMusicLogs,riskLow,1, CAT_MEDIA
     .quad nameGithubDesktopCache, pathGithubDesktopCache, riskLow, 1, CAT_APP
     .quad nameGithubDesktopCode, pathGithubDesktopCode, riskLow, 1, CAT_APP
+    .quad nameGithubDesktopGpu,pathGithubDesktopGpu,riskLow,1, CAT_APP
+    .quad nameGithubDesktopLogs,pathGithubDesktopLogs,riskLow,1, CAT_APP
     .quad nameApifoxCache,  pathApifoxCache,  riskLow,    1, CAT_DEV
     .quad nameApifoxCode,   pathApifoxCode,   riskLow,    1, CAT_DEV
+    .quad nameApifoxGpu,    pathApifoxGpu,    riskLow,    1, CAT_DEV
+    .quad nameApifoxLogs,   pathApifoxLogs,   riskLow,    1, CAT_DEV
     .quad nameClaudeCache,  pathClaudeCache,  riskLow,    1, CAT_APP
     .quad nameClaudeCode,   pathClaudeCode,   riskLow,    1, CAT_APP
+    .quad nameClaudeGpu,    pathClaudeGpu,    riskLow,    1, CAT_APP
+    .quad nameClaudeLogs,   pathClaudeLogs,   riskLow,    1, CAT_APP
+    .quad nameChatGptCache, pathChatGptCache, riskLow,    1, CAT_APP
+    .quad nameChatGptCode,  pathChatGptCode,  riskLow,    1, CAT_APP
+    .quad nameChatGptGpu,   pathChatGptGpu,   riskLow,    1, CAT_APP
+    .quad nameChatGptLogs,  pathChatGptLogs,  riskLow,    1, CAT_APP
+    .quad namePerplexityCache,pathPerplexityCache,riskLow,1, CAT_APP
+    .quad namePerplexityCode,pathPerplexityCode,riskLow,  1, CAT_APP
+    .quad namePerplexityGpu,pathPerplexityGpu,riskLow,    1, CAT_APP
     .quad nameSignalCache,  pathSignalCache,  riskLow,    1, CAT_APP
     .quad nameSignalCode,   pathSignalCode,   riskLow,    1, CAT_APP
     .quad nameSignalGpu,    pathSignalGpu,    riskLow,    1, CAT_APP
     .quad nameWhatsAppStore,pathWhatsAppStore,riskMedium, 1, CAT_CHAT
     .quad nameCanvaCache,   pathCanvaCache,   riskLow,    1, CAT_APP
     .quad nameCanvaCode,    pathCanvaCode,    riskLow,    1, CAT_APP
+    .quad nameCanvaGpu,     pathCanvaGpu,     riskLow,    1, CAT_APP
+    .quad nameCanvaLogs,    pathCanvaLogs,    riskLow,    1, CAT_APP
     .quad nameTyporaCache,  pathTyporaCache,  riskLow,    1, CAT_APP
+    .quad nameTyporaGpu,    pathTyporaGpu,    riskLow,    1, CAT_APP
+    .quad nameTyporaLogs,   pathTyporaLogs,   riskLow,    1, CAT_APP
     .quad nameMotrixCache,  pathMotrixCache,  riskLow,    1, CAT_APP
+    .quad nameMotrixLogs,   pathMotrixLogs,   riskLow,    1, CAT_APP
+    .quad nameDropboxCache, pathDropboxCache, riskLow,    1, CAT_APP
+    .quad nameDropboxLogs,  pathDropboxLogs,  riskLow,    1, CAT_APP
+    .quad nameGoogleDriveCache,pathGoogleDriveCache,riskLow,1, CAT_APP
+    .quad nameGoogleDriveLogs,pathGoogleDriveLogs,riskLow,1, CAT_APP
+    .quad nameGoogleDriveCrash,pathGoogleDriveCrash,riskLow,1, CAT_APP
     .quad nameAliyunDriveCache,pathAliyunDriveCache,riskLow,1, CAT_APP
     .quad nameAliyunDriveLogs,pathAliyunDriveLogs,riskLow,1, CAT_APP
     .quad nameQuarkDriveCache,pathQuarkDriveCache,riskLow,1, CAT_APP
@@ -4201,6 +4398,7 @@ targetTable:
     .quad nameIDMLogs,      pathIDMLogs,      riskLow,    1, CAT_APP
     .quad nameQBittorrentLogs,pathQBittorrentLogs,riskLow,1, CAT_APP
     .quad nameEverythingLogs,pathEverythingLogs,riskLow,  1, CAT_APP
+    .quad nameEverythingTemp,pathEverythingTemp,riskLow,  1, CAT_APP
     .quad nameToDeskLogs,   pathToDeskLogs,   riskLow,    1, CAT_APP
     .quad nameSunloginLogs, pathSunloginLogs, riskLow,    1, CAT_APP
     .quad nameSogouPyLogs,  pathSogouPyLogs,  riskLow,    1, CAT_APP
@@ -4251,6 +4449,10 @@ targetTable:
     .quad nameToDeskCache,  pathToDeskCache,  riskLow,   1, CAT_APP
     .quad nameSunloginCache,pathSunloginCache,riskLow,   1, CAT_APP
     .quad nameSunloginCrash,pathSunloginCrash,riskLow,   1, CAT_APP
+    .quad nameRustdeskCache,pathRustdeskCache,riskLow,   1, CAT_APP
+    .quad nameRustdeskLogs, pathRustdeskLogs, riskLow,   1, CAT_APP
+    .quad nameParsecCache,  pathParsecCache,  riskLow,   1, CAT_APP
+    .quad nameParsecLogs,   pathParsecLogs,   riskLow,   1, CAT_APP
     .quad nameBaiduPinyinLogs,pathBaiduPinyinLogs,riskLow,1, CAT_APP
     .quad nameBaiduPinyinTemp,pathBaiduPinyinTemp,riskLow,1, CAT_APP
     .quad nameIflyImeLogs,  pathIflyImeLogs,  riskLow,   1, CAT_APP
@@ -4338,6 +4540,19 @@ targetTable:
     .quad nameMindMasterLogs,pathMindMasterLogs,riskLow,  1, CAT_APP
     .quad nameMubuCache,    pathMubuCache,    riskLow,   1, CAT_APP
     .quad nameMubuLogs,     pathMubuLogs,     riskLow,   1, CAT_APP
+    .quad nameNeteaseMailCache,pathNeteaseMailCache,riskLow,1, CAT_APP
+    .quad nameNeteaseMailLogs,pathNeteaseMailLogs,riskLow,1, CAT_APP
+    .quad nameYoudaoTranslateCache,pathYoudaoTranslateCache,riskLow,1, CAT_APP
+    .quad nameYoudaoTranslateLogs,pathYoudaoTranslateLogs,riskLow,1, CAT_APP
+    .quad nameTickTickCache,pathTickTickCache,riskLow,   1, CAT_APP
+    .quad nameTickTickLogs, pathTickTickLogs, riskLow,   1, CAT_APP
+    .quad nameJoplinCache,  pathJoplinCache,  riskLow,   1, CAT_APP
+    .quad nameJoplinLogs,   pathJoplinLogs,   riskLow,   1, CAT_APP
+    .quad nameZoteroCache,  pathZoteroCache,  riskLow,   1, CAT_APP
+    .quad nameEvernoteCache,pathEvernoteCache,riskLow,   1, CAT_APP
+    .quad nameEvernoteLogs, pathEvernoteLogs, riskLow,   1, CAT_APP
+    .quad nameAdobeCcCache, pathAdobeCcCache, riskLow,   1, CAT_APP
+    .quad nameAdobeCcLogs,  pathAdobeCcLogs,  riskLow,   1, CAT_APP
     .quad namePowerToysLogs,pathPowerToysLogs,riskLow,    1, CAT_APP
     .quad nameOneDriveLogs, pathOneDriveLogs, riskLow,    1, CAT_APP
     .quad nameOfficeCache,  pathOfficeCache,  riskLow,    1, CAT_APP
@@ -4361,6 +4576,7 @@ targetTable:
     .quad nameWeChatXPluginLogs,pathWeChatXPluginLogs,riskLow,1, CAT_CHAT
     .quad nameWeChatCefCache,pathWeChatCefCache,riskLow,  1, CAT_CHAT
     .quad nameQQNTCache,    pathQQNTCache,    riskLow,    1, CAT_CHAT
+    .quad nameQQNTGpu,      pathQQNTGpu,      riskLow,    1, CAT_CHAT
     .quad nameQQNTLogs,     pathQQNTLogs,     riskLow,    1, CAT_CHAT
     .quad nameQQNTCrashpad, pathQQNTCrashpad, riskLow,    1, CAT_CHAT
     .quad nameTIMLogs,      pathTIMLogs,      riskLow,    1, CAT_CHAT
@@ -4369,19 +4585,26 @@ targetTable:
     .quad nameQQGuildLogs,  pathQQGuildLogs,  riskLow,    1, CAT_CHAT
     .quad nameWeComCache,   pathWeComCache,   riskLow,    1, CAT_CHAT
     .quad nameWeComLogs,    pathWeComLogs,    riskLow,    1, CAT_CHAT
+    .quad nameWeComGpu,     pathWeComGpu,     riskLow,    1, CAT_CHAT
+    .quad nameWeComCrash,   pathWeComCrash,   riskLow,    1, CAT_CHAT
     .quad nameTencentMeetingLogs,pathTencentMeetingLogs,riskLow,1, CAT_CHAT
     .quad nameTencentMeetingCache,pathTencentMeetingCache,riskLow,1, CAT_CHAT
+    .quad nameTencentMeetingGpu,pathTencentMeetingGpu,riskLow,1, CAT_CHAT
+    .quad nameTencentMeetingCrash,pathTencentMeetingCrash,riskLow,1, CAT_CHAT
     .quad nameWeChatDevToolsCache,pathWeChatDevToolsCache,riskLow,1, CAT_DEV
+    .quad nameWeChatDevToolsCode,pathWeChatDevToolsCode,riskLow,1, CAT_DEV
     .quad nameWeChatDevToolsLogs,pathWeChatDevToolsLogs,riskLow,1, CAT_DEV
     .quad nameWeChatDevToolsGpu,pathWeChatDevToolsGpu,riskLow,1, CAT_DEV
     .quad nameHBuilderXCache,pathHBuilderXCache,riskLow, 1, CAT_DEV
     .quad nameHBuilderXCode,pathHBuilderXCode,riskLow,   1, CAT_DEV
+    .quad nameHBuilderXGpu, pathHBuilderXGpu, riskLow,   1, CAT_DEV
     .quad nameHBuilderXLogs,pathHBuilderXLogs,riskLow,   1, CAT_DEV
     .quad nameDevEcoCache,  pathDevEcoCache,  riskLow,   1, CAT_DEV
     .quad nameDevEcoLogs,   pathDevEcoLogs,   riskLow,   1, CAT_DEV
     .quad nameTaroCache,    pathTaroCache,    riskLow,   1, CAT_DEV
     .quad nameUniappCache,  pathUniappCache,  riskLow,   1, CAT_DEV
     .quad nameNpm,          pathNpm,          riskLow,    1, CAT_DEV
+    .quad nameNpmLocal,     pathNpmLocal,     riskLow,    1, CAT_DEV
     .quad namePip,          pathPip,          riskLow,    1, CAT_DEV
     .quad nameNuget,        pathNuget,        riskHigh,   1, CAT_DEV
     .quad nameGradle,       pathGradle,       riskLow,    1, CAT_DEV
@@ -4398,11 +4621,14 @@ targetTable:
     .quad namePaperweight,  pathPaperweight,  riskLow,    1, CAT_DEV
     .quad nameMcDevCache,   pathMcDevCache,   riskLow,    1, CAT_DEV
     .quad nameMaven,        pathMaven,        riskMedium, 1, CAT_DEV
+    .quad nameMavenWrapper, pathMavenWrapper, riskLow,    1, CAT_DEV
     .quad nameYarn,         pathYarn,         riskLow,    1, CAT_DEV
+    .quad nameYarnBerry,    pathYarnBerry,    riskLow,    1, CAT_DEV
     .quad namePnpm,         pathPnpm,         riskLow,    1, CAT_DEV
     .quad nameCargo,        pathCargo,        riskLow,    1, CAT_DEV
     .quad nameGoBuild,      pathGoBuild,      riskLow,    1, CAT_DEV
     .quad nameDockerDesktop,pathDockerDesktop,riskHigh,   0, CAT_DEV
+    .quad nameDockerDesktopLogs,pathDockerDesktopLogs,riskLow,1, CAT_DEV
     .quad namePoetryCache,  pathPoetryCache,  riskLow,    1, CAT_DEV
     .quad nameAndroidBuild, pathAndroidBuild, riskLow,    1, CAT_DEV
     .quad nameUvCache,      pathUvCache,      riskLow,    1, CAT_DEV
@@ -4413,7 +4639,11 @@ targetTable:
     .quad nameWindsurfCache,pathWindsurfCache,riskLow,    1, CAT_DEV
     .quad nameTraeCache,    pathTraeCache,    riskLow,    1, CAT_DEV
     .quad nameJetBrainsLocal,pathJetBrainsLocal,riskMedium,1, CAT_DEV
+    .quad nameJetBrainsToolboxCache,pathJetBrainsToolboxCache,riskLow,1, CAT_DEV
+    .quad nameJetBrainsToolboxLogs,pathJetBrainsToolboxLogs,riskLow,1, CAT_DEV
     .quad nameVsCache,      pathVsCache,      riskMedium, 1, CAT_DEV
+    .quad nameVsCodeCachedData,pathVsCodeCachedData,riskLow,1, CAT_DEV
+    .quad nameVsCodeUserLogs,pathVsCodeUserLogs,riskLow,  1, CAT_DEV
     .quad nameNodeGyp,      pathNodeGyp,      riskLow,    1, CAT_DEV
     .quad nameElectronCache,pathElectronCache,riskLow,    1, CAT_DEV
     .quad namePlaywright,   pathPlaywright,   riskLow,    1, CAT_DEV
@@ -4435,8 +4665,13 @@ targetTable:
     .quad nameCcache,       pathCcache,       riskLow,    1, CAT_DEV
     .quad nameNinjaCache,   pathNinjaCache,   riskLow,    1, CAT_DEV
     .quad nameGitKrakenCache,pathGitKrakenCache,riskLow,  1, CAT_DEV
+    .quad nameGitKrakenGpu, pathGitKrakenGpu, riskLow,    1, CAT_DEV
     .quad nameInsomniaCache,pathInsomniaCache,riskLow,    1, CAT_DEV
     .quad nameInsomniaCode, pathInsomniaCode, riskLow,    1, CAT_DEV
+    .quad nameInsomniaGpu,  pathInsomniaGpu,  riskLow,    1, CAT_DEV
+    .quad nameApiPostCache, pathApiPostCache, riskLow,    1, CAT_DEV
+    .quad nameApiPostCode,  pathApiPostCode,  riskLow,    1, CAT_DEV
+    .quad nameApiPostLogs,  pathApiPostLogs,  riskLow,    1, CAT_DEV
     .quad nameBazelCache,   pathBazelCache,   riskLow,    1, CAT_DEV
     .quad nameRustupDownloads,pathRustupDownloads,riskLow,1, CAT_DEV
     .quad nameRustupTmp,    pathRustupTmp,    riskLow,    1, CAT_DEV
@@ -4449,6 +4684,7 @@ targetTable:
     .quad nameSteamHtmlCache,pathSteamHtmlCache,riskLow,  1, CAT_GAME
     .quad nameSteamAppCache,pathSteamAppCache,riskLow,    1, CAT_GAME
     .quad nameSteamDepotCache,pathSteamDepotCache,riskLow,1, CAT_GAME
+    .quad nameSteamDumps,   pathSteamDumps,   riskLow,    1, CAT_GAME
     .quad nameEpicWebcache, pathEpicWebcache, riskLow,    1, CAT_GAME
     .quad nameBattlenet,    pathBattlenet,    riskLow,    1, CAT_GAME
     .quad nameBattlenetLogs,pathBattlenetLogs,riskLow,  1, CAT_GAME
@@ -4461,6 +4697,7 @@ targetTable:
     .quad nameGogWebCache,  pathGogWebCache,  riskLow,    1, CAT_GAME
     .quad nameGogLogs,      pathGogLogs,      riskLow,    1, CAT_GAME
     .quad nameRobloxLogs,   pathRobloxLogs,   riskLow,    1, CAT_GAME
+    .quad nameRobloxCache,  pathRobloxCache,  riskLow,    1, CAT_GAME
     .quad nameMinecraftLogs,pathMinecraftLogs,riskLow,    1, CAT_GAME
     .quad nameMinecraftCrash,pathMinecraftCrash,riskLow,  1, CAT_GAME
     .quad nameMinecraftWebCache,pathMinecraftWebCache,riskLow,1, CAT_GAME
@@ -4477,6 +4714,8 @@ targetTable:
     .quad nameMCreatorGradle,pathMCreatorGradle,riskLow,  1, CAT_DEV
     .quad nameMCreatorCache,pathMCreatorCache,riskLow,    1, CAT_DEV
     .quad nameHoYoCache,    pathHoYoCache,    riskLow,    1, CAT_GAME
+    .quad nameHoYoLogs,     pathHoYoLogs,     riskLow,    1, CAT_GAME
+    .quad nameHoYoGpu,      pathHoYoGpu,      riskLow,    1, CAT_GAME
     .quad nameSteamLogs,    pathSteamLogs,    riskLow,    1, CAT_GAME
     .quad nameEpicLogs,     pathEpicLogs,     riskLow,    1, CAT_GAME
     .quad nameEpicCrashes,  pathEpicCrashes,  riskLow,    1, CAT_GAME
@@ -4488,6 +4727,7 @@ targetTable:
     .quad nameWeGameLogs,   pathWeGameLogs,   riskLow,    1, CAT_GAME
     .quad nameNeteaseUULogs,pathNeteaseUULogs,riskLow,   1, CAT_GAME
     .quad nameNeteaseUUCache,pathNeteaseUUCache,riskLow, 1, CAT_GAME
+    .quad nameNeteaseUUTemp,pathNeteaseUUTemp,riskLow,   1, CAT_GAME
     .quad nameQQGameCache,  pathQQGameCache,  riskLow,    1, CAT_GAME
     .quad nameQQGameLogs,   pathQQGameLogs,   riskLow,    1, CAT_GAME
     .quad nameWeGameDownloadCache,pathWeGameDownloadCache,riskLow,1, CAT_GAME
@@ -4512,8 +4752,14 @@ targetTable:
     .quad nameUnrealLogs,   pathUnrealLogs,   riskLow,    1, CAT_GAME
     .quad nameEpicUnrealDDC,pathEpicUnrealDDC,riskLow,    1, CAT_GAME
     .quad nameBlenderTemp,  pathBlenderTemp,  riskLow,    1, CAT_MEDIA
+    .quad nameBlenderCache, pathBlenderCache, riskLow,    1, CAT_MEDIA
     .quad nameObsLogs,      pathObsLogs,      riskLow,    1, CAT_MEDIA
     .quad nameObsCrashDumps,pathObsCrashDumps,riskLow,    1, CAT_MEDIA
+    .quad nameAudacityTemp, pathAudacityTemp, riskLow,    1, CAT_MEDIA
+    .quad nameShotcutCache, pathShotcutCache, riskLow,    1, CAT_MEDIA
+    .quad nameKdenliveCache,pathKdenliveCache,riskLow,    1, CAT_MEDIA
+    .quad nameGimpTemp,     pathGimpTemp,     riskLow,    1, CAT_MEDIA
+    .quad nameInkscapeCache,pathInkscapeCache,riskLow,    1, CAT_MEDIA
     .quad nameCapCutCache,  pathCapCutCache,  riskLow,    1, CAT_MEDIA
     .quad nameCapCutCode,   pathCapCutCode,   riskLow,    1, CAT_MEDIA
     .quad nameCapCutGpu,    pathCapCutGpu,    riskLow,    1, CAT_MEDIA
