@@ -3072,6 +3072,14 @@ nameBraveCode:     .asciz "Brave 代码缓存"
 pathBraveCode:     .asciz "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\Default\\Code Cache"
 nameBraveGpu:      .asciz "Brave GPU 缓存"
 pathBraveGpu:      .asciz "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\Default\\GPUCache"
+nameBraveP1Cache:  .asciz "Brave Profile 1 Cache"
+pathBraveP1Cache:  .asciz "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\Profile 1\\Cache"
+nameBraveP1Code:   .asciz "Brave Profile 1 Code Cache"
+pathBraveP1Code:   .asciz "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\Profile 1\\Code Cache"
+nameBraveP2Cache:  .asciz "Brave Profile 2 Cache"
+pathBraveP2Cache:  .asciz "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\Profile 2\\Cache"
+nameBraveP2Code:   .asciz "Brave Profile 2 Code Cache"
+pathBraveP2Code:   .asciz "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\Profile 2\\Code Cache"
 nameBraveCrashpad: .asciz "Brave Crashpad"
 pathBraveCrashpad: .asciz "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\Crashpad"
 nameOperaCache:    .asciz "Opera Stable 缓存"
@@ -3162,6 +3170,14 @@ nameVivaldiCode:   .asciz "Vivaldi 代码缓存"
 pathVivaldiCode:   .asciz "%LOCALAPPDATA%\\Vivaldi\\User Data\\Default\\Code Cache"
 nameVivaldiGpu:    .asciz "Vivaldi GPU 缓存"
 pathVivaldiGpu:    .asciz "%LOCALAPPDATA%\\Vivaldi\\User Data\\Default\\GPUCache"
+nameVivaldiP1Cache:.asciz "Vivaldi Profile 1 Cache"
+pathVivaldiP1Cache:.asciz "%LOCALAPPDATA%\\Vivaldi\\User Data\\Profile 1\\Cache"
+nameVivaldiP1Code: .asciz "Vivaldi Profile 1 Code Cache"
+pathVivaldiP1Code: .asciz "%LOCALAPPDATA%\\Vivaldi\\User Data\\Profile 1\\Code Cache"
+nameVivaldiP2Cache:.asciz "Vivaldi Profile 2 Cache"
+pathVivaldiP2Cache:.asciz "%LOCALAPPDATA%\\Vivaldi\\User Data\\Profile 2\\Cache"
+nameVivaldiP2Code: .asciz "Vivaldi Profile 2 Code Cache"
+pathVivaldiP2Code: .asciz "%LOCALAPPDATA%\\Vivaldi\\User Data\\Profile 2\\Code Cache"
 nameYandexCache:   .asciz "Yandex Browser 缓存"
 pathYandexCache:   .asciz "%LOCALAPPDATA%\\Yandex\\YandexBrowser\\User Data\\Default\\Cache"
 nameYandexCode:    .asciz "Yandex Browser 代码缓存"
@@ -3383,6 +3399,24 @@ nameGoogleDriveLogs:.asciz "Google DriveFS logs"
 pathGoogleDriveLogs:.asciz "%LOCALAPPDATA%\\Google\\DriveFS\\Logs"
 nameGoogleDriveCrash:.asciz "Google DriveFS Crashpad"
 pathGoogleDriveCrash:.asciz "%LOCALAPPDATA%\\Google\\DriveFS\\Crashpad"
+nameMegaCache:     .asciz "MEGAsync cache"
+pathMegaCache:     .asciz "%LOCALAPPDATA%\\Mega Limited\\MEGAsync\\Cache"
+nameMegaLogs:      .asciz "MEGAsync logs"
+pathMegaLogs:      .asciz "%LOCALAPPDATA%\\Mega Limited\\MEGAsync\\logs"
+nameBoxDriveCache: .asciz "Box Drive cache"
+pathBoxDriveCache: .asciz "%LOCALAPPDATA%\\Box\\Box\\cache"
+nameBoxDriveLogs:  .asciz "Box Drive logs"
+pathBoxDriveLogs:  .asciz "%LOCALAPPDATA%\\Box\\Box\\logs"
+nameSyncthingLogs: .asciz "Syncthing logs"
+pathSyncthingLogs: .asciz "%LOCALAPPDATA%\\Syncthing\\log"
+nameTianyiCloudCache:.asciz "Tianyi Cloud cache"
+pathTianyiCloudCache:.asciz "%APPDATA%\\ecloud\\Cache"
+nameTianyiCloudLogs:.asciz "Tianyi Cloud logs"
+pathTianyiCloudLogs:.asciz "%APPDATA%\\ecloud\\logs"
+nameCaiyunCache:   .asciz "China Mobile Cloud cache"
+pathCaiyunCache:   .asciz "%APPDATA%\\和彩云\\Cache"
+nameCaiyunLogs:    .asciz "China Mobile Cloud logs"
+pathCaiyunLogs:    .asciz "%APPDATA%\\和彩云\\logs"
 nameAliyunDriveCache:.asciz "Aliyun Drive Cache"
 pathAliyunDriveCache:.asciz "%APPDATA%\\aDrive\\Cache"
 nameAliyunDriveLogs:.asciz "Aliyun Drive logs"
@@ -3739,6 +3773,32 @@ nameAdobeCcCache:  .asciz "Adobe Creative Cloud cache"
 pathAdobeCcCache:  .asciz "%LOCALAPPDATA%\\Adobe\\Creative Cloud Libraries\\Caches"
 nameAdobeCcLogs:   .asciz "Adobe Creative Cloud logs"
 pathAdobeCcLogs:   .asciz "%LOCALAPPDATA%\\Adobe\\Creative Cloud\\Logs"
+nameThunderbirdCache:.asciz "Thunderbird cache"
+pathThunderbirdCache:.asciz "%LOCALAPPDATA%\\Thunderbird\\Profiles"
+nameThunderbirdLogs:.asciz "Thunderbird crash reports"
+pathThunderbirdLogs:.asciz "%APPDATA%\\Thunderbird\\Crash Reports"
+nameMailspringCache:.asciz "Mailspring Cache"
+pathMailspringCache:.asciz "%APPDATA%\\Mailspring\\Cache"
+nameMailspringLogs:.asciz "Mailspring logs"
+pathMailspringLogs:.asciz "%APPDATA%\\Mailspring\\logs"
+nameTodoistCache:  .asciz "Todoist Cache"
+pathTodoistCache:  .asciz "%APPDATA%\\Todoist\\Cache"
+nameTodoistCode:   .asciz "Todoist Code Cache"
+pathTodoistCode:   .asciz "%APPDATA%\\Todoist\\Code Cache"
+nameTodoistLogs:   .asciz "Todoist logs"
+pathTodoistLogs:   .asciz "%APPDATA%\\Todoist\\logs"
+nameTrelloCache:   .asciz "Trello Cache"
+pathTrelloCache:   .asciz "%APPDATA%\\Trello\\Cache"
+nameTrelloCode:    .asciz "Trello Code Cache"
+pathTrelloCode:    .asciz "%APPDATA%\\Trello\\Code Cache"
+nameMiroCache:     .asciz "Miro Cache"
+pathMiroCache:     .asciz "%APPDATA%\\Miro\\Cache"
+nameMiroCode:      .asciz "Miro Code Cache"
+pathMiroCode:      .asciz "%APPDATA%\\Miro\\Code Cache"
+nameLinearCache:   .asciz "Linear Cache"
+pathLinearCache:   .asciz "%APPDATA%\\Linear\\Cache"
+nameLinearCode:    .asciz "Linear Code Cache"
+pathLinearCode:    .asciz "%APPDATA%\\Linear\\Code Cache"
 
 nameWeChatFiles:   .asciz "微信文档聊天数据根目录"
 pathWeChatFiles:   .asciz "%USERPROFILE%\\Documents\\WeChat Files"
@@ -3969,6 +4029,20 @@ nameLmStudioGpu:   .asciz "LM Studio GPUCache"
 pathLmStudioGpu:   .asciz "%APPDATA%\\LM Studio\\GPUCache"
 nameOllamaLogs:    .asciz "Ollama logs"
 pathOllamaLogs:    .asciz "%LOCALAPPDATA%\\Ollama\\logs"
+nameAndroidStudioCache:.asciz "Android Studio cache"
+pathAndroidStudioCache:.asciz "%LOCALAPPDATA%\\Google\\AndroidStudio\\cache"
+nameAndroidStudioLogs:.asciz "Android Studio logs"
+pathAndroidStudioLogs:.asciz "%LOCALAPPDATA%\\Google\\AndroidStudio\\log"
+nameCypressCache:  .asciz "Cypress cache"
+pathCypressCache:  .asciz "%LOCALAPPDATA%\\Cypress\\Cache"
+nameTurboCache:    .asciz "Turborepo cache"
+pathTurboCache:    .asciz "%LOCALAPPDATA%\\turbo\\cache"
+nameViteCache:     .asciz "Vite cache"
+pathViteCache:     .asciz "%LOCALAPPDATA%\\vite"
+nameExpoCache:     .asciz "Expo cache"
+pathExpoCache:     .asciz "%USERPROFILE%\\.expo"
+namePrismaCache:   .asciz "Prisma cache"
+pathPrismaCache:   .asciz "%LOCALAPPDATA%\\Prisma\\Cache"
 nameBazelCache:    .asciz "Bazel user cache"
 pathBazelCache:    .asciz "%USERPROFILE%\\_bazel_%USERNAME%"
 nameRustupDownloads:.asciz "rustup downloads"
@@ -4129,6 +4203,24 @@ nameScreenToGifTemp:.asciz "ScreenToGif temp"
 pathScreenToGifTemp:.asciz "%LOCALAPPDATA%\\ScreenToGif\\Temp"
 nameXnViewCache:   .asciz "XnView cache"
 pathXnViewCache:   .asciz "%APPDATA%\\XnViewMP\\cache"
+nameFoobarCache:   .asciz "foobar2000 cache"
+pathFoobarCache:   .asciz "%APPDATA%\\foobar2000\\cache"
+nameFoobarLogs:    .asciz "foobar2000 logs"
+pathFoobarLogs:    .asciz "%APPDATA%\\foobar2000\\logs"
+nameMpvCache:      .asciz "mpv cache"
+pathMpvCache:      .asciz "%APPDATA%\\mpv\\cache"
+nameClipchampCache:.asciz "Clipchamp cache"
+pathClipchampCache:.asciz "%LOCALAPPDATA%\\Packages\\Clipchamp.Clipchamp_yxz26nhyzhsrt\\LocalCache"
+nameFilmoraCache:  .asciz "Wondershare Filmora cache"
+pathFilmoraCache:  .asciz "%LOCALAPPDATA%\\Wondershare\\Wondershare Filmora\\Cache"
+nameFilmoraLogs:   .asciz "Wondershare Filmora logs"
+pathFilmoraLogs:   .asciz "%APPDATA%\\Wondershare\\Wondershare Filmora\\Log"
+nameMovaviCache:   .asciz "Movavi cache"
+pathMovaviCache:   .asciz "%LOCALAPPDATA%\\Movavi\\Cache"
+nameCamtasiaCache: .asciz "Camtasia cache"
+pathCamtasiaCache: .asciz "%LOCALAPPDATA%\\TechSmith\\Camtasia Studio\\Cache"
+nameSnagitCache:   .asciz "Snagit cache"
+pathSnagitCache:   .asciz "%LOCALAPPDATA%\\TechSmith\\Snagit\\Cache"
 namePowerToysLogs: .asciz "PowerToys 日志"
 pathPowerToysLogs: .asciz "%LOCALAPPDATA%\\Microsoft\\PowerToys\\Logs"
 nameOneDriveLogs:  .asciz "OneDrive 日志"
@@ -4315,6 +4407,22 @@ nameOverwolfCache: .asciz "Overwolf cache"
 pathOverwolfCache: .asciz "%LOCALAPPDATA%\\Overwolf\\BrowserCache"
 nameOverwolfLogs:  .asciz "Overwolf logs"
 pathOverwolfLogs:  .asciz "%LOCALAPPDATA%\\Overwolf\\Log"
+nameItchCache:     .asciz "itch cache"
+pathItchCache:     .asciz "%APPDATA%\\itch\\Cache"
+nameItchLogs:      .asciz "itch logs"
+pathItchLogs:      .asciz "%APPDATA%\\itch\\logs"
+nameParadoxCache:  .asciz "Paradox Launcher cache"
+pathParadoxCache:  .asciz "%LOCALAPPDATA%\\Paradox Interactive\\launcher-cache"
+nameParadoxLogs:   .asciz "Paradox Launcher logs"
+pathParadoxLogs:   .asciz "%LOCALAPPDATA%\\Paradox Interactive\\launcher-v2\\logs"
+nameBlueStacksLogs:.asciz "BlueStacks logs"
+pathBlueStacksLogs:.asciz "%PROGRAMDATA%\\BlueStacks_nxt\\Logs"
+nameBlueStacksCache:.asciz "BlueStacks cache"
+pathBlueStacksCache:.asciz "%PROGRAMDATA%\\BlueStacks_nxt\\Engine\\UserData\\SharedFolder"
+nameNoxLogs:       .asciz "Nox logs"
+pathNoxLogs:       .asciz "%LOCALAPPDATA%\\Nox\\logs"
+nameNoxCache:      .asciz "Nox cache"
+pathNoxCache:      .asciz "%LOCALAPPDATA%\\Nox\\cache"
 
 .align 8
 targetTable:
@@ -4384,6 +4492,10 @@ targetTable:
     .quad nameBraveCache,   pathBraveCache,   riskLow,    1, CAT_BROWSER
     .quad nameBraveCode,    pathBraveCode,    riskLow,    1, CAT_BROWSER
     .quad nameBraveGpu,     pathBraveGpu,     riskLow,    1, CAT_BROWSER
+    .quad nameBraveP1Cache, pathBraveP1Cache, riskLow,    1, CAT_BROWSER
+    .quad nameBraveP1Code,  pathBraveP1Code,  riskLow,    1, CAT_BROWSER
+    .quad nameBraveP2Cache, pathBraveP2Cache, riskLow,    1, CAT_BROWSER
+    .quad nameBraveP2Code,  pathBraveP2Code,  riskLow,    1, CAT_BROWSER
     .quad nameBraveCrashpad,pathBraveCrashpad,riskLow,    1, CAT_BROWSER
     .quad nameOperaCache,   pathOperaCache,   riskLow,    1, CAT_BROWSER
     .quad nameOperaCode,    pathOperaCode,    riskLow,    1, CAT_BROWSER
@@ -4429,6 +4541,10 @@ targetTable:
     .quad nameVivaldiCache, pathVivaldiCache, riskLow,    1, CAT_BROWSER
     .quad nameVivaldiCode,  pathVivaldiCode,  riskLow,    1, CAT_BROWSER
     .quad nameVivaldiGpu,   pathVivaldiGpu,   riskLow,    1, CAT_BROWSER
+    .quad nameVivaldiP1Cache,pathVivaldiP1Cache,riskLow, 1, CAT_BROWSER
+    .quad nameVivaldiP1Code,pathVivaldiP1Code,riskLow,   1, CAT_BROWSER
+    .quad nameVivaldiP2Cache,pathVivaldiP2Cache,riskLow, 1, CAT_BROWSER
+    .quad nameVivaldiP2Code,pathVivaldiP2Code,riskLow,   1, CAT_BROWSER
     .quad nameYandexCache,  pathYandexCache,  riskLow,    1, CAT_BROWSER
     .quad nameYandexCode,   pathYandexCode,   riskLow,    1, CAT_BROWSER
     .quad nameYandexGpu,    pathYandexGpu,    riskLow,    1, CAT_BROWSER
@@ -4539,6 +4655,15 @@ targetTable:
     .quad nameGoogleDriveCache,pathGoogleDriveCache,riskLow,1, CAT_APP
     .quad nameGoogleDriveLogs,pathGoogleDriveLogs,riskLow,1, CAT_APP
     .quad nameGoogleDriveCrash,pathGoogleDriveCrash,riskLow,1, CAT_APP
+    .quad nameMegaCache,    pathMegaCache,    riskLow,    1, CAT_APP
+    .quad nameMegaLogs,     pathMegaLogs,     riskLow,    1, CAT_APP
+    .quad nameBoxDriveCache,pathBoxDriveCache,riskLow,    1, CAT_APP
+    .quad nameBoxDriveLogs, pathBoxDriveLogs, riskLow,    1, CAT_APP
+    .quad nameSyncthingLogs,pathSyncthingLogs,riskLow,    1, CAT_APP
+    .quad nameTianyiCloudCache,pathTianyiCloudCache,riskLow,1, CAT_APP
+    .quad nameTianyiCloudLogs,pathTianyiCloudLogs,riskLow,1, CAT_APP
+    .quad nameCaiyunCache,  pathCaiyunCache,  riskLow,    1, CAT_APP
+    .quad nameCaiyunLogs,   pathCaiyunLogs,   riskLow,    1, CAT_APP
     .quad nameAliyunDriveCache,pathAliyunDriveCache,riskLow,1, CAT_APP
     .quad nameAliyunDriveLogs,pathAliyunDriveLogs,riskLow,1, CAT_APP
     .quad nameQuarkDriveCache,pathQuarkDriveCache,riskLow,1, CAT_APP
@@ -4717,6 +4842,19 @@ targetTable:
     .quad nameEvernoteLogs, pathEvernoteLogs, riskLow,   1, CAT_APP
     .quad nameAdobeCcCache, pathAdobeCcCache, riskLow,   1, CAT_APP
     .quad nameAdobeCcLogs,  pathAdobeCcLogs,  riskLow,   1, CAT_APP
+    .quad nameThunderbirdCache,pathThunderbirdCache,riskLow,1, CAT_APP
+    .quad nameThunderbirdLogs,pathThunderbirdLogs,riskLow,1, CAT_APP
+    .quad nameMailspringCache,pathMailspringCache,riskLow,1, CAT_APP
+    .quad nameMailspringLogs,pathMailspringLogs,riskLow,1, CAT_APP
+    .quad nameTodoistCache,pathTodoistCache,riskLow,     1, CAT_APP
+    .quad nameTodoistCode, pathTodoistCode, riskLow,     1, CAT_APP
+    .quad nameTodoistLogs, pathTodoistLogs, riskLow,     1, CAT_APP
+    .quad nameTrelloCache, pathTrelloCache, riskLow,     1, CAT_APP
+    .quad nameTrelloCode,  pathTrelloCode,  riskLow,     1, CAT_APP
+    .quad nameMiroCache,   pathMiroCache,   riskLow,     1, CAT_APP
+    .quad nameMiroCode,    pathMiroCode,    riskLow,     1, CAT_APP
+    .quad nameLinearCache, pathLinearCache, riskLow,     1, CAT_APP
+    .quad nameLinearCode,  pathLinearCode,  riskLow,     1, CAT_APP
     .quad namePowerToysLogs,pathPowerToysLogs,riskLow,    1, CAT_APP
     .quad nameOneDriveLogs, pathOneDriveLogs, riskLow,    1, CAT_APP
     .quad nameOfficeCache,  pathOfficeCache,  riskLow,    1, CAT_APP
@@ -4844,6 +4982,13 @@ targetTable:
     .quad nameLmStudioCache,pathLmStudioCache,riskLow,    1, CAT_DEV
     .quad nameLmStudioGpu,  pathLmStudioGpu,  riskLow,    1, CAT_DEV
     .quad nameOllamaLogs,   pathOllamaLogs,   riskLow,    1, CAT_DEV
+    .quad nameAndroidStudioCache,pathAndroidStudioCache,riskLow,1, CAT_DEV
+    .quad nameAndroidStudioLogs,pathAndroidStudioLogs,riskLow,1, CAT_DEV
+    .quad nameCypressCache, pathCypressCache, riskLow,    1, CAT_DEV
+    .quad nameTurboCache,   pathTurboCache,   riskLow,    1, CAT_DEV
+    .quad nameViteCache,    pathViteCache,    riskLow,    1, CAT_DEV
+    .quad nameExpoCache,    pathExpoCache,    riskLow,    1, CAT_DEV
+    .quad namePrismaCache,  pathPrismaCache,  riskLow,    1, CAT_DEV
     .quad nameBazelCache,   pathBazelCache,   riskLow,    1, CAT_DEV
     .quad nameRustupDownloads,pathRustupDownloads,riskLow,1, CAT_DEV
     .quad nameRustupTmp,    pathRustupTmp,    riskLow,    1, CAT_DEV
@@ -4920,6 +5065,14 @@ targetTable:
     .quad nameHeroicLogs,   pathHeroicLogs,   riskLow,    1, CAT_GAME
     .quad nameOverwolfCache,pathOverwolfCache,riskLow,    1, CAT_GAME
     .quad nameOverwolfLogs, pathOverwolfLogs, riskLow,    1, CAT_GAME
+    .quad nameItchCache,    pathItchCache,    riskLow,    1, CAT_GAME
+    .quad nameItchLogs,     pathItchLogs,     riskLow,    1, CAT_GAME
+    .quad nameParadoxCache, pathParadoxCache, riskLow,    1, CAT_GAME
+    .quad nameParadoxLogs,  pathParadoxLogs,  riskLow,    1, CAT_GAME
+    .quad nameBlueStacksLogs,pathBlueStacksLogs,riskLow,  1, CAT_GAME
+    .quad nameBlueStacksCache,pathBlueStacksCache,riskLow,1, CAT_GAME
+    .quad nameNoxLogs,      pathNoxLogs,      riskLow,    1, CAT_GAME
+    .quad nameNoxCache,     pathNoxCache,     riskLow,    1, CAT_GAME
     .quad nameAdobeMedia,   pathAdobeMedia,   riskLow,    1, CAT_MEDIA
     .quad nameAdobeCommon,  pathAdobeCommon,  riskLow,    1, CAT_MEDIA
     .quad nameAdobePeak,    pathAdobePeak,    riskLow,    1, CAT_MEDIA
@@ -5001,6 +5154,15 @@ targetTable:
     .quad nameVlcArtCache,  pathVlcArtCache,  riskLow,    1, CAT_MEDIA
     .quad nameKugouCache,   pathKugouCache,   riskLow,    1, CAT_MEDIA
     .quad nameKuwoCache,    pathKuwoCache,    riskLow,    1, CAT_MEDIA
+    .quad nameFoobarCache,  pathFoobarCache,  riskLow,    1, CAT_MEDIA
+    .quad nameFoobarLogs,   pathFoobarLogs,   riskLow,    1, CAT_MEDIA
+    .quad nameMpvCache,     pathMpvCache,     riskLow,    1, CAT_MEDIA
+    .quad nameClipchampCache,pathClipchampCache,riskLow,  1, CAT_MEDIA
+    .quad nameFilmoraCache, pathFilmoraCache, riskLow,    1, CAT_MEDIA
+    .quad nameFilmoraLogs,  pathFilmoraLogs,  riskLow,    1, CAT_MEDIA
+    .quad nameMovaviCache,  pathMovaviCache,  riskLow,    1, CAT_MEDIA
+    .quad nameCamtasiaCache,pathCamtasiaCache,riskLow,    1, CAT_MEDIA
+    .quad nameSnagitCache,  pathSnagitCache,  riskLow,    1, CAT_MEDIA
     .quad nameNvidiaDownloader,pathNvidiaDownloader,riskLow,1, CAT_WINDOWS
     .quad nameNvidiaGfeCef, pathNvidiaGfeCef, riskLow,    1, CAT_APP
     .quad 0, 0, 0, 0, 0
