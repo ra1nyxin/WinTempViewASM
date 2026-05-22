@@ -38,6 +38,8 @@
 .equ ID_STOP, 1003
 .equ ID_CLEAN, 1004
 .equ LOG_LIMIT, 65500
+.equ EM_SETSEL, 0x00b1
+.equ EM_SCROLLCARET, 0x00b7
 
 .extern RegisterClassExW
 .extern CreateWindowExW
@@ -2644,29 +2646,46 @@ AppendLine:
     ret
 
 AppendRaw:
-    mov rdx, qword ptr logPos[rip]
-    lea r8, logBuffer[rip]
-    add r8, rdx
+    sub rsp, 40
 .append_loop:
-    cmp rdx, LOG_LIMIT
-    jae .append_done
     mov al, byte ptr [rcx]
     test al, al
     jz .append_done
+    mov rdx, qword ptr logPos[rip]
+    cmp rdx, LOG_LIMIT
+    jb .append_have_room
+    mov qword ptr [rsp + 32], rcx
+    call RollLogBuffer
+    mov rcx, qword ptr [rsp + 32]
+    mov rdx, qword ptr logPos[rip]
+    cmp rdx, LOG_LIMIT
+    jae .append_done
+.append_have_room:
+    lea r8, logBuffer[rip]
+    add r8, rdx
     mov byte ptr [r8], al
     inc rcx
-    inc r8
     inc rdx
+    mov byte ptr [r8 + 1], 0
+    mov qword ptr logPos[rip], rdx
     jmp .append_loop
 .append_done:
+    mov rdx, qword ptr logPos[rip]
+    lea r8, logBuffer[rip]
+    add r8, rdx
     mov byte ptr [r8], 0
-    mov qword ptr logPos[rip], rdx
+    add rsp, 40
     ret
 
 AppendCRLF:
+    sub rsp, 40
+.crlf_room:
     mov rdx, qword ptr logPos[rip]
     cmp rdx, LOG_LIMIT - 2
-    jae .crlf_done
+    jbe .crlf_write
+    call RollLogBuffer
+    jmp .crlf_room
+.crlf_write:
     lea r8, logBuffer[rip]
     add r8, rdx
     mov byte ptr [r8], 13
@@ -2675,6 +2694,45 @@ AppendCRLF:
     add rdx, 2
     mov qword ptr logPos[rip], rdx
 .crlf_done:
+    add rsp, 40
+    ret
+
+RollLogBuffer:
+    mov rdx, qword ptr logPos[rip]
+    lea r8, logBuffer[rip]
+    test rdx, rdx
+    jz .rlb_clear
+    xor ecx, ecx
+.rlb_find_line:
+    cmp rcx, rdx
+    jae .rlb_clear
+    mov al, byte ptr [r8 + rcx]
+    inc rcx
+    cmp al, 10
+    jne .rlb_find_line
+    cmp rcx, rdx
+    jae .rlb_clear
+    mov r9, rdx
+    sub r9, rcx
+    lea r10, [r8 + rcx]
+    mov r11, r8
+    mov rax, r9
+.rlb_move:
+    test rax, rax
+    jz .rlb_moved
+    mov dl, byte ptr [r10]
+    mov byte ptr [r11], dl
+    inc r10
+    inc r11
+    dec rax
+    jmp .rlb_move
+.rlb_moved:
+    mov byte ptr [r11], 0
+    mov qword ptr logPos[rip], r9
+    ret
+.rlb_clear:
+    mov byte ptr [r8], 0
+    mov qword ptr logPos[rip], 0
     ret
 
 RefreshLog:
@@ -2689,6 +2747,16 @@ RefreshLog:
     mov rcx, qword ptr hwndLog[rip]
     lea rdx, logWide[rip]
     call SetWindowTextW
+    mov rcx, qword ptr hwndLog[rip]
+    mov edx, EM_SETSEL
+    mov r8, -1
+    mov r9, -1
+    call SendMessageW
+    mov rcx, qword ptr hwndLog[rip]
+    mov edx, EM_SCROLLCARET
+    xor r8d, r8d
+    xor r9d, r9d
+    call SendMessageW
 .refresh_done:
     add rsp, 40
     ret
