@@ -37,12 +37,17 @@
 .equ ID_DRYRUN, 1002
 .equ ID_STOP, 1003
 .equ ID_CLEAN, 1004
-.equ LOG_LIMIT, 28000
+.equ LOG_LIMIT, 65000
 .equ EM_SETSEL, 0x00b1
 .equ EM_SCROLLCARET, 0x00b7
 .equ EM_LIMITTEXT, 0x00c5
 .equ WM_VSCROLL, 0x0115
 .equ SB_BOTTOM, 7
+.equ LBS_NOINTEGRALHEIGHT, 0x0100
+.equ LB_ADDSTRING, 0x0180
+.equ LB_RESETCONTENT, 0x0184
+.equ LB_GETCOUNT, 0x018b
+.equ LB_SETHORIZONTALEXTENT, 0x0194
 
 .extern RegisterClassExW
 .extern CreateWindowExW
@@ -505,19 +510,19 @@ WndProc:
     mov qword ptr [rsp + 80], rax
     mov qword ptr [rsp + 88], 0
     xor ecx, ecx
-    lea rdx, editClassW[rip]
+    lea rdx, listboxClassW[rip]
     lea r8, emptyStringW[rip]
-    mov r9d, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY
+    mov r9d, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_HSCROLL | LBS_NOINTEGRALHEIGHT
     call CreateWindowExW
     mov qword ptr hwndLog[rip], rax
     test rax, rax
-    jz .log_limit_done
+    jz .log_extent_done
     mov rcx, rax
-    mov edx, EM_LIMITTEXT
-    mov r8d, LOG_LIMIT
+    mov edx, LB_SETHORIZONTALEXTENT
+    mov r8d, 2400
     xor r9d, r9d
     call SendMessageW
-.log_limit_done:
+.log_extent_done:
 
     call InitUiFont
     lea rcx, dbgFontReady[rip]
@@ -930,6 +935,11 @@ InitWideStatics:
 
     lea rcx, editClass[rip]
     lea rdx, editClassW[rip]
+    mov r8d, 32
+    call ConvertUtf8ToWide
+
+    lea rcx, listboxClass[rip]
+    lea rdx, listboxClassW[rip]
     mov r8d, 32
     call ConvertUtf8ToWide
 
@@ -1639,6 +1649,13 @@ AppendTargetList:
     mov rax, qword ptr [rsi]
     test rax, rax
     jz .target_done
+
+    mov rax, qword ptr [rsi + 32]
+    mov qword ptr targetCategory[rip], rax
+    mov rcx, rax
+    call IsCategorySelected
+    test eax, eax
+    jz .target_next
 
     mov rcx, qword ptr [rsi + 8]
     lea rdx, pathTemplateW[rip]
@@ -2751,6 +2768,27 @@ RollLogBuffer:
     dec rax
     jmp .rlb_move
 .rlb_moved:
+    cmp byte ptr [r8], 13
+    jne .rlb_store
+    cmp r9, 1
+    jbe .rlb_clear
+    lea r10, [r8 + 1]
+    mov r11, r8
+    mov rax, r9
+    dec rax
+.rlb_trim_cr:
+    test rax, rax
+    jz .rlb_trim_done
+    mov dl, byte ptr [r10]
+    mov byte ptr [r11], dl
+    inc r10
+    inc r11
+    dec rax
+    jmp .rlb_trim_cr
+.rlb_trim_done:
+    dec r9
+    mov byte ptr [r11], 0
+.rlb_store:
     mov byte ptr [r11], 0
     mov qword ptr logPos[rip], r9
     ret
@@ -2760,34 +2798,80 @@ RollLogBuffer:
     ret
 
 RefreshLog:
-    sub rsp, 40
+    push rbx
+    push rsi
+    push rdi
+    sub rsp, 48
     mov rcx, qword ptr hwndLog[rip]
     test rcx, rcx
     jz .refresh_done
-    lea rcx, logBuffer[rip]
-    lea rdx, logWide[rip]
-    mov r8d, 65536
-    call ConvertUtf8ToWide
+
     mov rcx, qword ptr hwndLog[rip]
-    lea rdx, logWide[rip]
-    call SetWindowTextW
-    mov rcx, qword ptr hwndLog[rip]
-    mov edx, EM_SETSEL
-    mov r8, -1
-    mov r9, -1
-    call SendMessageW
-    mov rcx, qword ptr hwndLog[rip]
-    mov edx, EM_SCROLLCARET
+    mov edx, LB_RESETCONTENT
     xor r8d, r8d
     xor r9d, r9d
     call SendMessageW
+
+    lea rsi, logBuffer[rip]
+.refresh_line_loop:
+    mov al, byte ptr [rsi]
+    test al, al
+    jz .refresh_scroll_bottom
+
+    lea rdi, logLineBuffer[rip]
+    xor ebx, ebx
+.refresh_copy_line:
+    cmp ebx, 4094
+    jae .refresh_line_ready
+    mov al, byte ptr [rsi]
+    test al, al
+    jz .refresh_line_ready
+    cmp al, 13
+    je .refresh_skip_cr
+    cmp al, 10
+    je .refresh_line_ready_lf
+    mov byte ptr [rdi + rbx], al
+    inc ebx
+    inc rsi
+    jmp .refresh_copy_line
+.refresh_skip_cr:
+    inc rsi
+    jmp .refresh_copy_line
+.refresh_line_ready_lf:
+    inc rsi
+.refresh_line_ready:
+    mov byte ptr [rdi + rbx], 0
+    lea rcx, logLineBuffer[rip]
+    lea rdx, logLineWide[rip]
+    mov r8d, 4096
+    call ConvertUtf8ToWide
+    cmp word ptr logLineWide[rip], 0
+    jne .refresh_add_line
+    cmp byte ptr logLineBuffer[rip], 0
+    je .refresh_add_line
+    lea rcx, logLineFallback[rip]
+    lea rdx, logLineWide[rip]
+    mov r8d, 4096
+    call ConvertUtf8ToWide
+.refresh_add_line:
+    mov rcx, qword ptr hwndLog[rip]
+    mov edx, LB_ADDSTRING
+    xor r8d, r8d
+    lea r9, logLineWide[rip]
+    call SendMessageW
+    jmp .refresh_line_loop
+
+.refresh_scroll_bottom:
     mov rcx, qword ptr hwndLog[rip]
     mov edx, WM_VSCROLL
     mov r8d, SB_BOTTOM
     xor r9d, r9d
     call SendMessageW
 .refresh_done:
-    add rsp, 40
+    add rsp, 48
+    pop rdi
+    pop rsi
+    pop rbx
     ret
 
 RefreshProgressText:
@@ -2920,6 +3004,7 @@ className:         .asciz "WinTempViewAsmWindow"
 appTitle:          .asciz "winTempView - x64 汇编垃圾清理工具"
 buttonClass:       .asciz "BUTTON"
 editClass:         .asciz "EDIT"
+listboxClass:      .asciz "LISTBOX"
 staticClass:       .asciz "STATIC"
 emptyString:       .asciz ""
 fontFace:          .asciz "Microsoft YaHei UI"
@@ -2996,6 +3081,7 @@ statBytesText:     .asciz " | 文件 "
 statDirsText:      .asciz " | 目录 "
 statSkippedText:   .asciz " | 跳过 "
 statTruncatedText: .asciz " | 已截断"
+logLineFallback:   .asciz "[显示] 当前行包含无法转换的文本，已跳过原始内容。"
 zeroText:          .asciz "0"
 policyEnabledText: .asciz "默认清理:开"
 policyDisabledText:.asciz "默认清理:关"
@@ -4464,6 +4550,222 @@ nameNvidiaDownloader:.asciz "NVIDIA driver downloader cache"
 pathNvidiaDownloader:.asciz "%PROGRAMDATA%\\NVIDIA Corporation\\Downloader"
 nameNvidiaGfeCef:  .asciz "NVIDIA GeForce Experience CefCache"
 pathNvidiaGfeCef:  .asciz "%LOCALAPPDATA%\\NVIDIA Corporation\\NVIDIA GeForce Experience\\CefCache"
+nameSteamDShader:  .asciz "D: Steam shadercache"
+pathSteamDShader:  .asciz "D:\\Steam\\steamapps\\shadercache"
+nameSteamDApp:     .asciz "D: Steam appcache"
+pathSteamDApp:     .asciz "D:\\Steam\\appcache"
+nameSteamDDepot:   .asciz "D: Steam depotcache"
+pathSteamDDepot:   .asciz "D:\\Steam\\depotcache"
+nameSteamDLogs:    .asciz "D: Steam logs"
+pathSteamDLogs:    .asciz "D:\\Steam\\logs"
+nameSteamLibDShader:.asciz "D: SteamLibrary shadercache"
+pathSteamLibDShader:.asciz "D:\\SteamLibrary\\steamapps\\shadercache"
+nameSteamLibDDownload:.asciz "D: SteamLibrary downloading"
+pathSteamLibDDownload:.asciz "D:\\SteamLibrary\\steamapps\\downloading"
+nameSteamEShader:  .asciz "E: Steam shadercache"
+pathSteamEShader:  .asciz "E:\\Steam\\steamapps\\shadercache"
+nameSteamEApp:     .asciz "E: Steam appcache"
+pathSteamEApp:     .asciz "E:\\Steam\\appcache"
+nameSteamEDepot:   .asciz "E: Steam depotcache"
+pathSteamEDepot:   .asciz "E:\\Steam\\depotcache"
+nameSteamELogs:    .asciz "E: Steam logs"
+pathSteamELogs:    .asciz "E:\\Steam\\logs"
+nameSteamLibEShader:.asciz "E: SteamLibrary shadercache"
+pathSteamLibEShader:.asciz "E:\\SteamLibrary\\steamapps\\shadercache"
+nameSteamLibEDownload:.asciz "E: SteamLibrary downloading"
+pathSteamLibEDownload:.asciz "E:\\SteamLibrary\\steamapps\\downloading"
+nameSteamFShader:  .asciz "F: Steam shadercache"
+pathSteamFShader:  .asciz "F:\\Steam\\steamapps\\shadercache"
+nameSteamFApp:     .asciz "F: Steam appcache"
+pathSteamFApp:     .asciz "F:\\Steam\\appcache"
+nameSteamFDepot:   .asciz "F: Steam depotcache"
+pathSteamFDepot:   .asciz "F:\\Steam\\depotcache"
+nameSteamFLogs:    .asciz "F: Steam logs"
+pathSteamFLogs:    .asciz "F:\\Steam\\logs"
+nameSteamLibFShader:.asciz "F: SteamLibrary shadercache"
+pathSteamLibFShader:.asciz "F:\\SteamLibrary\\steamapps\\shadercache"
+nameSteamLibFDownload:.asciz "F: SteamLibrary downloading"
+pathSteamLibFDownload:.asciz "F:\\SteamLibrary\\steamapps\\downloading"
+nameEpicDWeb:      .asciz "D: Epic Games Launcher webcache"
+pathEpicDWeb:      .asciz "D:\\Epic Games\\Launcher\\Portal\\Saved\\webcache"
+nameEpicDLogs:     .asciz "D: Epic Games Launcher logs"
+pathEpicDLogs:     .asciz "D:\\Epic Games\\Launcher\\Portal\\Saved\\Logs"
+nameEpicEWeb:      .asciz "E: Epic Games Launcher webcache"
+pathEpicEWeb:      .asciz "E:\\Epic Games\\Launcher\\Portal\\Saved\\webcache"
+nameEpicELogs:     .asciz "E: Epic Games Launcher logs"
+pathEpicELogs:     .asciz "E:\\Epic Games\\Launcher\\Portal\\Saved\\Logs"
+nameEpicFWeb:      .asciz "F: Epic Games Launcher webcache"
+pathEpicFWeb:      .asciz "F:\\Epic Games\\Launcher\\Portal\\Saved\\webcache"
+nameEpicFLogs:     .asciz "F: Epic Games Launcher logs"
+pathEpicFLogs:     .asciz "F:\\Epic Games\\Launcher\\Portal\\Saved\\Logs"
+nameWeGameDCache:  .asciz "D: WeGame cache"
+pathWeGameDCache:  .asciz "D:\\WeGame\\cache"
+nameWeGameDLogs:   .asciz "D: WeGame logs"
+pathWeGameDLogs:   .asciz "D:\\WeGame\\logs"
+nameWeGameECache:  .asciz "E: WeGame cache"
+pathWeGameECache:  .asciz "E:\\WeGame\\cache"
+nameWeGameELogs:   .asciz "E: WeGame logs"
+pathWeGameELogs:   .asciz "E:\\WeGame\\logs"
+nameWeGameFCache:  .asciz "F: WeGame cache"
+pathWeGameFCache:  .asciz "F:\\WeGame\\cache"
+nameWeGameFLogs:   .asciz "F: WeGame logs"
+pathWeGameFLogs:   .asciz "F:\\WeGame\\logs"
+nameBattleDCache:  .asciz "D: Battle.net cache"
+pathBattleDCache:  .asciz "D:\\Battle.net\\Cache"
+nameBattleDLogs:   .asciz "D: Battle.net logs"
+pathBattleDLogs:   .asciz "D:\\Battle.net\\Logs"
+nameBattleECache:  .asciz "E: Battle.net cache"
+pathBattleECache:  .asciz "E:\\Battle.net\\Cache"
+nameBattleELogs:   .asciz "E: Battle.net logs"
+pathBattleELogs:   .asciz "E:\\Battle.net\\Logs"
+nameBattleFCache:  .asciz "F: Battle.net cache"
+pathBattleFCache:  .asciz "F:\\Battle.net\\Cache"
+nameBattleFLogs:   .asciz "F: Battle.net logs"
+pathBattleFLogs:   .asciz "F:\\Battle.net\\Logs"
+nameUbisoftDCache: .asciz "D: Ubisoft cache"
+pathUbisoftDCache: .asciz "D:\\Ubisoft\\Ubisoft Game Launcher\\cache"
+nameUbisoftDLogs:  .asciz "D: Ubisoft logs"
+pathUbisoftDLogs:  .asciz "D:\\Ubisoft\\Ubisoft Game Launcher\\logs"
+nameUbisoftECache: .asciz "E: Ubisoft cache"
+pathUbisoftECache: .asciz "E:\\Ubisoft\\Ubisoft Game Launcher\\cache"
+nameUbisoftELogs:  .asciz "E: Ubisoft logs"
+pathUbisoftELogs:  .asciz "E:\\Ubisoft\\Ubisoft Game Launcher\\logs"
+nameUbisoftFCache: .asciz "F: Ubisoft cache"
+pathUbisoftFCache: .asciz "F:\\Ubisoft\\Ubisoft Game Launcher\\cache"
+nameUbisoftFLogs:  .asciz "F: Ubisoft logs"
+pathUbisoftFLogs:  .asciz "F:\\Ubisoft\\Ubisoft Game Launcher\\logs"
+nameGogDCache:     .asciz "D: GOG Galaxy webcache"
+pathGogDCache:     .asciz "D:\\GOG Galaxy\\Applications\\webcache"
+nameGogDLogs:      .asciz "D: GOG Galaxy logs"
+pathGogDLogs:      .asciz "D:\\GOG Galaxy\\logs"
+nameGogECache:     .asciz "E: GOG Galaxy webcache"
+pathGogECache:     .asciz "E:\\GOG Galaxy\\Applications\\webcache"
+nameGogELogs:      .asciz "E: GOG Galaxy logs"
+pathGogELogs:      .asciz "E:\\GOG Galaxy\\logs"
+nameGogFCache:     .asciz "F: GOG Galaxy webcache"
+pathGogFCache:     .asciz "F:\\GOG Galaxy\\Applications\\webcache"
+nameGogFLogs:      .asciz "F: GOG Galaxy logs"
+pathGogFLogs:      .asciz "F:\\GOG Galaxy\\logs"
+nameNeteaseDCache: .asciz "D: NetEase Game cache"
+pathNeteaseDCache: .asciz "D:\\NetEase\\Game\\Cache"
+nameNeteaseDLogs:  .asciz "D: NetEase Game logs"
+pathNeteaseDLogs:  .asciz "D:\\NetEase\\Game\\logs"
+nameNeteaseECache: .asciz "E: NetEase Game cache"
+pathNeteaseECache: .asciz "E:\\NetEase\\Game\\Cache"
+nameNeteaseELogs:  .asciz "E: NetEase Game logs"
+pathNeteaseELogs:  .asciz "E:\\NetEase\\Game\\logs"
+nameNeteaseFCache: .asciz "F: NetEase Game cache"
+pathNeteaseFCache: .asciz "F:\\NetEase\\Game\\Cache"
+nameNeteaseFLogs:  .asciz "F: NetEase Game logs"
+pathNeteaseFLogs:  .asciz "F:\\NetEase\\Game\\logs"
+nameMuMuDEngine:   .asciz "D: MuMu engine cache"
+pathMuMuDEngine:   .asciz "D:\\MuMu\\cache"
+nameMuMuDLogs:     .asciz "D: MuMu logs"
+pathMuMuDLogs:     .asciz "D:\\MuMu\\logs"
+nameMuMuEEngine:   .asciz "E: MuMu engine cache"
+pathMuMuEEngine:   .asciz "E:\\MuMu\\cache"
+nameMuMuELogs:     .asciz "E: MuMu logs"
+pathMuMuELogs:     .asciz "E:\\MuMu\\logs"
+nameMuMuFEngine:   .asciz "F: MuMu engine cache"
+pathMuMuFEngine:   .asciz "F:\\MuMu\\cache"
+nameMuMuFLogs:     .asciz "F: MuMu logs"
+pathMuMuFLogs:     .asciz "F:\\MuMu\\logs"
+nameLDPlayerDCache:.asciz "D: LDPlayer cache"
+pathLDPlayerDCache:.asciz "D:\\LDPlayer\\cache"
+nameLDPlayerDLogs: .asciz "D: LDPlayer logs"
+pathLDPlayerDLogs: .asciz "D:\\LDPlayer\\log"
+nameLDPlayerECache:.asciz "E: LDPlayer cache"
+pathLDPlayerECache:.asciz "E:\\LDPlayer\\cache"
+nameLDPlayerELogs: .asciz "E: LDPlayer logs"
+pathLDPlayerELogs: .asciz "E:\\LDPlayer\\log"
+nameLDPlayerFCache:.asciz "F: LDPlayer cache"
+pathLDPlayerFCache:.asciz "F:\\LDPlayer\\cache"
+nameLDPlayerFLogs: .asciz "F: LDPlayer logs"
+pathLDPlayerFLogs: .asciz "F:\\LDPlayer\\log"
+nameAdobeDMedia:   .asciz "D: Adobe Media Cache"
+pathAdobeDMedia:   .asciz "D:\\Adobe\\Common\\Media Cache"
+nameAdobeDPeak:    .asciz "D: Adobe Peak Files"
+pathAdobeDPeak:    .asciz "D:\\Adobe\\Common\\Peak Files"
+nameAdobeEMedia:   .asciz "E: Adobe Media Cache"
+pathAdobeEMedia:   .asciz "E:\\Adobe\\Common\\Media Cache"
+nameAdobeEPeak:    .asciz "E: Adobe Peak Files"
+pathAdobeEPeak:    .asciz "E:\\Adobe\\Common\\Peak Files"
+nameAdobeFMedia:   .asciz "F: Adobe Media Cache"
+pathAdobeFMedia:   .asciz "F:\\Adobe\\Common\\Media Cache"
+nameAdobeFPeak:    .asciz "F: Adobe Peak Files"
+pathAdobeFPeak:    .asciz "F:\\Adobe\\Common\\Peak Files"
+nameJianyingDCache:.asciz "D: Jianying cache"
+pathJianyingDCache:.asciz "D:\\Jianying\\Cache"
+nameJianyingDLogs: .asciz "D: Jianying logs"
+pathJianyingDLogs: .asciz "D:\\Jianying\\logs"
+nameJianyingECache:.asciz "E: Jianying cache"
+pathJianyingECache:.asciz "E:\\Jianying\\Cache"
+nameJianyingELogs: .asciz "E: Jianying logs"
+pathJianyingELogs: .asciz "E:\\Jianying\\logs"
+nameJianyingFCache:.asciz "F: Jianying cache"
+pathJianyingFCache:.asciz "F:\\Jianying\\Cache"
+nameJianyingFLogs: .asciz "F: Jianying logs"
+pathJianyingFLogs: .asciz "F:\\Jianying\\logs"
+nameCapCutDCache:  .asciz "D: CapCut cache"
+pathCapCutDCache:  .asciz "D:\\CapCut\\Cache"
+nameCapCutDLogs:   .asciz "D: CapCut logs"
+pathCapCutDLogs:   .asciz "D:\\CapCut\\logs"
+nameCapCutECache:  .asciz "E: CapCut cache"
+pathCapCutECache:  .asciz "E:\\CapCut\\Cache"
+nameCapCutELogs:   .asciz "E: CapCut logs"
+pathCapCutELogs:   .asciz "E:\\CapCut\\logs"
+nameCapCutFCache:  .asciz "F: CapCut cache"
+pathCapCutFCache:  .asciz "F:\\CapCut\\Cache"
+nameCapCutFLogs:   .asciz "F: CapCut logs"
+pathCapCutFLogs:   .asciz "F:\\CapCut\\logs"
+nameUnityDCache:   .asciz "D: Unity cache"
+pathUnityDCache:   .asciz "D:\\Unity\\cache"
+nameUnityDShader:  .asciz "D: Unity ShaderCache"
+pathUnityDShader:  .asciz "D:\\Unity\\ShaderCache"
+nameUnityECache:   .asciz "E: Unity cache"
+pathUnityECache:   .asciz "E:\\Unity\\cache"
+nameUnityEShader:  .asciz "E: Unity ShaderCache"
+pathUnityEShader:  .asciz "E:\\Unity\\ShaderCache"
+nameUnityFCache:   .asciz "F: Unity cache"
+pathUnityFCache:   .asciz "F:\\Unity\\cache"
+nameUnityFShader:  .asciz "F: Unity ShaderCache"
+pathUnityFShader:  .asciz "F:\\Unity\\ShaderCache"
+nameUnrealDDDC:    .asciz "D: Unreal DerivedDataCache"
+pathUnrealDDDC:    .asciz "D:\\UnrealEngine\\DerivedDataCache"
+nameUnrealDLogs:   .asciz "D: Unreal logs"
+pathUnrealDLogs:   .asciz "D:\\UnrealEngine\\Logs"
+nameUnrealEDDC:    .asciz "E: Unreal DerivedDataCache"
+pathUnrealEDDC:    .asciz "E:\\UnrealEngine\\DerivedDataCache"
+nameUnrealELogs:   .asciz "E: Unreal logs"
+pathUnrealELogs:   .asciz "E:\\UnrealEngine\\Logs"
+nameUnrealFDDC:    .asciz "F: Unreal DerivedDataCache"
+pathUnrealFDDC:    .asciz "F:\\UnrealEngine\\DerivedDataCache"
+nameUnrealFLogs:   .asciz "F: Unreal logs"
+pathUnrealFLogs:   .asciz "F:\\UnrealEngine\\Logs"
+nameNodeDCache:    .asciz "D: node cache"
+pathNodeDCache:    .asciz "D:\\nodejs\\cache"
+nameNodeDModules:  .asciz "D: node_modules cache"
+pathNodeDModules:  .asciz "D:\\node_modules\\.cache"
+nameNodeECache:    .asciz "E: node cache"
+pathNodeECache:    .asciz "E:\\nodejs\\cache"
+nameNodeEModules:  .asciz "E: node_modules cache"
+pathNodeEModules:  .asciz "E:\\node_modules\\.cache"
+nameNodeFCache:    .asciz "F: node cache"
+pathNodeFCache:    .asciz "F:\\nodejs\\cache"
+nameNodeFModules:  .asciz "F: node_modules cache"
+pathNodeFModules:  .asciz "F:\\node_modules\\.cache"
+nameAndroidDGradle:.asciz "D: Android Gradle cache"
+pathAndroidDGradle:.asciz "D:\\Android\\.gradle"
+nameAndroidDBuild: .asciz "D: Android build cache"
+pathAndroidDBuild: .asciz "D:\\Android\\build-cache"
+nameAndroidEGradle:.asciz "E: Android Gradle cache"
+pathAndroidEGradle:.asciz "E:\\Android\\.gradle"
+nameAndroidEBuild: .asciz "E: Android build cache"
+pathAndroidEBuild: .asciz "E:\\Android\\build-cache"
+nameAndroidFGradle:.asciz "F: Android Gradle cache"
+pathAndroidFGradle:.asciz "F:\\Android\\.gradle"
+nameAndroidFBuild: .asciz "F: Android build cache"
+pathAndroidFBuild: .asciz "F:\\Android\\build-cache"
 nameQQGameCache:   .asciz "QQGame cache"
 pathQQGameCache:   .asciz "%APPDATA%\\Tencent\\QQGame\\Cache"
 nameQQGameLogs:    .asciz "QQGame logs"
@@ -5262,6 +5564,114 @@ targetTable:
     .quad nameSnagitCache,  pathSnagitCache,  riskLow,    1, CAT_MEDIA
     .quad nameNvidiaDownloader,pathNvidiaDownloader,riskLow,1, CAT_WINDOWS
     .quad nameNvidiaGfeCef, pathNvidiaGfeCef, riskLow,    1, CAT_APP
+    .quad nameSteamDShader, pathSteamDShader, riskLow,    1, CAT_GAME
+    .quad nameSteamDApp,    pathSteamDApp,    riskLow,    1, CAT_GAME
+    .quad nameSteamDDepot,  pathSteamDDepot,  riskLow,    1, CAT_GAME
+    .quad nameSteamDLogs,   pathSteamDLogs,   riskLow,    1, CAT_GAME
+    .quad nameSteamLibDShader,pathSteamLibDShader,riskLow,1,CAT_GAME
+    .quad nameSteamLibDDownload,pathSteamLibDDownload,riskLow,1,CAT_GAME
+    .quad nameSteamEShader, pathSteamEShader, riskLow,    1, CAT_GAME
+    .quad nameSteamEApp,    pathSteamEApp,    riskLow,    1, CAT_GAME
+    .quad nameSteamEDepot,  pathSteamEDepot,  riskLow,    1, CAT_GAME
+    .quad nameSteamELogs,   pathSteamELogs,   riskLow,    1, CAT_GAME
+    .quad nameSteamLibEShader,pathSteamLibEShader,riskLow,1,CAT_GAME
+    .quad nameSteamLibEDownload,pathSteamLibEDownload,riskLow,1,CAT_GAME
+    .quad nameSteamFShader, pathSteamFShader, riskLow,    1, CAT_GAME
+    .quad nameSteamFApp,    pathSteamFApp,    riskLow,    1, CAT_GAME
+    .quad nameSteamFDepot,  pathSteamFDepot,  riskLow,    1, CAT_GAME
+    .quad nameSteamFLogs,   pathSteamFLogs,   riskLow,    1, CAT_GAME
+    .quad nameSteamLibFShader,pathSteamLibFShader,riskLow,1,CAT_GAME
+    .quad nameSteamLibFDownload,pathSteamLibFDownload,riskLow,1,CAT_GAME
+    .quad nameEpicDWeb,     pathEpicDWeb,     riskLow,    1, CAT_GAME
+    .quad nameEpicDLogs,    pathEpicDLogs,    riskLow,    1, CAT_GAME
+    .quad nameEpicEWeb,     pathEpicEWeb,     riskLow,    1, CAT_GAME
+    .quad nameEpicELogs,    pathEpicELogs,    riskLow,    1, CAT_GAME
+    .quad nameEpicFWeb,     pathEpicFWeb,     riskLow,    1, CAT_GAME
+    .quad nameEpicFLogs,    pathEpicFLogs,    riskLow,    1, CAT_GAME
+    .quad nameWeGameDCache, pathWeGameDCache, riskLow,    1, CAT_GAME
+    .quad nameWeGameDLogs,  pathWeGameDLogs,  riskLow,    1, CAT_GAME
+    .quad nameWeGameECache, pathWeGameECache, riskLow,    1, CAT_GAME
+    .quad nameWeGameELogs,  pathWeGameELogs,  riskLow,    1, CAT_GAME
+    .quad nameWeGameFCache, pathWeGameFCache, riskLow,    1, CAT_GAME
+    .quad nameWeGameFLogs,  pathWeGameFLogs,  riskLow,    1, CAT_GAME
+    .quad nameBattleDCache, pathBattleDCache, riskLow,    1, CAT_GAME
+    .quad nameBattleDLogs,  pathBattleDLogs,  riskLow,    1, CAT_GAME
+    .quad nameBattleECache, pathBattleECache, riskLow,    1, CAT_GAME
+    .quad nameBattleELogs,  pathBattleELogs,  riskLow,    1, CAT_GAME
+    .quad nameBattleFCache, pathBattleFCache, riskLow,    1, CAT_GAME
+    .quad nameBattleFLogs,  pathBattleFLogs,  riskLow,    1, CAT_GAME
+    .quad nameUbisoftDCache,pathUbisoftDCache,riskLow,   1, CAT_GAME
+    .quad nameUbisoftDLogs, pathUbisoftDLogs, riskLow,    1, CAT_GAME
+    .quad nameUbisoftECache,pathUbisoftECache,riskLow,   1, CAT_GAME
+    .quad nameUbisoftELogs, pathUbisoftELogs, riskLow,    1, CAT_GAME
+    .quad nameUbisoftFCache,pathUbisoftFCache,riskLow,   1, CAT_GAME
+    .quad nameUbisoftFLogs, pathUbisoftFLogs, riskLow,    1, CAT_GAME
+    .quad nameGogDCache,    pathGogDCache,    riskLow,    1, CAT_GAME
+    .quad nameGogDLogs,     pathGogDLogs,     riskLow,    1, CAT_GAME
+    .quad nameGogECache,    pathGogECache,    riskLow,    1, CAT_GAME
+    .quad nameGogELogs,     pathGogELogs,     riskLow,    1, CAT_GAME
+    .quad nameGogFCache,    pathGogFCache,    riskLow,    1, CAT_GAME
+    .quad nameGogFLogs,     pathGogFLogs,     riskLow,    1, CAT_GAME
+    .quad nameNeteaseDCache,pathNeteaseDCache,riskLow,   1, CAT_GAME
+    .quad nameNeteaseDLogs, pathNeteaseDLogs, riskLow,    1, CAT_GAME
+    .quad nameNeteaseECache,pathNeteaseECache,riskLow,   1, CAT_GAME
+    .quad nameNeteaseELogs, pathNeteaseELogs, riskLow,    1, CAT_GAME
+    .quad nameNeteaseFCache,pathNeteaseFCache,riskLow,   1, CAT_GAME
+    .quad nameNeteaseFLogs, pathNeteaseFLogs, riskLow,    1, CAT_GAME
+    .quad nameMuMuDEngine,  pathMuMuDEngine,  riskLow,    1, CAT_GAME
+    .quad nameMuMuDLogs,    pathMuMuDLogs,    riskLow,    1, CAT_GAME
+    .quad nameMuMuEEngine,  pathMuMuEEngine,  riskLow,    1, CAT_GAME
+    .quad nameMuMuELogs,    pathMuMuELogs,    riskLow,    1, CAT_GAME
+    .quad nameMuMuFEngine,  pathMuMuFEngine,  riskLow,    1, CAT_GAME
+    .quad nameMuMuFLogs,    pathMuMuFLogs,    riskLow,    1, CAT_GAME
+    .quad nameLDPlayerDCache,pathLDPlayerDCache,riskLow, 1, CAT_GAME
+    .quad nameLDPlayerDLogs,pathLDPlayerDLogs,riskLow,   1, CAT_GAME
+    .quad nameLDPlayerECache,pathLDPlayerECache,riskLow, 1, CAT_GAME
+    .quad nameLDPlayerELogs,pathLDPlayerELogs,riskLow,   1, CAT_GAME
+    .quad nameLDPlayerFCache,pathLDPlayerFCache,riskLow, 1, CAT_GAME
+    .quad nameLDPlayerFLogs,pathLDPlayerFLogs,riskLow,   1, CAT_GAME
+    .quad nameAdobeDMedia,  pathAdobeDMedia,  riskLow,    1, CAT_MEDIA
+    .quad nameAdobeDPeak,   pathAdobeDPeak,   riskLow,    1, CAT_MEDIA
+    .quad nameAdobeEMedia,  pathAdobeEMedia,  riskLow,    1, CAT_MEDIA
+    .quad nameAdobeEPeak,   pathAdobeEPeak,   riskLow,    1, CAT_MEDIA
+    .quad nameAdobeFMedia,  pathAdobeFMedia,  riskLow,    1, CAT_MEDIA
+    .quad nameAdobeFPeak,   pathAdobeFPeak,   riskLow,    1, CAT_MEDIA
+    .quad nameJianyingDCache,pathJianyingDCache,riskLow, 1, CAT_MEDIA
+    .quad nameJianyingDLogs,pathJianyingDLogs,riskLow,   1, CAT_MEDIA
+    .quad nameJianyingECache,pathJianyingECache,riskLow, 1, CAT_MEDIA
+    .quad nameJianyingELogs,pathJianyingELogs,riskLow,   1, CAT_MEDIA
+    .quad nameJianyingFCache,pathJianyingFCache,riskLow, 1, CAT_MEDIA
+    .quad nameJianyingFLogs,pathJianyingFLogs,riskLow,   1, CAT_MEDIA
+    .quad nameCapCutDCache, pathCapCutDCache, riskLow,    1, CAT_MEDIA
+    .quad nameCapCutDLogs,  pathCapCutDLogs,  riskLow,    1, CAT_MEDIA
+    .quad nameCapCutECache, pathCapCutECache, riskLow,    1, CAT_MEDIA
+    .quad nameCapCutELogs,  pathCapCutELogs,  riskLow,    1, CAT_MEDIA
+    .quad nameCapCutFCache, pathCapCutFCache, riskLow,    1, CAT_MEDIA
+    .quad nameCapCutFLogs,  pathCapCutFLogs,  riskLow,    1, CAT_MEDIA
+    .quad nameUnityDCache,  pathUnityDCache,  riskLow,    1, CAT_GAME
+    .quad nameUnityDShader, pathUnityDShader, riskLow,    1, CAT_GAME
+    .quad nameUnityECache,  pathUnityECache,  riskLow,    1, CAT_GAME
+    .quad nameUnityEShader, pathUnityEShader, riskLow,    1, CAT_GAME
+    .quad nameUnityFCache,  pathUnityFCache,  riskLow,    1, CAT_GAME
+    .quad nameUnityFShader, pathUnityFShader, riskLow,    1, CAT_GAME
+    .quad nameUnrealDDDC,   pathUnrealDDDC,   riskLow,    1, CAT_GAME
+    .quad nameUnrealDLogs,  pathUnrealDLogs,  riskLow,    1, CAT_GAME
+    .quad nameUnrealEDDC,   pathUnrealEDDC,   riskLow,    1, CAT_GAME
+    .quad nameUnrealELogs,  pathUnrealELogs,  riskLow,    1, CAT_GAME
+    .quad nameUnrealFDDC,   pathUnrealFDDC,   riskLow,    1, CAT_GAME
+    .quad nameUnrealFLogs,  pathUnrealFLogs,  riskLow,    1, CAT_GAME
+    .quad nameNodeDCache,   pathNodeDCache,   riskLow,    1, CAT_DEV
+    .quad nameNodeDModules, pathNodeDModules, riskLow,    1, CAT_DEV
+    .quad nameNodeECache,   pathNodeECache,   riskLow,    1, CAT_DEV
+    .quad nameNodeEModules, pathNodeEModules, riskLow,    1, CAT_DEV
+    .quad nameNodeFCache,   pathNodeFCache,   riskLow,    1, CAT_DEV
+    .quad nameNodeFModules, pathNodeFModules, riskLow,    1, CAT_DEV
+    .quad nameAndroidDGradle,pathAndroidDGradle,riskLow, 1, CAT_DEV
+    .quad nameAndroidDBuild,pathAndroidDBuild,riskLow,   1, CAT_DEV
+    .quad nameAndroidEGradle,pathAndroidEGradle,riskLow, 1, CAT_DEV
+    .quad nameAndroidEBuild,pathAndroidEBuild,riskLow,   1, CAT_DEV
+    .quad nameAndroidFGradle,pathAndroidFGradle,riskLow, 1, CAT_DEV
+    .quad nameAndroidFBuild,pathAndroidFBuild,riskLow,   1, CAT_DEV
     .quad 0, 0, 0, 0, 0
 
 .section .bss
@@ -5334,6 +5744,7 @@ classNameW:       .skip 256
 appTitleW:        .skip 256
 buttonClassW:     .skip 64
 editClassW:       .skip 64
+listboxClassW:    .skip 64
 staticClassW:     .skip 64
 emptyStringW:     .skip 8
 fontFaceW:        .skip 128
@@ -5366,3 +5777,5 @@ progressBuffer:.skip 512
 progressWide:.skip 1024
 logBuffer:   .skip 65536
 logWide:     .skip 131072
+logLineBuffer:.skip 4096
+logLineWide:  .skip 8192
