@@ -98,6 +98,25 @@ gcc -O2 -s -static -static-libgcc -nostdlib -mwindows "-Wl,-e,WinMainCRTStartup"
 winTempView.exe
 ```
 
+## 自动发布
+
+仓库内置 GitHub Actions workflow：`.github/workflows/release.yml`。
+
+自动发布触发方式：
+
+- push 到 `main` 分支。
+- 在 GitHub Actions 页面手动运行 `Build release` workflow。
+
+发布流程：
+
+- workflow 在 `windows-latest` 上安装或启用 MinGW-w64 GCC。
+- 使用 `windres` 编译资源文件。
+- 使用静态优化 release 命令编译 `winTempView.exe`。
+- 读取已有 GitHub Release，按 `v0.1.x` 自动递增 patch 版本号。
+- 创建新的 GitHub Release，并上传 `winTempView.exe` 作为 Release 资产。
+
+项目只使用 `main` 分支发布，不需要本地创建 tag 或推送 tag。
+
 ## 仓库结构
 
 ```text
@@ -105,6 +124,9 @@ winTempView.exe
 ├── Makefile
 ├── README.md
 ├── build_command_doc.txt
+├── .github
+│   └── workflows
+│       └── release.yml
 └── src
     ├── app.manifest
     ├── app.rc

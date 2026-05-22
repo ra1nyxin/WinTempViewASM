@@ -1,3 +1,4 @@
 日常编译：mingw32-make
 调试测试版：cd src && windres app.rc -O coff -o app.res.o && cd .. && gcc -g3 -O0 -mwindows -o winTempView_debug.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32
 Release发布版：cd src && windres app.rc -O coff -o app.res.o && cd .. && gcc -O2 -s -static -static-libgcc -nostdlib -mwindows "-Wl,-e,WinMainCRTStartup" -o winTempView.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32
+自动发布：push 到 main 或在 GitHub Actions 页面手动运行 Build release workflow；workflow 会自动递增 v0.1.x、静态编译 release exe，并上传到 GitHub Release 资产。

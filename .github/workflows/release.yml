@@ -1,0 +1,88 @@
+name: Build release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare MinGW-w64
+        shell: pwsh
+        run: |
+          $mingwBin = "C:\msys64\mingw64\bin"
+          if (-not (Test-Path "$mingwBin\gcc.exe")) {
+            C:\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm --needed mingw-w64-x86_64-gcc"
+          }
+          $mingwBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          & "$mingwBin\gcc.exe" --version
+          & "$mingwBin\windres.exe" --version
+
+      - name: Compute next release version
+        id: version
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $maxPatch = -1
+          $tags = gh release list --limit 100 --json tagName --jq '.[].tagName'
+          foreach ($tag in $tags) {
+            if ($tag -match '^v0\.1\.(\d+)$') {
+              $patch = [int]$Matches[1]
+              if ($patch -gt $maxPatch) {
+                $maxPatch = $patch
+              }
+            }
+          }
+          $nextPatch = $maxPatch + 1
+          if ($nextPatch -lt 0) {
+            $nextPatch = 0
+          }
+          $version = "v0.1.$nextPatch"
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "release_name=WinTempViewASM $version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          Write-Host "Next release: $version"
+
+      - name: Build static optimized executable
+        shell: pwsh
+        run: |
+          Push-Location src
+          windres app.rc -O coff -o app.res.o
+          Pop-Location
+          gcc -O2 -s -static -static-libgcc -nostdlib -mwindows "-Wl,-e,WinMainCRTStartup" -o winTempView.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32
+          if (-not (Test-Path "winTempView.exe")) {
+            throw "winTempView.exe was not generated"
+          }
+          Get-Item winTempView.exe | Format-List Name,Length,LastWriteTime
+
+      - name: Create GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_NAME: ${{ steps.version.outputs.release_name }}
+        run: |
+          $notes = @"
+          Automated release for $env:VERSION from main commit $env:GITHUB_SHA.
+
+          Build command:
+          gcc -O2 -s -static -static-libgcc -nostdlib -mwindows "-Wl,-e,WinMainCRTStartup" -o winTempView.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32
+
+          Asset:
+          - winTempView.exe
+          "@
+          gh release create $env:VERSION winTempView.exe --title "$env:RELEASE_NAME" --notes "$notes" --target "$env:GITHUB_SHA"
