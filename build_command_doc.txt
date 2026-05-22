@@ -1,0 +1,3 @@
+日常编译：mingw32-make
+调试测试版：cd src && windres app.rc -O coff -o app.res.o && cd .. && gcc -g3 -O0 -mwindows -o winTempView_debug.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32
+Release发布版：cd src && windres app.rc -O coff -o app.res.o && cd .. && gcc -O2 -s -mwindows -o winTempView.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32

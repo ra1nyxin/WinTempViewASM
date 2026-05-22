@@ -1,0 +1,10 @@
+winTempView.exe
+winTempView_debug.exe
+winTempView-log-*.txt
+src/*.res.o
+*.o
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.lib
