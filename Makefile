@@ -1,5 +1,5 @@
 ASFLAGS := -x assembler-with-cpp -Wa,-adhln
-LDFLAGS := -mwindows
+LDFLAGS := -mwindows -nostdlib "-Wl,-e,WinMainCRTStartup"
 LDLIBS := -luser32 -lgdi32 -lkernel32
 
 TARGET := winTempView.exe

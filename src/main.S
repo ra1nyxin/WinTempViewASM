@@ -3084,6 +3084,20 @@ nameMaxthonCache:  .asciz "Maxthon Browser Cache"
 pathMaxthonCache:  .asciz "%LOCALAPPDATA%\\Maxthon\\Application\\User Data\\Default\\Cache"
 nameMaxthonCode:   .asciz "Maxthon Browser Code Cache"
 pathMaxthonCode:   .asciz "%LOCALAPPDATA%\\Maxthon\\Application\\User Data\\Default\\Code Cache"
+nameBrowser2345Cache:.asciz "2345 Explorer Cache"
+pathBrowser2345Cache:.asciz "%LOCALAPPDATA%\\2345Explorer\\User Data\\Default\\Cache"
+nameBrowser2345Code:.asciz "2345 Explorer Code Cache"
+pathBrowser2345Code:.asciz "%LOCALAPPDATA%\\2345Explorer\\User Data\\Default\\Code Cache"
+nameBrowser2345Gpu:.asciz "2345 Explorer GPUCache"
+pathBrowser2345Gpu:.asciz "%LOCALAPPDATA%\\2345Explorer\\User Data\\Default\\GPUCache"
+nameLiebaoCache:   .asciz "Liebao Browser Cache"
+pathLiebaoCache:   .asciz "%LOCALAPPDATA%\\liebao\\User Data\\Default\\Cache"
+nameLiebaoCode:    .asciz "Liebao Browser Code Cache"
+pathLiebaoCode:    .asciz "%LOCALAPPDATA%\\liebao\\User Data\\Default\\Code Cache"
+nameUCWebCache:    .asciz "UC Browser Cache"
+pathUCWebCache:    .asciz "%LOCALAPPDATA%\\UCBrowser\\User Data\\Default\\Cache"
+nameUCWebCode:     .asciz "UC Browser Code Cache"
+pathUCWebCode:     .asciz "%LOCALAPPDATA%\\UCBrowser\\User Data\\Default\\Code Cache"
 nameVivaldiCache:  .asciz "Vivaldi 缓存"
 pathVivaldiCache:  .asciz "%LOCALAPPDATA%\\Vivaldi\\User Data\\Default\\Cache"
 nameVivaldiCode:   .asciz "Vivaldi 代码缓存"
@@ -3255,6 +3269,88 @@ nameQQPinyinLogs:  .asciz "QQ Pinyin logs"
 pathQQPinyinLogs:  .asciz "%APPDATA%\\Tencent\\QQPinyin\\log"
 nameQQPinyinCache: .asciz "QQ Pinyin cache"
 pathQQPinyinCache: .asciz "%LOCALAPPDATA%\\Tencent\\QQPinyin\\Cache"
+nameDingTalkLocalCache:.asciz "DingTalk Local Cache"
+pathDingTalkLocalCache:.asciz "%LOCALAPPDATA%\\DingTalk\\Cache"
+nameDingTalkLogs:  .asciz "DingTalk logs"
+pathDingTalkLogs:  .asciz "%APPDATA%\\DingTalk\\logs"
+nameDingTalkCode:  .asciz "DingTalk Code Cache"
+pathDingTalkCode:  .asciz "%APPDATA%\\DingTalk\\Code Cache"
+nameDingTalkGpu:   .asciz "DingTalk GPUCache"
+pathDingTalkGpu:   .asciz "%APPDATA%\\DingTalk\\GPUCache"
+nameFeishuLogs:    .asciz "Feishu logs"
+pathFeishuLogs:    .asciz "%APPDATA%\\Feishu\\logs"
+nameFeishuCode:    .asciz "Feishu Code Cache"
+pathFeishuCode:    .asciz "%APPDATA%\\Feishu\\Code Cache"
+nameFeishuGpu:     .asciz "Feishu GPUCache"
+pathFeishuGpu:     .asciz "%APPDATA%\\Feishu\\GPUCache"
+nameFeishuLocalCache:.asciz "Feishu Local Cache"
+pathFeishuLocalCache:.asciz "%LOCALAPPDATA%\\Feishu\\Cache"
+nameLarkLogs:      .asciz "Lark logs"
+pathLarkLogs:      .asciz "%APPDATA%\\LarkShell\\logs"
+nameLarkCode:      .asciz "Lark Code Cache"
+pathLarkCode:      .asciz "%APPDATA%\\LarkShell\\Code Cache"
+nameLarkGpu:       .asciz "Lark GPUCache"
+pathLarkGpu:       .asciz "%APPDATA%\\LarkShell\\GPUCache"
+nameWpsLogs:       .asciz "WPS Office logs"
+pathWpsLogs:       .asciz "%APPDATA%\\kingsoft\\office6\\logs"
+nameWpsTemp:       .asciz "WPS Office temp"
+pathWpsTemp:       .asciz "%APPDATA%\\kingsoft\\office6\\temp"
+nameWpsCloudCache: .asciz "WPS Cloud cache"
+pathWpsCloudCache: .asciz "%LOCALAPPDATA%\\Kingsoft\\WPS Cloud Files\\cache"
+nameKingsoftPdfCache:.asciz "Kingsoft PDF Cache"
+pathKingsoftPdfCache:.asciz "%APPDATA%\\Kingsoft\\Kingsoft PDF\\Cache"
+nameTencentDocsCache:.asciz "Tencent Docs Cache"
+pathTencentDocsCache:.asciz "%APPDATA%\\Tencent\\TencentDocs\\Cache"
+nameTencentDocsLogs:.asciz "Tencent Docs logs"
+pathTencentDocsLogs:.asciz "%APPDATA%\\Tencent\\TencentDocs\\logs"
+nameBaiduNetdiskLocalCache:.asciz "Baidu Netdisk Local Cache"
+pathBaiduNetdiskLocalCache:.asciz "%LOCALAPPDATA%\\baidu\\BaiduNetdisk\\Cache"
+nameBaiduNetdiskCrash:.asciz "Baidu Netdisk crash"
+pathBaiduNetdiskCrash:.asciz "%LOCALAPPDATA%\\baidu\\BaiduNetdisk\\Crash"
+nameAliyunDriveLocalCache:.asciz "Aliyun Drive Local Cache"
+pathAliyunDriveLocalCache:.asciz "%LOCALAPPDATA%\\aDrive\\Cache"
+nameAliyunDriveLocalLogs:.asciz "Aliyun Drive Local logs"
+pathAliyunDriveLocalLogs:.asciz "%LOCALAPPDATA%\\aDrive\\logs"
+nameAliyunDriveGpu:.asciz "Aliyun Drive GPUCache"
+pathAliyunDriveGpu:.asciz "%APPDATA%\\aDrive\\GPUCache"
+nameQuarkDriveLocalCache:.asciz "Quark Drive Local Cache"
+pathQuarkDriveLocalCache:.asciz "%LOCALAPPDATA%\\QuarkCloudDrive\\Cache"
+nameQuarkDriveGpu:.asciz "Quark Drive GPUCache"
+pathQuarkDriveGpu:.asciz "%APPDATA%\\QuarkCloudDrive\\GPUCache"
+nameDrive115Cache: .asciz "115 Drive Cache"
+pathDrive115Cache: .asciz "%APPDATA%\\115\\Cache"
+nameDrive115Logs:  .asciz "115 Drive logs"
+pathDrive115Logs:  .asciz "%APPDATA%\\115\\logs"
+nameThunderProfilesCache:.asciz "Thunder Profiles Cache"
+pathThunderProfilesCache:.asciz "%LOCALAPPDATA%\\Thunder Network\\Thunder\\Profiles\\Cache"
+nameThunderTemp:   .asciz "Thunder temp"
+pathThunderTemp:   .asciz "%LOCALAPPDATA%\\Thunder Network\\Thunder\\Temp"
+nameThunderBrowserCache:.asciz "Thunder browser cache"
+pathThunderBrowserCache:.asciz "%APPDATA%\\Thunder Network\\Thunder\\Browser\\Cache"
+nameToDeskCache:   .asciz "ToDesk cache"
+pathToDeskCache:   .asciz "%APPDATA%\\ToDesk\\Cache"
+nameSunloginCache: .asciz "Sunlogin cache"
+pathSunloginCache: .asciz "%APPDATA%\\Oray\\SunloginClient\\cache"
+nameSunloginCrash: .asciz "Sunlogin crash"
+pathSunloginCrash: .asciz "%APPDATA%\\Oray\\SunloginClient\\crash"
+nameBaiduPinyinLogs:.asciz "Baidu Pinyin logs"
+pathBaiduPinyinLogs:.asciz "%APPDATA%\\Baidu\\BaiduPinyin\\log"
+nameBaiduPinyinTemp:.asciz "Baidu Pinyin temp"
+pathBaiduPinyinTemp:.asciz "%LOCALAPPDATA%\\Baidu\\BaiduPinyin\\Temp"
+nameIflyImeLogs:   .asciz "iFlyIME logs"
+pathIflyImeLogs:   .asciz "%APPDATA%\\iFlyIME\\log"
+nameIflyImeTemp:   .asciz "iFlyIME temp"
+pathIflyImeTemp:   .asciz "%LOCALAPPDATA%\\iFlyIME\\Temp"
+nameTencentLemonLogs:.asciz "Tencent Lemon logs"
+pathTencentLemonLogs:.asciz "%APPDATA%\\Tencent\\Lemon\\logs"
+nameTencentLemonCache:.asciz "Tencent Lemon cache"
+pathTencentLemonCache:.asciz "%LOCALAPPDATA%\\Tencent\\Lemon\\cache"
+nameHuorongLogs:   .asciz "Huorong logs"
+pathHuorongLogs:   .asciz "%PROGRAMDATA%\\Huorong\\Sysdiag\\log"
+nameZip360Cache:   .asciz "360 Zip Cache"
+pathZip360Cache:   .asciz "%APPDATA%\\360zip\\Cache"
+nameZip360Temp:    .asciz "360 Zip temp"
+pathZip360Temp:    .asciz "%APPDATA%\\360zip\\Temp"
 
 nameWeChatFiles:   .asciz "微信文档聊天数据根目录"
 pathWeChatFiles:   .asciz "%USERPROFILE%\\Documents\\WeChat Files"
@@ -3268,6 +3364,34 @@ nameQQAppData:     .asciz "QQ AppData 数据"
 pathQQAppData:     .asciz "%APPDATA%\\Tencent\\QQ"
 nameQQNTData:      .asciz "QQNT 数据"
 pathQQNTData:      .asciz "%APPDATA%\\Tencent\\QQNT"
+nameWeChatLogs:    .asciz "WeChat logs"
+pathWeChatLogs:    .asciz "%APPDATA%\\Tencent\\WeChat\\log"
+nameWeChatXPluginLogs:.asciz "WeChat XPlugin logs"
+pathWeChatXPluginLogs:.asciz "%APPDATA%\\Tencent\\WeChat\\XPlugin\\Logs"
+nameWeChatCefCache:.asciz "WeChat CefCache"
+pathWeChatCefCache:.asciz "%APPDATA%\\Tencent\\WeChat\\CefCache"
+nameQQNTCache:     .asciz "QQNT Cache"
+pathQQNTCache:     .asciz "%APPDATA%\\Tencent\\QQNT\\Cache"
+nameQQNTLogs:      .asciz "QQNT logs"
+pathQQNTLogs:      .asciz "%APPDATA%\\Tencent\\QQNT\\logs"
+nameQQNTCrashpad:  .asciz "QQNT Crashpad"
+pathQQNTCrashpad:  .asciz "%APPDATA%\\Tencent\\QQNT\\Crashpad"
+nameTIMLogs:       .asciz "TIM logs"
+pathTIMLogs:       .asciz "%APPDATA%\\Tencent\\TIM\\log"
+nameTIMCache:      .asciz "TIM cache"
+pathTIMCache:      .asciz "%APPDATA%\\Tencent\\TIM\\Cache"
+nameQQGuildCache:  .asciz "QQGuild Cache"
+pathQQGuildCache:  .asciz "%APPDATA%\\Tencent\\QQGuild\\Cache"
+nameQQGuildLogs:   .asciz "QQGuild logs"
+pathQQGuildLogs:   .asciz "%APPDATA%\\Tencent\\QQGuild\\logs"
+nameWeComCache:    .asciz "WeCom cache"
+pathWeComCache:    .asciz "%APPDATA%\\Tencent\\WeCom\\Cache"
+nameWeComLogs:     .asciz "WeCom logs"
+pathWeComLogs:     .asciz "%APPDATA%\\Tencent\\WeCom\\Log"
+nameTencentMeetingLogs:.asciz "Tencent Meeting logs"
+pathTencentMeetingLogs:.asciz "%APPDATA%\\Tencent\\WeMeet\\Logs"
+nameTencentMeetingCache:.asciz "Tencent Meeting cache"
+pathTencentMeetingCache:.asciz "%LOCALAPPDATA%\\Tencent\\WeMeet\\Cache"
 
 nameNpm:           .asciz "npm 缓存"
 pathNpm:           .asciz "%APPDATA%\\npm-cache"
@@ -3549,6 +3673,50 @@ nameHandBrakeLogs: .asciz "HandBrake logs"
 pathHandBrakeLogs: .asciz "%APPDATA%\\HandBrake\\logs"
 nameAimpCache:     .asciz "AIMP cache"
 pathAimpCache:     .asciz "%APPDATA%\\AIMP\\Cache"
+nameNeteaseMusicWebCache:.asciz "Netease Music Web Cache"
+pathNeteaseMusicWebCache:.asciz "%LOCALAPPDATA%\\Netease\\CloudMusic\\webdata\\Cache"
+nameNeteaseMusicGpu:.asciz "Netease Music GPUCache"
+pathNeteaseMusicGpu:.asciz "%LOCALAPPDATA%\\Netease\\CloudMusic\\GPUCache"
+nameQQMusicLogs:   .asciz "QQ Music logs"
+pathQQMusicLogs:   .asciz "%APPDATA%\\Tencent\\QQMusic\\Logs"
+nameQQMusicGpu:    .asciz "QQ Music GPUCache"
+pathQQMusicGpu:    .asciz "%APPDATA%\\Tencent\\QQMusic\\GPUCache"
+nameKugouLogs:     .asciz "KuGou logs"
+pathKugouLogs:     .asciz "%APPDATA%\\KuGou8\\Log"
+nameKugouTemp:     .asciz "KuGou temp"
+pathKugouTemp:     .asciz "%LOCALAPPDATA%\\KuGou\\Temp"
+nameKuwoLogs:      .asciz "Kuwo logs"
+pathKuwoLogs:      .asciz "%APPDATA%\\KuwoMusic\\log"
+nameTencentVideoLogs:.asciz "Tencent Video logs"
+pathTencentVideoLogs:.asciz "%APPDATA%\\Tencent\\QQLive\\Log"
+nameTencentVideoGpu:.asciz "Tencent Video GPUCache"
+pathTencentVideoGpu:.asciz "%APPDATA%\\Tencent\\QQLive\\GPUCache"
+nameIqiyiLogs:     .asciz "iQIYI logs"
+pathIqiyiLogs:     .asciz "%APPDATA%\\IQIYI Video\\Logs"
+nameIqiyiGpu:      .asciz "iQIYI GPUCache"
+pathIqiyiGpu:      .asciz "%APPDATA%\\IQIYI Video\\GPUCache"
+nameYoukuCache:    .asciz "Youku Cache"
+pathYoukuCache:    .asciz "%APPDATA%\\Youku\\Cache"
+nameYoukuLogs:     .asciz "Youku logs"
+pathYoukuLogs:     .asciz "%APPDATA%\\Youku\\Logs"
+nameMangoTVCache:  .asciz "MangoTV Cache"
+pathMangoTVCache:  .asciz "%APPDATA%\\MGTV\\Cache"
+nameMangoTVLogs:   .asciz "MangoTV logs"
+pathMangoTVLogs:   .asciz "%APPDATA%\\MGTV\\Logs"
+nameBilibiliGpu:   .asciz "Bilibili GPUCache"
+pathBilibiliGpu:   .asciz "%LOCALAPPDATA%\\bilibili\\GPUCache"
+nameBilibiliCrash: .asciz "Bilibili Crashpad"
+pathBilibiliCrash: .asciz "%LOCALAPPDATA%\\bilibili\\Crashpad"
+nameDouyinCache:   .asciz "Douyin Cache"
+pathDouyinCache:   .asciz "%APPDATA%\\douyin\\Cache"
+nameDouyinLogs:    .asciz "Douyin logs"
+pathDouyinLogs:    .asciz "%APPDATA%\\douyin\\logs"
+nameJianyingCache: .asciz "Jianying Cache"
+pathJianyingCache: .asciz "%LOCALAPPDATA%\\JianyingPro\\User Data\\Default\\Cache"
+nameJianyingCode:  .asciz "Jianying Code Cache"
+pathJianyingCode:  .asciz "%LOCALAPPDATA%\\JianyingPro\\User Data\\Default\\Code Cache"
+nameJianyingLogs:  .asciz "Jianying logs"
+pathJianyingLogs:  .asciz "%APPDATA%\\JianyingPro\\logs"
 nameVlcArtCache:   .asciz "VLC art cache"
 pathVlcArtCache:   .asciz "%APPDATA%\\vlc\\art"
 nameKugouCache:    .asciz "KuGou cache"
@@ -3634,6 +3802,13 @@ targetTable:
     .quad nameBrowser360SafeGpu,pathBrowser360SafeGpu,riskLow,1, CAT_BROWSER
     .quad nameMaxthonCache, pathMaxthonCache, riskLow,    1, CAT_BROWSER
     .quad nameMaxthonCode,  pathMaxthonCode,  riskLow,    1, CAT_BROWSER
+    .quad nameBrowser2345Cache,pathBrowser2345Cache,riskLow,1, CAT_BROWSER
+    .quad nameBrowser2345Code,pathBrowser2345Code,riskLow,1, CAT_BROWSER
+    .quad nameBrowser2345Gpu,pathBrowser2345Gpu,riskLow,1, CAT_BROWSER
+    .quad nameLiebaoCache,  pathLiebaoCache,  riskLow,    1, CAT_BROWSER
+    .quad nameLiebaoCode,   pathLiebaoCode,   riskLow,    1, CAT_BROWSER
+    .quad nameUCWebCache,   pathUCWebCache,   riskLow,    1, CAT_BROWSER
+    .quad nameUCWebCode,    pathUCWebCode,    riskLow,    1, CAT_BROWSER
     .quad nameVivaldiCache, pathVivaldiCache, riskLow,    1, CAT_BROWSER
     .quad nameVivaldiCode,  pathVivaldiCode,  riskLow,    1, CAT_BROWSER
     .quad nameVivaldiGpu,   pathVivaldiGpu,   riskLow,    1, CAT_BROWSER
@@ -3719,6 +3894,47 @@ targetTable:
     .quad nameSogouPyTemp,  pathSogouPyTemp,  riskLow,    1, CAT_APP
     .quad nameQQPinyinLogs, pathQQPinyinLogs, riskLow,    1, CAT_APP
     .quad nameQQPinyinCache,pathQQPinyinCache,riskLow,    1, CAT_APP
+    .quad nameDingTalkLocalCache,pathDingTalkLocalCache,riskLow,1, CAT_APP
+    .quad nameDingTalkLogs, pathDingTalkLogs, riskLow,    1, CAT_APP
+    .quad nameDingTalkCode, pathDingTalkCode, riskLow,    1, CAT_APP
+    .quad nameDingTalkGpu,  pathDingTalkGpu,  riskLow,    1, CAT_APP
+    .quad nameFeishuLogs,   pathFeishuLogs,   riskLow,    1, CAT_APP
+    .quad nameFeishuCode,   pathFeishuCode,   riskLow,    1, CAT_APP
+    .quad nameFeishuGpu,    pathFeishuGpu,    riskLow,    1, CAT_APP
+    .quad nameFeishuLocalCache,pathFeishuLocalCache,riskLow,1, CAT_APP
+    .quad nameLarkLogs,     pathLarkLogs,     riskLow,    1, CAT_APP
+    .quad nameLarkCode,     pathLarkCode,     riskLow,    1, CAT_APP
+    .quad nameLarkGpu,      pathLarkGpu,      riskLow,    1, CAT_APP
+    .quad nameWpsLogs,      pathWpsLogs,      riskLow,    1, CAT_APP
+    .quad nameWpsTemp,      pathWpsTemp,      riskLow,    1, CAT_APP
+    .quad nameWpsCloudCache,pathWpsCloudCache,riskLow,    1, CAT_APP
+    .quad nameKingsoftPdfCache,pathKingsoftPdfCache,riskLow,1, CAT_APP
+    .quad nameTencentDocsCache,pathTencentDocsCache,riskLow,1, CAT_APP
+    .quad nameTencentDocsLogs,pathTencentDocsLogs,riskLow,1, CAT_APP
+    .quad nameBaiduNetdiskLocalCache,pathBaiduNetdiskLocalCache,riskLow,1, CAT_APP
+    .quad nameBaiduNetdiskCrash,pathBaiduNetdiskCrash,riskLow,1, CAT_APP
+    .quad nameAliyunDriveLocalCache,pathAliyunDriveLocalCache,riskLow,1, CAT_APP
+    .quad nameAliyunDriveLocalLogs,pathAliyunDriveLocalLogs,riskLow,1, CAT_APP
+    .quad nameAliyunDriveGpu,pathAliyunDriveGpu,riskLow,  1, CAT_APP
+    .quad nameQuarkDriveLocalCache,pathQuarkDriveLocalCache,riskLow,1, CAT_APP
+    .quad nameQuarkDriveGpu,pathQuarkDriveGpu,riskLow,   1, CAT_APP
+    .quad nameDrive115Cache,pathDrive115Cache,riskLow,   1, CAT_APP
+    .quad nameDrive115Logs, pathDrive115Logs, riskLow,   1, CAT_APP
+    .quad nameThunderProfilesCache,pathThunderProfilesCache,riskLow,1, CAT_APP
+    .quad nameThunderTemp,  pathThunderTemp,  riskLow,   1, CAT_APP
+    .quad nameThunderBrowserCache,pathThunderBrowserCache,riskLow,1, CAT_APP
+    .quad nameToDeskCache,  pathToDeskCache,  riskLow,   1, CAT_APP
+    .quad nameSunloginCache,pathSunloginCache,riskLow,   1, CAT_APP
+    .quad nameSunloginCrash,pathSunloginCrash,riskLow,   1, CAT_APP
+    .quad nameBaiduPinyinLogs,pathBaiduPinyinLogs,riskLow,1, CAT_APP
+    .quad nameBaiduPinyinTemp,pathBaiduPinyinTemp,riskLow,1, CAT_APP
+    .quad nameIflyImeLogs,  pathIflyImeLogs,  riskLow,   1, CAT_APP
+    .quad nameIflyImeTemp,  pathIflyImeTemp,  riskLow,   1, CAT_APP
+    .quad nameTencentLemonLogs,pathTencentLemonLogs,riskLow,1, CAT_APP
+    .quad nameTencentLemonCache,pathTencentLemonCache,riskLow,1, CAT_APP
+    .quad nameHuorongLogs,  pathHuorongLogs,  riskLow,   1, CAT_APP
+    .quad nameZip360Cache,  pathZip360Cache,  riskLow,   1, CAT_APP
+    .quad nameZip360Temp,   pathZip360Temp,   riskLow,   1, CAT_APP
     .quad namePowerToysLogs,pathPowerToysLogs,riskLow,    1, CAT_APP
     .quad nameOneDriveLogs, pathOneDriveLogs, riskLow,    1, CAT_APP
     .quad nameOfficeCache,  pathOfficeCache,  riskLow,    1, CAT_APP
@@ -3738,6 +3954,20 @@ targetTable:
     .quad nameWeChatAppData,pathWeChatAppData,riskHigh,   1, CAT_CHAT
     .quad nameQQAppData,    pathQQAppData,    riskHigh,   1, CAT_CHAT
     .quad nameQQNTData,     pathQQNTData,     riskHigh,   1, CAT_CHAT
+    .quad nameWeChatLogs,   pathWeChatLogs,   riskLow,    1, CAT_CHAT
+    .quad nameWeChatXPluginLogs,pathWeChatXPluginLogs,riskLow,1, CAT_CHAT
+    .quad nameWeChatCefCache,pathWeChatCefCache,riskLow,  1, CAT_CHAT
+    .quad nameQQNTCache,    pathQQNTCache,    riskLow,    1, CAT_CHAT
+    .quad nameQQNTLogs,     pathQQNTLogs,     riskLow,    1, CAT_CHAT
+    .quad nameQQNTCrashpad, pathQQNTCrashpad, riskLow,    1, CAT_CHAT
+    .quad nameTIMLogs,      pathTIMLogs,      riskLow,    1, CAT_CHAT
+    .quad nameTIMCache,     pathTIMCache,     riskLow,    1, CAT_CHAT
+    .quad nameQQGuildCache, pathQQGuildCache, riskLow,    1, CAT_CHAT
+    .quad nameQQGuildLogs,  pathQQGuildLogs,  riskLow,    1, CAT_CHAT
+    .quad nameWeComCache,   pathWeComCache,   riskLow,    1, CAT_CHAT
+    .quad nameWeComLogs,    pathWeComLogs,    riskLow,    1, CAT_CHAT
+    .quad nameTencentMeetingLogs,pathTencentMeetingLogs,riskLow,1, CAT_CHAT
+    .quad nameTencentMeetingCache,pathTencentMeetingCache,riskLow,1, CAT_CHAT
     .quad nameNpm,          pathNpm,          riskLow,    1, CAT_DEV
     .quad namePip,          pathPip,          riskLow,    1, CAT_DEV
     .quad nameNuget,        pathNuget,        riskHigh,   1, CAT_DEV
@@ -3864,6 +4094,28 @@ targetTable:
     .quad nameDaVinciLogs,  pathDaVinciLogs,  riskLow,    1, CAT_MEDIA
     .quad nameHandBrakeLogs,pathHandBrakeLogs,riskLow,    1, CAT_MEDIA
     .quad nameAimpCache,    pathAimpCache,    riskLow,    1, CAT_MEDIA
+    .quad nameNeteaseMusicWebCache,pathNeteaseMusicWebCache,riskLow,1, CAT_MEDIA
+    .quad nameNeteaseMusicGpu,pathNeteaseMusicGpu,riskLow,1, CAT_MEDIA
+    .quad nameQQMusicLogs,  pathQQMusicLogs,  riskLow,    1, CAT_MEDIA
+    .quad nameQQMusicGpu,   pathQQMusicGpu,   riskLow,    1, CAT_MEDIA
+    .quad nameKugouLogs,    pathKugouLogs,    riskLow,    1, CAT_MEDIA
+    .quad nameKugouTemp,    pathKugouTemp,    riskLow,    1, CAT_MEDIA
+    .quad nameKuwoLogs,     pathKuwoLogs,     riskLow,    1, CAT_MEDIA
+    .quad nameTencentVideoLogs,pathTencentVideoLogs,riskLow,1, CAT_MEDIA
+    .quad nameTencentVideoGpu,pathTencentVideoGpu,riskLow,1, CAT_MEDIA
+    .quad nameIqiyiLogs,    pathIqiyiLogs,    riskLow,    1, CAT_MEDIA
+    .quad nameIqiyiGpu,     pathIqiyiGpu,     riskLow,    1, CAT_MEDIA
+    .quad nameYoukuCache,   pathYoukuCache,   riskLow,    1, CAT_MEDIA
+    .quad nameYoukuLogs,    pathYoukuLogs,    riskLow,    1, CAT_MEDIA
+    .quad nameMangoTVCache, pathMangoTVCache, riskLow,    1, CAT_MEDIA
+    .quad nameMangoTVLogs,  pathMangoTVLogs,  riskLow,    1, CAT_MEDIA
+    .quad nameBilibiliGpu,  pathBilibiliGpu,  riskLow,    1, CAT_MEDIA
+    .quad nameBilibiliCrash,pathBilibiliCrash,riskLow,    1, CAT_MEDIA
+    .quad nameDouyinCache,  pathDouyinCache,  riskLow,    1, CAT_MEDIA
+    .quad nameDouyinLogs,   pathDouyinLogs,   riskLow,    1, CAT_MEDIA
+    .quad nameJianyingCache,pathJianyingCache,riskLow,    1, CAT_MEDIA
+    .quad nameJianyingCode, pathJianyingCode, riskLow,    1, CAT_MEDIA
+    .quad nameJianyingLogs, pathJianyingLogs, riskLow,    1, CAT_MEDIA
     .quad nameVlcArtCache,  pathVlcArtCache,  riskLow,    1, CAT_MEDIA
     .quad nameKugouCache,   pathKugouCache,   riskLow,    1, CAT_MEDIA
     .quad nameKuwoCache,    pathKuwoCache,    riskLow,    1, CAT_MEDIA
