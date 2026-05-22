@@ -74,6 +74,8 @@
 .extern CreateFileW
 .extern WriteFile
 .extern FlushFileBuffers
+.extern GetModuleHandleW
+.extern ExitProcess
 
 .equ CP_UTF8, 65001
 .equ WM_SETFONT, 48
@@ -111,7 +113,20 @@
 .equ CAT_RECYCLE, 8
 
 .section .text
+.globl WinMainCRTStartup
 .globl WinMain
+
+WinMainCRTStartup:
+    sub rsp, 40
+    xor ecx, ecx
+    call GetModuleHandleW
+    mov rcx, rax
+    xor edx, edx
+    xor r8d, r8d
+    mov r9d, SW_SHOWDEFAULT
+    call WinMain
+    mov ecx, eax
+    call ExitProcess
 
 WinMain:
     push rbp
