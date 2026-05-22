@@ -4766,6 +4766,190 @@ nameAndroidFGradle:.asciz "F: Android Gradle cache"
 pathAndroidFGradle:.asciz "F:\\Android\\.gradle"
 nameAndroidFBuild: .asciz "F: Android build cache"
 pathAndroidFBuild: .asciz "F:\\Android\\build-cache"
+nameSteamGShader:  .asciz "G: Steam shadercache"
+pathSteamGShader:  .asciz "G:\\Steam\\steamapps\\shadercache"
+nameSteamLibGShader:.asciz "G: SteamLibrary shadercache"
+pathSteamLibGShader:.asciz "G:\\SteamLibrary\\steamapps\\shadercache"
+nameSteamLibGDownload:.asciz "G: SteamLibrary downloading"
+pathSteamLibGDownload:.asciz "G:\\SteamLibrary\\steamapps\\downloading"
+nameEpicGWeb:      .asciz "G: Epic Games Launcher webcache"
+pathEpicGWeb:      .asciz "G:\\Epic Games\\Launcher\\Portal\\Saved\\webcache"
+nameEpicGLogs:     .asciz "G: Epic Games Launcher logs"
+pathEpicGLogs:     .asciz "G:\\Epic Games\\Launcher\\Portal\\Saved\\Logs"
+nameWeGameGCache:  .asciz "G: WeGame cache"
+pathWeGameGCache:  .asciz "G:\\WeGame\\cache"
+nameWeGameGLogs:   .asciz "G: WeGame logs"
+pathWeGameGLogs:   .asciz "G:\\WeGame\\logs"
+nameBattleGCache:  .asciz "G: Battle.net cache"
+pathBattleGCache:  .asciz "G:\\Battle.net\\Cache"
+nameUbisoftGCache: .asciz "G: Ubisoft cache"
+pathUbisoftGCache: .asciz "G:\\Ubisoft\\Ubisoft Game Launcher\\cache"
+nameGogGCache:     .asciz "G: GOG Galaxy webcache"
+pathGogGCache:     .asciz "G:\\GOG Galaxy\\Applications\\webcache"
+nameNeteaseGCache: .asciz "G: NetEase Game cache"
+pathNeteaseGCache: .asciz "G:\\NetEase\\Game\\Cache"
+nameMuMuGCache:    .asciz "G: MuMu cache"
+pathMuMuGCache:    .asciz "G:\\MuMu\\cache"
+nameLDPlayerGCache:.asciz "G: LDPlayer cache"
+pathLDPlayerGCache:.asciz "G:\\LDPlayer\\cache"
+nameAdobeGMedia:   .asciz "G: Adobe Media Cache"
+pathAdobeGMedia:   .asciz "G:\\Adobe\\Common\\Media Cache"
+nameAdobeGPeak:    .asciz "G: Adobe Peak Files"
+pathAdobeGPeak:    .asciz "G:\\Adobe\\Common\\Peak Files"
+nameJianyingGCache:.asciz "G: Jianying cache"
+pathJianyingGCache:.asciz "G:\\Jianying\\Cache"
+nameCapCutGCache:  .asciz "G: CapCut cache"
+pathCapCutGCache:  .asciz "G:\\CapCut\\Cache"
+nameUnityGCache:   .asciz "G: Unity cache"
+pathUnityGCache:   .asciz "G:\\Unity\\cache"
+nameUnityGShader:  .asciz "G: Unity ShaderCache"
+pathUnityGShader:  .asciz "G:\\Unity\\ShaderCache"
+nameUnrealGDDC:    .asciz "G: Unreal DerivedDataCache"
+pathUnrealGDDC:    .asciz "G:\\UnrealEngine\\DerivedDataCache"
+nameUnrealGLogs:   .asciz "G: Unreal logs"
+pathUnrealGLogs:   .asciz "G:\\UnrealEngine\\Logs"
+nameNodeGModules:  .asciz "G: node_modules cache"
+pathNodeGModules:  .asciz "G:\\node_modules\\.cache"
+nameAndroidGGradle:.asciz "G: Android Gradle cache"
+pathAndroidGGradle:.asciz "G:\\Android\\.gradle"
+nameSteamHShader:  .asciz "H: Steam shadercache"
+pathSteamHShader:  .asciz "H:\\Steam\\steamapps\\shadercache"
+nameSteamLibHShader:.asciz "H: SteamLibrary shadercache"
+pathSteamLibHShader:.asciz "H:\\SteamLibrary\\steamapps\\shadercache"
+nameSteamLibHDownload:.asciz "H: SteamLibrary downloading"
+pathSteamLibHDownload:.asciz "H:\\SteamLibrary\\steamapps\\downloading"
+nameEpicHWeb:      .asciz "H: Epic Games Launcher webcache"
+pathEpicHWeb:      .asciz "H:\\Epic Games\\Launcher\\Portal\\Saved\\webcache"
+nameEpicHLogs:     .asciz "H: Epic Games Launcher logs"
+pathEpicHLogs:     .asciz "H:\\Epic Games\\Launcher\\Portal\\Saved\\Logs"
+nameWeGameHCache:  .asciz "H: WeGame cache"
+pathWeGameHCache:  .asciz "H:\\WeGame\\cache"
+nameWeGameHLogs:   .asciz "H: WeGame logs"
+pathWeGameHLogs:   .asciz "H:\\WeGame\\logs"
+nameBattleHCache:  .asciz "H: Battle.net cache"
+pathBattleHCache:  .asciz "H:\\Battle.net\\Cache"
+nameUbisoftHCache: .asciz "H: Ubisoft cache"
+pathUbisoftHCache: .asciz "H:\\Ubisoft\\Ubisoft Game Launcher\\cache"
+nameGogHCache:     .asciz "H: GOG Galaxy webcache"
+pathGogHCache:     .asciz "H:\\GOG Galaxy\\Applications\\webcache"
+nameNeteaseHCache: .asciz "H: NetEase Game cache"
+pathNeteaseHCache: .asciz "H:\\NetEase\\Game\\Cache"
+nameMuMuHCache:    .asciz "H: MuMu cache"
+pathMuMuHCache:    .asciz "H:\\MuMu\\cache"
+nameLDPlayerHCache:.asciz "H: LDPlayer cache"
+pathLDPlayerHCache:.asciz "H:\\LDPlayer\\cache"
+nameAdobeHMedia:   .asciz "H: Adobe Media Cache"
+pathAdobeHMedia:   .asciz "H:\\Adobe\\Common\\Media Cache"
+nameAdobeHPeak:    .asciz "H: Adobe Peak Files"
+pathAdobeHPeak:    .asciz "H:\\Adobe\\Common\\Peak Files"
+nameJianyingHCache:.asciz "H: Jianying cache"
+pathJianyingHCache:.asciz "H:\\Jianying\\Cache"
+nameCapCutHCache:  .asciz "H: CapCut cache"
+pathCapCutHCache:  .asciz "H:\\CapCut\\Cache"
+nameUnityHCache:   .asciz "H: Unity cache"
+pathUnityHCache:   .asciz "H:\\Unity\\cache"
+nameUnityHShader:  .asciz "H: Unity ShaderCache"
+pathUnityHShader:  .asciz "H:\\Unity\\ShaderCache"
+nameUnrealHDDC:    .asciz "H: Unreal DerivedDataCache"
+pathUnrealHDDC:    .asciz "H:\\UnrealEngine\\DerivedDataCache"
+nameUnrealHLogs:   .asciz "H: Unreal logs"
+pathUnrealHLogs:   .asciz "H:\\UnrealEngine\\Logs"
+nameNodeHModules:  .asciz "H: node_modules cache"
+pathNodeHModules:  .asciz "H:\\node_modules\\.cache"
+nameAndroidHGradle:.asciz "H: Android Gradle cache"
+pathAndroidHGradle:.asciz "H:\\Android\\.gradle"
+nameSteamIShader:  .asciz "I: Steam shadercache"
+pathSteamIShader:  .asciz "I:\\Steam\\steamapps\\shadercache"
+nameSteamLibIShader:.asciz "I: SteamLibrary shadercache"
+pathSteamLibIShader:.asciz "I:\\SteamLibrary\\steamapps\\shadercache"
+nameSteamLibIDownload:.asciz "I: SteamLibrary downloading"
+pathSteamLibIDownload:.asciz "I:\\SteamLibrary\\steamapps\\downloading"
+nameEpicIWeb:      .asciz "I: Epic Games Launcher webcache"
+pathEpicIWeb:      .asciz "I:\\Epic Games\\Launcher\\Portal\\Saved\\webcache"
+nameEpicILogs:     .asciz "I: Epic Games Launcher logs"
+pathEpicILogs:     .asciz "I:\\Epic Games\\Launcher\\Portal\\Saved\\Logs"
+nameWeGameICache:  .asciz "I: WeGame cache"
+pathWeGameICache:  .asciz "I:\\WeGame\\cache"
+nameWeGameILogs:   .asciz "I: WeGame logs"
+pathWeGameILogs:   .asciz "I:\\WeGame\\logs"
+nameBattleICache:  .asciz "I: Battle.net cache"
+pathBattleICache:  .asciz "I:\\Battle.net\\Cache"
+nameUbisoftICache: .asciz "I: Ubisoft cache"
+pathUbisoftICache: .asciz "I:\\Ubisoft\\Ubisoft Game Launcher\\cache"
+nameGogICache:     .asciz "I: GOG Galaxy webcache"
+pathGogICache:     .asciz "I:\\GOG Galaxy\\Applications\\webcache"
+nameNeteaseICache: .asciz "I: NetEase Game cache"
+pathNeteaseICache: .asciz "I:\\NetEase\\Game\\Cache"
+nameMuMuICache:    .asciz "I: MuMu cache"
+pathMuMuICache:    .asciz "I:\\MuMu\\cache"
+nameLDPlayerICache:.asciz "I: LDPlayer cache"
+pathLDPlayerICache:.asciz "I:\\LDPlayer\\cache"
+nameAdobeIMedia:   .asciz "I: Adobe Media Cache"
+pathAdobeIMedia:   .asciz "I:\\Adobe\\Common\\Media Cache"
+nameAdobeIPeak:    .asciz "I: Adobe Peak Files"
+pathAdobeIPeak:    .asciz "I:\\Adobe\\Common\\Peak Files"
+nameJianyingICache:.asciz "I: Jianying cache"
+pathJianyingICache:.asciz "I:\\Jianying\\Cache"
+nameCapCutICache:  .asciz "I: CapCut cache"
+pathCapCutICache:  .asciz "I:\\CapCut\\Cache"
+nameUnityICache:   .asciz "I: Unity cache"
+pathUnityICache:   .asciz "I:\\Unity\\cache"
+nameUnityIShader:  .asciz "I: Unity ShaderCache"
+pathUnityIShader:  .asciz "I:\\Unity\\ShaderCache"
+nameUnrealIDDC:    .asciz "I: Unreal DerivedDataCache"
+pathUnrealIDDC:    .asciz "I:\\UnrealEngine\\DerivedDataCache"
+nameUnrealILogs:   .asciz "I: Unreal logs"
+pathUnrealILogs:   .asciz "I:\\UnrealEngine\\Logs"
+nameNodeIModules:  .asciz "I: node_modules cache"
+pathNodeIModules:  .asciz "I:\\node_modules\\.cache"
+nameAndroidIGradle:.asciz "I: Android Gradle cache"
+pathAndroidIGradle:.asciz "I:\\Android\\.gradle"
+nameSteamJShader:  .asciz "J: Steam shadercache"
+pathSteamJShader:  .asciz "J:\\Steam\\steamapps\\shadercache"
+nameSteamLibJShader:.asciz "J: SteamLibrary shadercache"
+pathSteamLibJShader:.asciz "J:\\SteamLibrary\\steamapps\\shadercache"
+nameSteamLibJDownload:.asciz "J: SteamLibrary downloading"
+pathSteamLibJDownload:.asciz "J:\\SteamLibrary\\steamapps\\downloading"
+nameEpicJWeb:      .asciz "J: Epic Games Launcher webcache"
+pathEpicJWeb:      .asciz "J:\\Epic Games\\Launcher\\Portal\\Saved\\webcache"
+nameEpicJLogs:     .asciz "J: Epic Games Launcher logs"
+pathEpicJLogs:     .asciz "J:\\Epic Games\\Launcher\\Portal\\Saved\\Logs"
+nameWeGameJCache:  .asciz "J: WeGame cache"
+pathWeGameJCache:  .asciz "J:\\WeGame\\cache"
+nameWeGameJLogs:   .asciz "J: WeGame logs"
+pathWeGameJLogs:   .asciz "J:\\WeGame\\logs"
+nameBattleJCache:  .asciz "J: Battle.net cache"
+pathBattleJCache:  .asciz "J:\\Battle.net\\Cache"
+nameUbisoftJCache: .asciz "J: Ubisoft cache"
+pathUbisoftJCache: .asciz "J:\\Ubisoft\\Ubisoft Game Launcher\\cache"
+nameGogJCache:     .asciz "J: GOG Galaxy webcache"
+pathGogJCache:     .asciz "J:\\GOG Galaxy\\Applications\\webcache"
+nameNeteaseJCache: .asciz "J: NetEase Game cache"
+pathNeteaseJCache: .asciz "J:\\NetEase\\Game\\Cache"
+nameMuMuJCache:    .asciz "J: MuMu cache"
+pathMuMuJCache:    .asciz "J:\\MuMu\\cache"
+nameLDPlayerJCache:.asciz "J: LDPlayer cache"
+pathLDPlayerJCache:.asciz "J:\\LDPlayer\\cache"
+nameAdobeJMedia:   .asciz "J: Adobe Media Cache"
+pathAdobeJMedia:   .asciz "J:\\Adobe\\Common\\Media Cache"
+nameAdobeJPeak:    .asciz "J: Adobe Peak Files"
+pathAdobeJPeak:    .asciz "J:\\Adobe\\Common\\Peak Files"
+nameJianyingJCache:.asciz "J: Jianying cache"
+pathJianyingJCache:.asciz "J:\\Jianying\\Cache"
+nameCapCutJCache:  .asciz "J: CapCut cache"
+pathCapCutJCache:  .asciz "J:\\CapCut\\Cache"
+nameUnityJCache:   .asciz "J: Unity cache"
+pathUnityJCache:   .asciz "J:\\Unity\\cache"
+nameUnityJShader:  .asciz "J: Unity ShaderCache"
+pathUnityJShader:  .asciz "J:\\Unity\\ShaderCache"
+nameUnrealJDDC:    .asciz "J: Unreal DerivedDataCache"
+pathUnrealJDDC:    .asciz "J:\\UnrealEngine\\DerivedDataCache"
+nameUnrealJLogs:   .asciz "J: Unreal logs"
+pathUnrealJLogs:   .asciz "J:\\UnrealEngine\\Logs"
+nameNodeJModules:  .asciz "J: node_modules cache"
+pathNodeJModules:  .asciz "J:\\node_modules\\.cache"
+nameAndroidJGradle:.asciz "J: Android Gradle cache"
+pathAndroidJGradle:.asciz "J:\\Android\\.gradle"
 nameQQGameCache:   .asciz "QQGame cache"
 pathQQGameCache:   .asciz "%APPDATA%\\Tencent\\QQGame\\Cache"
 nameQQGameLogs:    .asciz "QQGame logs"
@@ -5672,6 +5856,98 @@ targetTable:
     .quad nameAndroidEBuild,pathAndroidEBuild,riskLow,   1, CAT_DEV
     .quad nameAndroidFGradle,pathAndroidFGradle,riskLow, 1, CAT_DEV
     .quad nameAndroidFBuild,pathAndroidFBuild,riskLow,   1, CAT_DEV
+    .quad nameSteamGShader, pathSteamGShader, riskLow,    1, CAT_GAME
+    .quad nameSteamLibGShader,pathSteamLibGShader,riskLow,1,CAT_GAME
+    .quad nameSteamLibGDownload,pathSteamLibGDownload,riskLow,1,CAT_GAME
+    .quad nameEpicGWeb,     pathEpicGWeb,     riskLow,    1, CAT_GAME
+    .quad nameEpicGLogs,    pathEpicGLogs,    riskLow,    1, CAT_GAME
+    .quad nameWeGameGCache, pathWeGameGCache, riskLow,    1, CAT_GAME
+    .quad nameWeGameGLogs,  pathWeGameGLogs,  riskLow,    1, CAT_GAME
+    .quad nameBattleGCache, pathBattleGCache, riskLow,    1, CAT_GAME
+    .quad nameUbisoftGCache,pathUbisoftGCache,riskLow,   1, CAT_GAME
+    .quad nameGogGCache,    pathGogGCache,    riskLow,    1, CAT_GAME
+    .quad nameNeteaseGCache,pathNeteaseGCache,riskLow,   1, CAT_GAME
+    .quad nameMuMuGCache,   pathMuMuGCache,   riskLow,    1, CAT_GAME
+    .quad nameLDPlayerGCache,pathLDPlayerGCache,riskLow, 1, CAT_GAME
+    .quad nameAdobeGMedia,  pathAdobeGMedia,  riskLow,    1, CAT_MEDIA
+    .quad nameAdobeGPeak,   pathAdobeGPeak,   riskLow,    1, CAT_MEDIA
+    .quad nameJianyingGCache,pathJianyingGCache,riskLow, 1, CAT_MEDIA
+    .quad nameCapCutGCache, pathCapCutGCache, riskLow,    1, CAT_MEDIA
+    .quad nameUnityGCache,  pathUnityGCache,  riskLow,    1, CAT_GAME
+    .quad nameUnityGShader, pathUnityGShader, riskLow,    1, CAT_GAME
+    .quad nameUnrealGDDC,   pathUnrealGDDC,   riskLow,    1, CAT_GAME
+    .quad nameUnrealGLogs,  pathUnrealGLogs,  riskLow,    1, CAT_GAME
+    .quad nameNodeGModules, pathNodeGModules, riskLow,    1, CAT_DEV
+    .quad nameAndroidGGradle,pathAndroidGGradle,riskLow, 1, CAT_DEV
+    .quad nameSteamHShader, pathSteamHShader, riskLow,    1, CAT_GAME
+    .quad nameSteamLibHShader,pathSteamLibHShader,riskLow,1,CAT_GAME
+    .quad nameSteamLibHDownload,pathSteamLibHDownload,riskLow,1,CAT_GAME
+    .quad nameEpicHWeb,     pathEpicHWeb,     riskLow,    1, CAT_GAME
+    .quad nameEpicHLogs,    pathEpicHLogs,    riskLow,    1, CAT_GAME
+    .quad nameWeGameHCache, pathWeGameHCache, riskLow,    1, CAT_GAME
+    .quad nameWeGameHLogs,  pathWeGameHLogs,  riskLow,    1, CAT_GAME
+    .quad nameBattleHCache, pathBattleHCache, riskLow,    1, CAT_GAME
+    .quad nameUbisoftHCache,pathUbisoftHCache,riskLow,   1, CAT_GAME
+    .quad nameGogHCache,    pathGogHCache,    riskLow,    1, CAT_GAME
+    .quad nameNeteaseHCache,pathNeteaseHCache,riskLow,   1, CAT_GAME
+    .quad nameMuMuHCache,   pathMuMuHCache,   riskLow,    1, CAT_GAME
+    .quad nameLDPlayerHCache,pathLDPlayerHCache,riskLow, 1, CAT_GAME
+    .quad nameAdobeHMedia,  pathAdobeHMedia,  riskLow,    1, CAT_MEDIA
+    .quad nameAdobeHPeak,   pathAdobeHPeak,   riskLow,    1, CAT_MEDIA
+    .quad nameJianyingHCache,pathJianyingHCache,riskLow, 1, CAT_MEDIA
+    .quad nameCapCutHCache, pathCapCutHCache, riskLow,    1, CAT_MEDIA
+    .quad nameUnityHCache,  pathUnityHCache,  riskLow,    1, CAT_GAME
+    .quad nameUnityHShader, pathUnityHShader, riskLow,    1, CAT_GAME
+    .quad nameUnrealHDDC,   pathUnrealHDDC,   riskLow,    1, CAT_GAME
+    .quad nameUnrealHLogs,  pathUnrealHLogs,  riskLow,    1, CAT_GAME
+    .quad nameNodeHModules, pathNodeHModules, riskLow,    1, CAT_DEV
+    .quad nameAndroidHGradle,pathAndroidHGradle,riskLow, 1, CAT_DEV
+    .quad nameSteamIShader, pathSteamIShader, riskLow,    1, CAT_GAME
+    .quad nameSteamLibIShader,pathSteamLibIShader,riskLow,1,CAT_GAME
+    .quad nameSteamLibIDownload,pathSteamLibIDownload,riskLow,1,CAT_GAME
+    .quad nameEpicIWeb,     pathEpicIWeb,     riskLow,    1, CAT_GAME
+    .quad nameEpicILogs,    pathEpicILogs,    riskLow,    1, CAT_GAME
+    .quad nameWeGameICache, pathWeGameICache, riskLow,    1, CAT_GAME
+    .quad nameWeGameILogs,  pathWeGameILogs,  riskLow,    1, CAT_GAME
+    .quad nameBattleICache, pathBattleICache, riskLow,    1, CAT_GAME
+    .quad nameUbisoftICache,pathUbisoftICache,riskLow,   1, CAT_GAME
+    .quad nameGogICache,    pathGogICache,    riskLow,    1, CAT_GAME
+    .quad nameNeteaseICache,pathNeteaseICache,riskLow,   1, CAT_GAME
+    .quad nameMuMuICache,   pathMuMuICache,   riskLow,    1, CAT_GAME
+    .quad nameLDPlayerICache,pathLDPlayerICache,riskLow, 1, CAT_GAME
+    .quad nameAdobeIMedia,  pathAdobeIMedia,  riskLow,    1, CAT_MEDIA
+    .quad nameAdobeIPeak,   pathAdobeIPeak,   riskLow,    1, CAT_MEDIA
+    .quad nameJianyingICache,pathJianyingICache,riskLow, 1, CAT_MEDIA
+    .quad nameCapCutICache, pathCapCutICache, riskLow,    1, CAT_MEDIA
+    .quad nameUnityICache,  pathUnityICache,  riskLow,    1, CAT_GAME
+    .quad nameUnityIShader, pathUnityIShader, riskLow,    1, CAT_GAME
+    .quad nameUnrealIDDC,   pathUnrealIDDC,   riskLow,    1, CAT_GAME
+    .quad nameUnrealILogs,  pathUnrealILogs,  riskLow,    1, CAT_GAME
+    .quad nameNodeIModules, pathNodeIModules, riskLow,    1, CAT_DEV
+    .quad nameAndroidIGradle,pathAndroidIGradle,riskLow, 1, CAT_DEV
+    .quad nameSteamJShader, pathSteamJShader, riskLow,    1, CAT_GAME
+    .quad nameSteamLibJShader,pathSteamLibJShader,riskLow,1,CAT_GAME
+    .quad nameSteamLibJDownload,pathSteamLibJDownload,riskLow,1,CAT_GAME
+    .quad nameEpicJWeb,     pathEpicJWeb,     riskLow,    1, CAT_GAME
+    .quad nameEpicJLogs,    pathEpicJLogs,    riskLow,    1, CAT_GAME
+    .quad nameWeGameJCache, pathWeGameJCache, riskLow,    1, CAT_GAME
+    .quad nameWeGameJLogs,  pathWeGameJLogs,  riskLow,    1, CAT_GAME
+    .quad nameBattleJCache, pathBattleJCache, riskLow,    1, CAT_GAME
+    .quad nameUbisoftJCache,pathUbisoftJCache,riskLow,   1, CAT_GAME
+    .quad nameGogJCache,    pathGogJCache,    riskLow,    1, CAT_GAME
+    .quad nameNeteaseJCache,pathNeteaseJCache,riskLow,   1, CAT_GAME
+    .quad nameMuMuJCache,   pathMuMuJCache,   riskLow,    1, CAT_GAME
+    .quad nameLDPlayerJCache,pathLDPlayerJCache,riskLow, 1, CAT_GAME
+    .quad nameAdobeJMedia,  pathAdobeJMedia,  riskLow,    1, CAT_MEDIA
+    .quad nameAdobeJPeak,   pathAdobeJPeak,   riskLow,    1, CAT_MEDIA
+    .quad nameJianyingJCache,pathJianyingJCache,riskLow, 1, CAT_MEDIA
+    .quad nameCapCutJCache, pathCapCutJCache, riskLow,    1, CAT_MEDIA
+    .quad nameUnityJCache,  pathUnityJCache,  riskLow,    1, CAT_GAME
+    .quad nameUnityJShader, pathUnityJShader, riskLow,    1, CAT_GAME
+    .quad nameUnrealJDDC,   pathUnrealJDDC,   riskLow,    1, CAT_GAME
+    .quad nameUnrealJLogs,  pathUnrealJLogs,  riskLow,    1, CAT_GAME
+    .quad nameNodeJModules, pathNodeJModules, riskLow,    1, CAT_DEV
+    .quad nameAndroidJGradle,pathAndroidJGradle,riskLow, 1, CAT_DEV
     .quad 0, 0, 0, 0, 0
 
 .section .bss
