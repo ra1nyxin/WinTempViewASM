@@ -3421,6 +3421,54 @@ nameXMindCNCache:  .asciz "XMind cache"
 pathXMindCNCache:  .asciz "%APPDATA%\\XMind\\Cache"
 nameXMindCNLogs:   .asciz "XMind logs"
 pathXMindCNLogs:   .asciz "%APPDATA%\\XMind\\logs"
+nameFoxmailCache:  .asciz "Foxmail cache"
+pathFoxmailCache:  .asciz "%APPDATA%\\Tencent\\Foxmail\\Cache"
+nameFoxmailLogs:   .asciz "Foxmail logs"
+pathFoxmailLogs:   .asciz "%APPDATA%\\Tencent\\Foxmail\\logs"
+nameAliWangwangCache:.asciz "AliWangwang cache"
+pathAliWangwangCache:.asciz "%APPDATA%\\AliWangwang\\Cache"
+nameAliWangwangLogs:.asciz "AliWangwang logs"
+pathAliWangwangLogs:.asciz "%APPDATA%\\AliWangwang\\logs"
+nameClassInCache:  .asciz "ClassIn cache"
+pathClassInCache:  .asciz "%APPDATA%\\ClassIn\\Cache"
+nameClassInLogs:   .asciz "ClassIn logs"
+pathClassInLogs:   .asciz "%APPDATA%\\ClassIn\\logs"
+nameTencentClassroomCache:.asciz "Tencent Classroom cache"
+pathTencentClassroomCache:.asciz "%APPDATA%\\Tencent\\TXEDU\\Cache"
+nameTencentClassroomLogs:.asciz "Tencent Classroom logs"
+pathTencentClassroomLogs:.asciz "%APPDATA%\\Tencent\\TXEDU\\logs"
+nameChaoxingCache: .asciz "Chaoxing cache"
+pathChaoxingCache: .asciz "%APPDATA%\\Chaoxing\\Cache"
+nameChaoxingLogs:  .asciz "Chaoxing logs"
+pathChaoxingLogs:  .asciz "%APPDATA%\\Chaoxing\\logs"
+nameSeewoCache:    .asciz "Seewo cache"
+pathSeewoCache:    .asciz "%APPDATA%\\Seewo\\Cache"
+nameSeewoLogs:     .asciz "Seewo logs"
+pathSeewoLogs:     .asciz "%APPDATA%\\Seewo\\logs"
+nameYoudaoCourseCache:.asciz "Youdao Course cache"
+pathYoudaoCourseCache:.asciz "%APPDATA%\\Youdao\\Course\\Cache"
+nameYoudaoCourseLogs:.asciz "Youdao Course logs"
+pathYoudaoCourseLogs:.asciz "%APPDATA%\\Youdao\\Course\\logs"
+nameLanhuCache:    .asciz "Lanhu cache"
+pathLanhuCache:    .asciz "%APPDATA%\\Lanhu\\Cache"
+nameLanhuLogs:     .asciz "Lanhu logs"
+pathLanhuLogs:     .asciz "%APPDATA%\\Lanhu\\logs"
+namePixsoCache:    .asciz "Pixso cache"
+pathPixsoCache:    .asciz "%APPDATA%\\Pixso\\Cache"
+namePixsoCode:     .asciz "Pixso Code Cache"
+pathPixsoCode:     .asciz "%APPDATA%\\Pixso\\Code Cache"
+nameMasterGoCache: .asciz "MasterGo cache"
+pathMasterGoCache: .asciz "%APPDATA%\\MasterGo\\Cache"
+nameMasterGoCode:  .asciz "MasterGo Code Cache"
+pathMasterGoCode:  .asciz "%APPDATA%\\MasterGo\\Code Cache"
+nameEastMoneyCache:.asciz "EastMoney cache"
+pathEastMoneyCache:.asciz "%APPDATA%\\EastMoney\\Cache"
+nameEastMoneyLogs: .asciz "EastMoney logs"
+pathEastMoneyLogs: .asciz "%APPDATA%\\EastMoney\\logs"
+nameTongHuaShunCache:.asciz "TongHuaShun cache"
+pathTongHuaShunCache:.asciz "%APPDATA%\\10jqka\\Cache"
+nameTongHuaShunLogs:.asciz "TongHuaShun logs"
+pathTongHuaShunLogs:.asciz "%APPDATA%\\10jqka\\logs"
 
 nameWeChatFiles:   .asciz "微信文档聊天数据根目录"
 pathWeChatFiles:   .asciz "%USERPROFILE%\\Documents\\WeChat Files"
@@ -3462,6 +3510,26 @@ nameTencentMeetingLogs:.asciz "Tencent Meeting logs"
 pathTencentMeetingLogs:.asciz "%APPDATA%\\Tencent\\WeMeet\\Logs"
 nameTencentMeetingCache:.asciz "Tencent Meeting cache"
 pathTencentMeetingCache:.asciz "%LOCALAPPDATA%\\Tencent\\WeMeet\\Cache"
+nameWeChatDevToolsCache:.asciz "WeChat DevTools cache"
+pathWeChatDevToolsCache:.asciz "%APPDATA%\\Tencent\\微信开发者工具\\Cache"
+nameWeChatDevToolsLogs:.asciz "WeChat DevTools logs"
+pathWeChatDevToolsLogs:.asciz "%APPDATA%\\Tencent\\微信开发者工具\\logs"
+nameWeChatDevToolsGpu:.asciz "WeChat DevTools GPUCache"
+pathWeChatDevToolsGpu:.asciz "%APPDATA%\\Tencent\\微信开发者工具\\GPUCache"
+nameHBuilderXCache:.asciz "HBuilderX cache"
+pathHBuilderXCache:.asciz "%APPDATA%\\HBuilder X\\Cache"
+nameHBuilderXCode:.asciz "HBuilderX Code Cache"
+pathHBuilderXCode:.asciz "%APPDATA%\\HBuilder X\\Code Cache"
+nameHBuilderXLogs:.asciz "HBuilderX logs"
+pathHBuilderXLogs:.asciz "%APPDATA%\\HBuilder X\\logs"
+nameDevEcoCache:   .asciz "DevEco Studio cache"
+pathDevEcoCache:   .asciz "%LOCALAPPDATA%\\Huawei\\DevEcoStudio"
+nameDevEcoLogs:    .asciz "DevEco Studio logs"
+pathDevEcoLogs:    .asciz "%APPDATA%\\Huawei\\DevEcoStudio\\logs"
+nameTaroCache:     .asciz "Taro cache"
+pathTaroCache:     .asciz "%USERPROFILE%\\.taro"
+nameUniappCache:   .asciz "uni-app cache"
+pathUniappCache:   .asciz "%USERPROFILE%\\.dcloud"
 
 nameNpm:           .asciz "npm 缓存"
 pathNpm:           .asciz "%APPDATA%\\npm-cache"
@@ -4092,6 +4160,30 @@ targetTable:
     .quad nameYuqueLogs,    pathYuqueLogs,    riskLow,   1, CAT_APP
     .quad nameXMindCNCache, pathXMindCNCache, riskLow,   1, CAT_APP
     .quad nameXMindCNLogs,  pathXMindCNLogs,  riskLow,   1, CAT_APP
+    .quad nameFoxmailCache, pathFoxmailCache, riskLow,   1, CAT_APP
+    .quad nameFoxmailLogs,  pathFoxmailLogs,  riskLow,   1, CAT_APP
+    .quad nameAliWangwangCache,pathAliWangwangCache,riskLow,1, CAT_APP
+    .quad nameAliWangwangLogs,pathAliWangwangLogs,riskLow,1, CAT_APP
+    .quad nameClassInCache, pathClassInCache, riskLow,   1, CAT_APP
+    .quad nameClassInLogs,  pathClassInLogs,  riskLow,   1, CAT_APP
+    .quad nameTencentClassroomCache,pathTencentClassroomCache,riskLow,1, CAT_APP
+    .quad nameTencentClassroomLogs,pathTencentClassroomLogs,riskLow,1, CAT_APP
+    .quad nameChaoxingCache,pathChaoxingCache,riskLow,   1, CAT_APP
+    .quad nameChaoxingLogs, pathChaoxingLogs, riskLow,   1, CAT_APP
+    .quad nameSeewoCache,   pathSeewoCache,   riskLow,   1, CAT_APP
+    .quad nameSeewoLogs,    pathSeewoLogs,    riskLow,   1, CAT_APP
+    .quad nameYoudaoCourseCache,pathYoudaoCourseCache,riskLow,1, CAT_APP
+    .quad nameYoudaoCourseLogs,pathYoudaoCourseLogs,riskLow,1, CAT_APP
+    .quad nameLanhuCache,   pathLanhuCache,   riskLow,   1, CAT_APP
+    .quad nameLanhuLogs,    pathLanhuLogs,    riskLow,   1, CAT_APP
+    .quad namePixsoCache,   pathPixsoCache,   riskLow,   1, CAT_APP
+    .quad namePixsoCode,    pathPixsoCode,    riskLow,   1, CAT_APP
+    .quad nameMasterGoCache,pathMasterGoCache,riskLow,   1, CAT_APP
+    .quad nameMasterGoCode, pathMasterGoCode, riskLow,   1, CAT_APP
+    .quad nameEastMoneyCache,pathEastMoneyCache,riskLow, 1, CAT_APP
+    .quad nameEastMoneyLogs,pathEastMoneyLogs,riskLow,   1, CAT_APP
+    .quad nameTongHuaShunCache,pathTongHuaShunCache,riskLow,1, CAT_APP
+    .quad nameTongHuaShunLogs,pathTongHuaShunLogs,riskLow,1, CAT_APP
     .quad namePowerToysLogs,pathPowerToysLogs,riskLow,    1, CAT_APP
     .quad nameOneDriveLogs, pathOneDriveLogs, riskLow,    1, CAT_APP
     .quad nameOfficeCache,  pathOfficeCache,  riskLow,    1, CAT_APP
@@ -4125,6 +4217,16 @@ targetTable:
     .quad nameWeComLogs,    pathWeComLogs,    riskLow,    1, CAT_CHAT
     .quad nameTencentMeetingLogs,pathTencentMeetingLogs,riskLow,1, CAT_CHAT
     .quad nameTencentMeetingCache,pathTencentMeetingCache,riskLow,1, CAT_CHAT
+    .quad nameWeChatDevToolsCache,pathWeChatDevToolsCache,riskLow,1, CAT_DEV
+    .quad nameWeChatDevToolsLogs,pathWeChatDevToolsLogs,riskLow,1, CAT_DEV
+    .quad nameWeChatDevToolsGpu,pathWeChatDevToolsGpu,riskLow,1, CAT_DEV
+    .quad nameHBuilderXCache,pathHBuilderXCache,riskLow, 1, CAT_DEV
+    .quad nameHBuilderXCode,pathHBuilderXCode,riskLow,   1, CAT_DEV
+    .quad nameHBuilderXLogs,pathHBuilderXLogs,riskLow,   1, CAT_DEV
+    .quad nameDevEcoCache,  pathDevEcoCache,  riskLow,   1, CAT_DEV
+    .quad nameDevEcoLogs,   pathDevEcoLogs,   riskLow,   1, CAT_DEV
+    .quad nameTaroCache,    pathTaroCache,    riskLow,   1, CAT_DEV
+    .quad nameUniappCache,  pathUniappCache,  riskLow,   1, CAT_DEV
     .quad nameNpm,          pathNpm,          riskLow,    1, CAT_DEV
     .quad namePip,          pathPip,          riskLow,    1, CAT_DEV
     .quad nameNuget,        pathNuget,        riskHigh,   1, CAT_DEV
