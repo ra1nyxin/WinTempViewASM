@@ -37,9 +37,12 @@
 .equ ID_DRYRUN, 1002
 .equ ID_STOP, 1003
 .equ ID_CLEAN, 1004
-.equ LOG_LIMIT, 65500
+.equ LOG_LIMIT, 28000
 .equ EM_SETSEL, 0x00b1
 .equ EM_SCROLLCARET, 0x00b7
+.equ EM_LIMITTEXT, 0x00c5
+.equ WM_VSCROLL, 0x0115
+.equ SB_BOTTOM, 7
 
 .extern RegisterClassExW
 .extern CreateWindowExW
@@ -507,6 +510,14 @@ WndProc:
     mov r9d, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY
     call CreateWindowExW
     mov qword ptr hwndLog[rip], rax
+    test rax, rax
+    jz .log_limit_done
+    mov rcx, rax
+    mov edx, EM_LIMITTEXT
+    mov r8d, LOG_LIMIT
+    xor r9d, r9d
+    call SendMessageW
+.log_limit_done:
 
     call InitUiFont
     lea rcx, dbgFontReady[rip]
@@ -545,6 +556,13 @@ WndProc:
     jmp .wnd_exit
 
 .do_clean:
+    cmp qword ptr hWorker[rip], 0
+    je .clean_confirm
+    mov ecx, 3
+    call StartWorker
+    xor eax, eax
+    jmp .wnd_exit
+.clean_confirm:
     call ConfirmClean
     cmp eax, IDYES
     jne .clean_cancel
@@ -555,8 +573,11 @@ WndProc:
     jmp .wnd_exit
 
 .do_stop:
+    cmp qword ptr hWorker[rip], 0
+    je .stop_idle
     mov qword ptr scanCancel[rip], 1
     call MarkStopRequested
+.stop_idle:
     xor eax, eax
     jmp .wnd_exit
 
@@ -1361,6 +1382,9 @@ MarkStopRequested:
     mov rcx, qword ptr hwndStop[rip]
     lea rdx, stoppingButtonTextW[rip]
     call SetTextIfHwnd
+    mov rcx, qword ptr hwndStop[rip]
+    xor edx, edx
+    call EnableWindowIfHwnd
     add rsp, 40
     ret
 
@@ -2755,6 +2779,11 @@ RefreshLog:
     mov rcx, qword ptr hwndLog[rip]
     mov edx, EM_SCROLLCARET
     xor r8d, r8d
+    xor r9d, r9d
+    call SendMessageW
+    mov rcx, qword ptr hwndLog[rip]
+    mov edx, WM_VSCROLL
+    mov r8d, SB_BOTTOM
     xor r9d, r9d
     call SendMessageW
 .refresh_done:
