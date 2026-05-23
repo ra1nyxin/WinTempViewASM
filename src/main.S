@@ -37,7 +37,7 @@
 .equ ID_DRYRUN, 1002
 .equ ID_STOP, 1003
 .equ ID_CLEAN, 1004
-.equ LOG_LIMIT, 65000
+.equ LOG_LIMIT, 2090000
 .equ EM_SETSEL, 0x00b1
 .equ EM_SCROLLCARET, 0x00b7
 .equ EM_LIMITTEXT, 0x00c5
@@ -2822,7 +2822,7 @@ RefreshLog:
     xor ebx, ebx
 .refresh_copy_line:
     cmp ebx, 4094
-    jae .refresh_line_ready
+    jae .refresh_skip_long_line
     mov al, byte ptr [rsi]
     test al, al
     jz .refresh_line_ready
@@ -2839,6 +2839,14 @@ RefreshLog:
     jmp .refresh_copy_line
 .refresh_line_ready_lf:
     inc rsi
+    jmp .refresh_line_ready
+.refresh_skip_long_line:
+    mov al, byte ptr [rsi]
+    test al, al
+    jz .refresh_line_ready
+    inc rsi
+    cmp al, 10
+    jne .refresh_skip_long_line
 .refresh_line_ready:
     mov byte ptr [rdi + rbx], 0
     lea rcx, logLineBuffer[rip]
@@ -6291,7 +6299,7 @@ sizeDecimalBuffer:.skip 4
 progressNumberBuffer:.skip 32
 progressBuffer:.skip 512
 progressWide:.skip 1024
-logBuffer:   .skip 65536
-logWide:     .skip 131072
+logBuffer:   .skip 2097152
+logWide:     .skip 4194304
 logLineBuffer:.skip 4096
 logLineWide:  .skip 8192
