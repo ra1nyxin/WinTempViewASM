@@ -26,66 +26,66 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path build | Out-Null
           $log = "build\actions-build-log.md"
-          $initialLog = @"
-          ## Actions build log
-
-          ```text
-          Workflow: $env:GITHUB_WORKFLOW
-          Run ID: $env:GITHUB_RUN_ID
-          Run number: $env:GITHUB_RUN_NUMBER
-          Repository: $env:GITHUB_REPOSITORY
-          Ref: $env:GITHUB_REF
-          SHA: $env:GITHUB_SHA
-          Runner label: windows-2022
-          Checkout action: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-          Runner OS: $env:RUNNER_OS
-          Runner arch: $env:RUNNER_ARCH
-          Runner name: $env:RUNNER_NAME
-          Runner environment: $env:RUNNER_ENVIRONMENT
-          Workspace: $env:GITHUB_WORKSPACE
-          Started UTC: $((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"))
-          ```
-
-          ## PowerShell
-
-          ```text
-          $($PSVersionTable | Out-String -Width 240)
-          ```
-
-          ## Operating system
-
-          ```text
-          $(Get-CimInstance Win32_OperatingSystem | Select-Object Caption,Version,BuildNumber,OSArchitecture,InstallDate,LastBootUpTime | Format-List | Out-String -Width 240)
-          ```
-
-          ## Environment variables
-
-          Sensitive environment variables matching token/secret/password/key/auth are filtered before writing public release notes.
-
-          ```text
-          $(
-            Get-ChildItem Env: |
-              Where-Object { $_.Name -notmatch '(?i)(token|secret|password|passwd|credential|private|key|auth)' } |
-              Sort-Object Name |
-              Format-Table -AutoSize |
-              Out-String -Width 240
-          )
-          ```
-          "@
-          $initialLog | Set-Content -Path $log -Encoding utf8
+          $startedUtc = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ")
+          $psInfo = $PSVersionTable | Out-String -Width 240
+          $osInfo = Get-CimInstance Win32_OperatingSystem | Select-Object Caption,Version,BuildNumber,OSArchitecture,InstallDate,LastBootUpTime | Format-List | Out-String -Width 240
+          $envInfo = Get-ChildItem Env: |
+            Where-Object { $_.Name -notmatch '(?i)(token|secret|password|passwd|credential|private|key|auth)' } |
+            Sort-Object Name |
+            Format-Table -AutoSize |
+            Out-String -Width 240
+          @(
+            '## Actions build log'
+            ''
+            '```text'
+            "Workflow: $env:GITHUB_WORKFLOW"
+            "Run ID: $env:GITHUB_RUN_ID"
+            "Run number: $env:GITHUB_RUN_NUMBER"
+            "Repository: $env:GITHUB_REPOSITORY"
+            "Ref: $env:GITHUB_REF"
+            "SHA: $env:GITHUB_SHA"
+            'Runner label: windows-2022'
+            'Checkout action: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5'
+            "Runner OS: $env:RUNNER_OS"
+            "Runner arch: $env:RUNNER_ARCH"
+            "Runner name: $env:RUNNER_NAME"
+            "Runner environment: $env:RUNNER_ENVIRONMENT"
+            "Workspace: $env:GITHUB_WORKSPACE"
+            "Started UTC: $startedUtc"
+            '```'
+            ''
+            '## PowerShell'
+            ''
+            '```text'
+            $psInfo
+            '```'
+            ''
+            '## Operating system'
+            ''
+            '```text'
+            $osInfo
+            '```'
+            ''
+            '## Environment variables'
+            ''
+            'Sensitive environment variables matching token/secret/password/key/auth are filtered before writing public release notes.'
+            ''
+            '```text'
+            $envInfo
+            '```'
+          ) | Set-Content -Path $log -Encoding utf8
 
       - name: Prepare MinGW-w64
         shell: pwsh
         run: |
           $log = "build\actions-build-log.md"
-          $section = @"
-
-          ## Prepare MinGW-w64
-
-          ```text
-          MinGW bin: C:\msys64\mingw64\bin
-          "@
-          $section | Add-Content -Path $log -Encoding utf8
+          @(
+            ''
+            '## Prepare MinGW-w64'
+            ''
+            '```text'
+            'MinGW bin: C:\msys64\mingw64\bin'
+          ) | Add-Content -Path $log -Encoding utf8
           $mingwBin = "C:\msys64\mingw64\bin"
           if (-not (Test-Path "$mingwBin\gcc.exe")) {
             "gcc.exe not found, installing mingw-w64-x86_64-gcc" | Tee-Object -FilePath $log -Append
@@ -119,14 +119,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $log = "build\actions-build-log.md"
-          $section = @"
-
-          ## Compute next release version
-
-          ```text
-          gh release list --limit 100 --json tagName --jq '.[].tagName'
-          "@
-          $section | Add-Content -Path $log -Encoding utf8
+          @(
+            ''
+            '## Compute next release version'
+            ''
+            '```text'
+            "gh release list --limit 100 --json tagName --jq '.[].tagName'"
+          ) | Add-Content -Path $log -Encoding utf8
           $maxPatch = -1
           $tags = gh release list --limit 100 --json tagName --jq '.[].tagName'
           if ($LASTEXITCODE -ne 0) {
@@ -155,18 +154,17 @@ jobs:
         shell: pwsh
         run: |
           $log = "build\actions-build-log.md"
-          $section = @"
-
-          ## Build static optimized executable
-
-          ```text
-          cd src
-          windres app.rc -O coff -o app.res.o
-          cd ..
-          gcc -O2 -s -static -static-libgcc -nostdlib -mwindows "-Wl,-e,WinMainCRTStartup" -o winTempView.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32
-
-          "@
-          $section | Add-Content -Path $log -Encoding utf8
+          @(
+            ''
+            '## Build static optimized executable'
+            ''
+            '```text'
+            'cd src'
+            'windres app.rc -O coff -o app.res.o'
+            'cd ..'
+            'gcc -O2 -s -static -static-libgcc -nostdlib -mwindows "-Wl,-e,WinMainCRTStartup" -o winTempView.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32'
+            ''
+          ) | Add-Content -Path $log -Encoding utf8
           Push-Location src
           windres app.rc -O coff -o app.res.o 2>&1 | Tee-Object -FilePath "..\build\actions-build-log.md" -Append
           if ($LASTEXITCODE -ne 0) {
