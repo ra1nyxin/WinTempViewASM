@@ -510,16 +510,16 @@ WndProc:
     mov qword ptr [rsp + 80], rax
     mov qword ptr [rsp + 88], 0
     xor ecx, ecx
-    lea rdx, listboxClassW[rip]
+    lea rdx, editClassW[rip]
     lea r8, emptyStringW[rip]
-    mov r9d, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_HSCROLL | LBS_NOINTEGRALHEIGHT
+    mov r9d, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY
     call CreateWindowExW
     mov qword ptr hwndLog[rip], rax
     test rax, rax
     jz .log_extent_done
     mov rcx, rax
-    mov edx, LB_SETHORIZONTALEXTENT
-    mov r8d, 2400
+    mov edx, EM_LIMITTEXT
+    mov r8d, 2090000
     xor r9d, r9d
     call SendMessageW
 .log_extent_done:
@@ -806,6 +806,17 @@ DebugLogRaw:
 .dlr_done:
     add rsp, 32
     pop rsi
+    ret
+
+DebugDumpResultLog:
+    sub rsp, 40
+    lea rcx, dbgResultDumpBegin[rip]
+    call DebugLogRaw
+    lea rcx, logBuffer[rip]
+    call DebugLogRaw
+    lea rcx, dbgResultDumpEnd[rip]
+    call DebugLogRaw
+    add rsp, 40
     ret
 
 DebugLogWriteBytes:
@@ -1326,6 +1337,7 @@ WorkerProc:
     call DebugLogRaw
     call BuildCleanLog
 .wp_post:
+    call DebugDumpResultLog
     lea rcx, dbgWorkerBuildDone[rip]
     call DebugLogRaw
     mov rcx, qword ptr hMain[rip]
@@ -2798,88 +2810,39 @@ RollLogBuffer:
     ret
 
 RefreshLog:
-    push rbx
-    push rsi
-    push rdi
-    sub rsp, 48
+    sub rsp, 40
     mov rcx, qword ptr hwndLog[rip]
     test rcx, rcx
     jz .refresh_done
 
-    mov rcx, qword ptr hwndLog[rip]
-    mov edx, LB_RESETCONTENT
-    xor r8d, r8d
-    xor r9d, r9d
-    call SendMessageW
-
-    lea rsi, logBuffer[rip]
-.refresh_line_loop:
-    mov al, byte ptr [rsi]
-    test al, al
-    jz .refresh_scroll_bottom
-
-    lea rdi, logLineBuffer[rip]
-    xor ebx, ebx
-.refresh_copy_line:
-    cmp ebx, 4094
-    jae .refresh_skip_long_line
-    mov al, byte ptr [rsi]
-    test al, al
-    jz .refresh_line_ready
-    cmp al, 13
-    je .refresh_skip_cr
-    cmp al, 10
-    je .refresh_line_ready_lf
-    mov byte ptr [rdi + rbx], al
-    inc ebx
-    inc rsi
-    jmp .refresh_copy_line
-.refresh_skip_cr:
-    inc rsi
-    jmp .refresh_copy_line
-.refresh_line_ready_lf:
-    inc rsi
-    jmp .refresh_line_ready
-.refresh_skip_long_line:
-    mov al, byte ptr [rsi]
-    test al, al
-    jz .refresh_line_ready
-    inc rsi
-    cmp al, 10
-    jne .refresh_skip_long_line
-.refresh_line_ready:
-    mov byte ptr [rdi + rbx], 0
-    lea rcx, logLineBuffer[rip]
-    lea rdx, logLineWide[rip]
-    mov r8d, 4096
+    lea rcx, logBuffer[rip]
+    lea rdx, logWide[rip]
+    mov r8d, 2097152
     call ConvertUtf8ToWide
-    cmp word ptr logLineWide[rip], 0
-    jne .refresh_add_line
-    cmp byte ptr logLineBuffer[rip], 0
-    je .refresh_add_line
+    cmp word ptr logWide[rip], 0
+    jne .refresh_set_text
+    cmp byte ptr logBuffer[rip], 0
+    je .refresh_set_text
     lea rcx, logLineFallback[rip]
-    lea rdx, logLineWide[rip]
-    mov r8d, 4096
+    lea rdx, logWide[rip]
+    mov r8d, 2097152
     call ConvertUtf8ToWide
-.refresh_add_line:
+.refresh_set_text:
     mov rcx, qword ptr hwndLog[rip]
-    mov edx, LB_ADDSTRING
-    xor r8d, r8d
-    lea r9, logLineWide[rip]
+    lea rdx, logWide[rip]
+    call SetWindowTextW
+    mov rcx, qword ptr hwndLog[rip]
+    mov edx, EM_SETSEL
+    mov r8, -1
+    mov r9, -1
     call SendMessageW
-    jmp .refresh_line_loop
-
-.refresh_scroll_bottom:
     mov rcx, qword ptr hwndLog[rip]
-    mov edx, WM_VSCROLL
-    mov r8d, SB_BOTTOM
+    mov edx, EM_SCROLLCARET
+    xor r8d, r8d
     xor r9d, r9d
     call SendMessageW
 .refresh_done:
-    add rsp, 48
-    pop rdi
-    pop rsi
-    pop rbx
+    add rsp, 40
     ret
 
 RefreshProgressText:
@@ -3042,6 +3005,8 @@ dbgWorkerDryRun:   .asciz "[worker] BuildDryRunLog"
 dbgWorkerClean:    .asciz "[worker] BuildCleanLog"
 dbgWorkerBuildDone:.asciz "[worker] build routine returned"
 dbgWorkerPostedDone:.asciz "[worker] WM_SCAN_DONE posted"
+dbgResultDumpBegin:.asciz "[result] begin"
+dbgResultDumpEnd:  .asciz "[result] end"
 dbgWmScanDone:     .asciz "[ui] WM_SCAN_DONE received"
 dbgFinishWorkerEnter:.asciz "[ui] FinishWorker enter"
 dbgFinishWorkerDone:.asciz "[ui] FinishWorker done"
