@@ -42,6 +42,7 @@
 .equ UI_TAIL_BYTES, 180000
 .equ UI_FILE_READ_LIMIT, 240000
 .equ UI_TAIL_LF_SCAN, 301
+.equ WM_GETTEXTLENGTH, 0x000e
 .equ EM_SETSEL, 0x00b1
 .equ EM_SCROLLCARET, 0x00b7
 .equ EM_LIMITTEXT, 0x00c5
@@ -2912,9 +2913,19 @@ RefreshLog:
     lea rdx, logWide[rip]
     call SetWindowTextW
     mov rcx, qword ptr hwndLog[rip]
+    mov edx, WM_GETTEXTLENGTH
+    xor r8d, r8d
+    xor r9d, r9d
+    call SendMessageW
+    mov r8, rax
+    mov r9, rax
+    mov rcx, qword ptr hwndLog[rip]
     mov edx, EM_SETSEL
-    mov r8, -1
-    mov r9, -1
+    call SendMessageW
+    mov rcx, qword ptr hwndLog[rip]
+    mov edx, WM_VSCROLL
+    mov r8d, SB_BOTTOM
+    xor r9d, r9d
     call SendMessageW
     mov rcx, qword ptr hwndLog[rip]
     mov edx, EM_SCROLLCARET
@@ -2950,8 +2961,6 @@ BuildUiLogPreview:
     lea rcx, uiPreviewPathMissing[rip]
     call AppendUiLine
 .bul_have_path:
-    lea rcx, uiPreviewTailNote[rip]
-    call AppendUiLine
     lea rcx, dividerLine[rip]
     call AppendUiLine
     call AppendLogFilePreviewToUi
@@ -3410,7 +3419,6 @@ logLineFallback:   .asciz "[显示] 当前行包含无法转换的文本，已�
 uiPreviewTitle:    .asciz "界面仅显示摘要和最新结果尾部；完整结果以本次启动日志为准。"
 uiPreviewPathPrefix:.asciz "日志文件："
 uiPreviewPathMissing:.asciz "当前日志路径不可用或日志文件创建失败。"
-uiPreviewTailNote: .asciz "日志较小时显示最新完整结果；日志较大时显示最后约 300 行或最后约 180KB："
 uiPreviewMemoryFallback:.asciz "日志文件读取失败，下面显示内存结果尾部预览："
 zeroText:          .asciz "0"
 policyEnabledText: .asciz "默认清理:开"
