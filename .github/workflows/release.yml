@@ -15,22 +15,100 @@ concurrency:
 
 jobs:
   build-and-release:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Initialize build log
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build | Out-Null
+          $log = "build\actions-build-log.md"
+          @"
+          ## Actions build log
+
+          ```text
+          Workflow: $env:GITHUB_WORKFLOW
+          Run ID: $env:GITHUB_RUN_ID
+          Run number: $env:GITHUB_RUN_NUMBER
+          Repository: $env:GITHUB_REPOSITORY
+          Ref: $env:GITHUB_REF
+          SHA: $env:GITHUB_SHA
+          Runner label: windows-2022
+          Checkout action: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+          Runner OS: $env:RUNNER_OS
+          Runner arch: $env:RUNNER_ARCH
+          Runner name: $env:RUNNER_NAME
+          Runner environment: $env:RUNNER_ENVIRONMENT
+          Workspace: $env:GITHUB_WORKSPACE
+          Started UTC: $((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"))
+          ```
+
+          ## PowerShell
+
+          ```text
+          $($PSVersionTable | Out-String -Width 240)
+          ```
+
+          ## Operating system
+
+          ```text
+          $(Get-CimInstance Win32_OperatingSystem | Select-Object Caption,Version,BuildNumber,OSArchitecture,InstallDate,LastBootUpTime | Format-List | Out-String -Width 240)
+          ```
+
+          ## Environment variables
+
+          Sensitive environment variables matching token/secret/password/key/auth are filtered before writing public release notes.
+
+          ```text
+          $(
+            Get-ChildItem Env: |
+              Where-Object { $_.Name -notmatch '(?i)(token|secret|password|passwd|credential|private|key|auth)' } |
+              Sort-Object Name |
+              Format-Table -AutoSize |
+              Out-String -Width 240
+          )
+          ```
+          "@ | Set-Content -Path $log -Encoding utf8
 
       - name: Prepare MinGW-w64
         shell: pwsh
         run: |
+          $log = "build\actions-build-log.md"
+          @"
+
+          ## Prepare MinGW-w64
+
+          ```text
+          MinGW bin: C:\msys64\mingw64\bin
+          "@ | Add-Content -Path $log -Encoding utf8
           $mingwBin = "C:\msys64\mingw64\bin"
           if (-not (Test-Path "$mingwBin\gcc.exe")) {
-            C:\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm --needed mingw-w64-x86_64-gcc"
+            "gcc.exe not found, installing mingw-w64-x86_64-gcc" | Tee-Object -FilePath $log -Append
+            C:\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm --needed mingw-w64-x86_64-gcc" 2>&1 | Tee-Object -FilePath $log -Append
+            if ($LASTEXITCODE -ne 0) {
+              throw "pacman install failed with exit code $LASTEXITCODE"
+            }
+          } else {
+            "gcc.exe already exists" | Tee-Object -FilePath $log -Append
           }
           $mingwBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          & "$mingwBin\gcc.exe" --version
-          & "$mingwBin\windres.exe" --version
+          "Added to GITHUB_PATH: $mingwBin" | Tee-Object -FilePath $log -Append
+          "" | Add-Content -Path $log -Encoding utf8
+          "gcc --version" | Tee-Object -FilePath $log -Append
+          & "$mingwBin\gcc.exe" --version 2>&1 | Tee-Object -FilePath $log -Append
+          if ($LASTEXITCODE -ne 0) {
+            throw "gcc --version failed with exit code $LASTEXITCODE"
+          }
+          "" | Add-Content -Path $log -Encoding utf8
+          "windres --version" | Tee-Object -FilePath $log -Append
+          & "$mingwBin\windres.exe" --version 2>&1 | Tee-Object -FilePath $log -Append
+          if ($LASTEXITCODE -ne 0) {
+            throw "windres --version failed with exit code $LASTEXITCODE"
+          }
+          "```" | Add-Content -Path $log -Encoding utf8
 
       - name: Compute next release version
         id: version
@@ -38,8 +116,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          $log = "build\actions-build-log.md"
+          @"
+
+          ## Compute next release version
+
+          ```text
+          gh release list --limit 100 --json tagName --jq '.[].tagName'
+          "@ | Add-Content -Path $log -Encoding utf8
           $maxPatch = -1
           $tags = gh release list --limit 100 --json tagName --jq '.[].tagName'
+          if ($LASTEXITCODE -ne 0) {
+            throw "gh release list failed with exit code $LASTEXITCODE"
+          }
+          $tags | Tee-Object -FilePath $log -Append
           foreach ($tag in $tags) {
             if ($tag -match '^v0\.1\.(\d+)$') {
               $patch = [int]$Matches[1]
@@ -55,19 +145,42 @@ jobs:
           $version = "v0.1.$nextPatch"
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
           "release_name=WinTempViewASM $version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          Write-Host "Next release: $version"
+          "Next release: $version" | Tee-Object -FilePath $log -Append
+          "```" | Add-Content -Path $log -Encoding utf8
 
       - name: Build static optimized executable
         shell: pwsh
         run: |
-          Push-Location src
+          $log = "build\actions-build-log.md"
+          @"
+
+          ## Build static optimized executable
+
+          ```text
+          cd src
           windres app.rc -O coff -o app.res.o
-          Pop-Location
+          cd ..
           gcc -O2 -s -static -static-libgcc -nostdlib -mwindows "-Wl,-e,WinMainCRTStartup" -o winTempView.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32
+
+          "@ | Add-Content -Path $log -Encoding utf8
+          Push-Location src
+          windres app.rc -O coff -o app.res.o 2>&1 | Tee-Object -FilePath "..\build\actions-build-log.md" -Append
+          if ($LASTEXITCODE -ne 0) {
+            throw "windres failed with exit code $LASTEXITCODE"
+          }
+          Pop-Location
+          gcc -O2 -s -static -static-libgcc -nostdlib -mwindows "-Wl,-e,WinMainCRTStartup" -o winTempView.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32 2>&1 | Tee-Object -FilePath $log -Append
+          if ($LASTEXITCODE -ne 0) {
+            throw "gcc build failed with exit code $LASTEXITCODE"
+          }
           if (-not (Test-Path "winTempView.exe")) {
             throw "winTempView.exe was not generated"
           }
-          Get-Item winTempView.exe | Format-List Name,Length,LastWriteTime
+          Get-Item winTempView.exe | Format-List Name,Length,LastWriteTime | Out-String -Width 240 | Tee-Object -FilePath $log -Append
+          $sha256 = (Get-FileHash winTempView.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          "SHA256: $sha256" | Tee-Object -FilePath $log -Append
+          "Finished UTC: $((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"))" | Tee-Object -FilePath $log -Append
+          "```" | Add-Content -Path $log -Encoding utf8
 
       - name: Create GitHub Release
         shell: pwsh
@@ -76,6 +189,7 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
           RELEASE_NAME: ${{ steps.version.outputs.release_name }}
         run: |
+          $buildLog = Get-Content "build\actions-build-log.md" -Raw
           $notes = @"
           Automated release for $env:VERSION from main commit $env:GITHUB_SHA.
 
@@ -84,5 +198,8 @@ jobs:
 
           Asset:
           - winTempView.exe
+
+          $buildLog
           "@
-          gh release create $env:VERSION winTempView.exe --title "$env:RELEASE_NAME" --notes "$notes" --target "$env:GITHUB_SHA"
+          $notes | Set-Content -Path "build\release-notes.md" -Encoding utf8
+          gh release create $env:VERSION winTempView.exe --title "$env:RELEASE_NAME" --notes-file "build\release-notes.md" --target "$env:GITHUB_SHA"
