@@ -3063,7 +3063,7 @@ catGameText:       .asciz "游戏平台"
 catMediaText:      .asciz "媒体工具"
 catRecycleText:    .asciz "回收站"
 confirmCleanTitle: .asciz "确认执行清理"
-confirmCleanText:  .asciz "将真实删除默认开启、分类已勾选且路径安全的目标内容，不删除目标根目录本身。默认未勾选的分类需要你手动勾选后才会处理。"
+confirmCleanText:  .asciz "再次确认清理当前已勾选的内容"
 
 intro1:            .asciz "winTempView x64 汇编原型"
 intro2:            .asciz "当前版本支持扫描预估、按分类选择、以及真实清理。"
