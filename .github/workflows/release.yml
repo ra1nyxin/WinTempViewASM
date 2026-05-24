@@ -110,7 +110,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             throw "windres --version failed with exit code $LASTEXITCODE"
           }
-          "```" | Add-Content -Path $log -Encoding utf8
+          '```' | Add-Content -Path $log -Encoding utf8
 
       - name: Compute next release version
         id: version
@@ -149,7 +149,7 @@ jobs:
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
           "release_name=WinTempViewASM $version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
           "Next release: $version" | Tee-Object -FilePath $log -Append
-          "```" | Add-Content -Path $log -Encoding utf8
+          '```' | Add-Content -Path $log -Encoding utf8
 
       - name: Build static optimized executable
         shell: pwsh
@@ -184,7 +184,7 @@ jobs:
           $sha256 = (Get-FileHash winTempView.exe -Algorithm SHA256).Hash.ToLowerInvariant()
           "SHA256: $sha256" | Tee-Object -FilePath $log -Append
           "Finished UTC: $((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"))" | Tee-Object -FilePath $log -Append
-          "```" | Add-Content -Path $log -Encoding utf8
+          '```' | Add-Content -Path $log -Encoding utf8
 
       - name: Create GitHub Release
         shell: pwsh
