@@ -38,6 +38,10 @@
 .equ ID_STOP, 1003
 .equ ID_CLEAN, 1004
 .equ LOG_LIMIT, 2090000
+.equ UI_LOG_LIMIT, 262000
+.equ UI_TAIL_BYTES, 180000
+.equ UI_FILE_READ_LIMIT, 240000
+.equ UI_TAIL_LF_SCAN, 301
 .equ EM_SETSEL, 0x00b1
 .equ EM_SCROLLCARET, 0x00b7
 .equ EM_LIMITTEXT, 0x00c5
@@ -83,7 +87,9 @@
 .extern GetLocalTime
 .extern CreateFileW
 .extern WriteFile
+.extern ReadFile
 .extern FlushFileBuffers
+.extern SetFilePointerEx
 .extern GetModuleHandleW
 .extern ExitProcess
 
@@ -102,8 +108,13 @@
 .equ FILE_ATTRIBUTE_DIRECTORY, 0x10
 .equ FILE_ATTRIBUTE_REPARSE_POINT, 0x400
 .equ GENERIC_WRITE, 0x40000000
+.equ GENERIC_READ, 0x80000000
 .equ FILE_SHARE_READ, 1
+.equ FILE_SHARE_WRITE, 2
 .equ CREATE_ALWAYS, 2
+.equ OPEN_EXISTING, 3
+.equ FILE_BEGIN, 0
+.equ FILE_END, 2
 .equ FILE_ATTRIBUTE_NORMAL, 0x80
 .equ MAX_SCAN_DEPTH, 24
 .equ MAX_SCAN_ITEMS, 10000
@@ -127,7 +138,7 @@
 .globl WinMain
 
 WinMainCRTStartup:
-    sub rsp, 40
+    sub rsp, 56
     xor ecx, ecx
     call GetModuleHandleW
     mov rcx, rax
@@ -756,7 +767,7 @@ CloseDebugLog:
     call CloseHandle
     mov qword ptr hDebugLog[rip], 0
 .cdl_done:
-    add rsp, 40
+    add rsp, 56
     ret
 
 StopWorkerForExit:
@@ -816,6 +827,7 @@ DebugDumpResultLog:
     call DebugLogRaw
     lea rcx, dbgResultDumpEnd[rip]
     call DebugLogRaw
+    mov qword ptr logResultReady[rip], 1
     add rsp, 40
     ret
 
@@ -2687,6 +2699,7 @@ AppendFixed2:
 
 ResetLog:
     mov qword ptr logPos[rip], 0
+    mov qword ptr logResultReady[rip], 0
     lea rax, logBuffer[rip]
     mov byte ptr [rax], 0
     ret
@@ -2748,6 +2761,58 @@ AppendCRLF:
     mov qword ptr logPos[rip], rdx
 .crlf_done:
     add rsp, 40
+    ret
+
+ResetUiLog:
+    mov qword ptr uiLogPos[rip], 0
+    lea rax, uiLogBuffer[rip]
+    mov byte ptr [rax], 0
+    ret
+
+AppendUiLine:
+    sub rsp, 40
+    call AppendUiRaw
+    call AppendUiCRLF
+    add rsp, 40
+    ret
+
+AppendUiRaw:
+    sub rsp, 40
+.aui_loop:
+    mov al, byte ptr [rcx]
+    test al, al
+    jz .aui_done
+    mov rdx, qword ptr uiLogPos[rip]
+    cmp rdx, UI_LOG_LIMIT
+    jae .aui_done
+    lea r8, uiLogBuffer[rip]
+    add r8, rdx
+    mov byte ptr [r8], al
+    inc rcx
+    inc rdx
+    mov byte ptr [r8 + 1], 0
+    mov qword ptr uiLogPos[rip], rdx
+    jmp .aui_loop
+.aui_done:
+    mov rdx, qword ptr uiLogPos[rip]
+    lea r8, uiLogBuffer[rip]
+    add r8, rdx
+    mov byte ptr [r8], 0
+    add rsp, 40
+    ret
+
+AppendUiCRLF:
+    mov rdx, qword ptr uiLogPos[rip]
+    cmp rdx, UI_LOG_LIMIT - 2
+    ja .auic_done
+    lea r8, uiLogBuffer[rip]
+    add r8, rdx
+    mov byte ptr [r8], 13
+    mov byte ptr [r8 + 1], 10
+    mov byte ptr [r8 + 2], 0
+    add rdx, 2
+    mov qword ptr uiLogPos[rip], rdx
+.auic_done:
     ret
 
 RollLogBuffer:
@@ -2815,14 +2880,29 @@ RefreshLog:
     test rcx, rcx
     jz .refresh_done
 
+    cmp qword ptr logResultReady[rip], 1
+    jne .refresh_full_log
+    call BuildUiLogPreview
+    lea rcx, uiLogBuffer[rip]
+    jmp .refresh_convert
+
+.refresh_full_log:
     lea rcx, logBuffer[rip]
+.refresh_convert:
     lea rdx, logWide[rip]
     mov r8d, 2097152
     call ConvertUtf8ToWide
     cmp word ptr logWide[rip], 0
     jne .refresh_set_text
+    cmp qword ptr logResultReady[rip], 1
+    jne .refresh_check_full_empty
+    cmp byte ptr uiLogBuffer[rip], 0
+    je .refresh_set_text
+    jmp .refresh_fallback
+.refresh_check_full_empty:
     cmp byte ptr logBuffer[rip], 0
     je .refresh_set_text
+.refresh_fallback:
     lea rcx, logLineFallback[rip]
     lea rdx, logWide[rip]
     mov r8d, 2097152
@@ -2843,6 +2923,278 @@ RefreshLog:
     call SendMessageW
 .refresh_done:
     add rsp, 40
+    ret
+
+BuildUiLogPreview:
+    push rsi
+    sub rsp, 32
+    call ResetUiLog
+    lea rcx, uiPreviewTitle[rip]
+    call AppendUiLine
+    lea rcx, uiPreviewPathPrefix[rip]
+    call AppendUiRaw
+    cmp qword ptr hDebugLog[rip], 0
+    je .bul_no_path
+    cmp word ptr debugLogPathW[rip], 0
+    je .bul_no_path
+    lea rcx, debugLogPathW[rip]
+    lea rdx, pathBuffer[rip]
+    mov r8d, 4096
+    call ConvertWideToUtf8
+    cmp byte ptr pathBuffer[rip], 0
+    je .bul_no_path
+    lea rcx, pathBuffer[rip]
+    call AppendUiLine
+    jmp .bul_have_path
+.bul_no_path:
+    lea rcx, uiPreviewPathMissing[rip]
+    call AppendUiLine
+.bul_have_path:
+    lea rcx, uiPreviewTailNote[rip]
+    call AppendUiLine
+    lea rcx, dividerLine[rip]
+    call AppendUiLine
+    call AppendLogFilePreviewToUi
+    test eax, eax
+    jnz .bul_done
+    lea rcx, uiPreviewMemoryFallback[rip]
+    call AppendUiLine
+    lea rcx, dividerLine[rip]
+    call AppendUiLine
+    call FindLogTailStart
+    mov rsi, rax
+    mov rcx, rsi
+    call AppendUiRaw
+.bul_done:
+    add rsp, 32
+    pop rsi
+    ret
+
+AppendLogFilePreviewToUi:
+    push rbx
+    push rsi
+    push rdi
+    push r12
+    sub rsp, 56
+
+    xor eax, eax
+    cmp qword ptr hDebugLog[rip], 0
+    je .alf_done
+    cmp word ptr debugLogPathW[rip], 0
+    je .alf_done
+
+    mov rcx, qword ptr hDebugLog[rip]
+    call FlushFileBuffers
+
+    mov qword ptr [rsp + 32], OPEN_EXISTING
+    mov qword ptr [rsp + 40], FILE_ATTRIBUTE_NORMAL
+    mov qword ptr [rsp + 48], 0
+    lea rcx, debugLogPathW[rip]
+    mov edx, GENERIC_READ
+    mov r8d, FILE_SHARE_READ | FILE_SHARE_WRITE
+    xor r9d, r9d
+    call CreateFileW
+    cmp rax, INVALID_HANDLE_VALUE
+    je .alf_done
+    mov rbx, rax
+
+    mov rcx, rbx
+    xor edx, edx
+    lea r8, uiFileSize[rip]
+    mov r9d, FILE_END
+    call SetFilePointerEx
+    test eax, eax
+    jz .alf_close_fail
+
+    mov rax, qword ptr uiFileSize[rip]
+    test rax, rax
+    jz .alf_close_fail
+    xor r12d, r12d
+    mov rsi, rax
+    cmp rsi, UI_FILE_READ_LIMIT
+    jbe .alf_have_window
+    mov esi, UI_FILE_READ_LIMIT
+    mov r12, qword ptr uiFileSize[rip]
+    sub r12, rsi
+.alf_have_window:
+    mov rcx, rbx
+    mov rdx, r12
+    xor r8d, r8d
+    mov r9d, FILE_BEGIN
+    call SetFilePointerEx
+    test eax, eax
+    jz .alf_close_fail
+
+    mov dword ptr uiBytesRead[rip], 0
+    mov qword ptr [rsp + 32], 0
+    mov rcx, rbx
+    lea rdx, uiFileBuffer[rip]
+    mov r8d, esi
+    lea r9, uiBytesRead[rip]
+    call ReadFile
+    test eax, eax
+    jz .alf_close_fail
+
+    mov rcx, rbx
+    call CloseHandle
+    mov rbx, 0
+
+    mov eax, dword ptr uiBytesRead[rip]
+    test eax, eax
+    jz .alf_done
+    lea rdi, uiFileBuffer[rip]
+    mov byte ptr [rdi + rax], 0
+    test r12, r12
+    jnz .alf_tail_window
+
+    mov rcx, rdi
+    mov edx, eax
+    call FindLastResultBegin
+    test rax, rax
+    jnz .alf_append_ptr
+    lea rax, uiFileBuffer[rip]
+    cmp dword ptr uiBytesRead[rip], 3
+    jb .alf_append_ptr
+    cmp byte ptr [rax], 0xef
+    jne .alf_append_ptr
+    cmp byte ptr [rax + 1], 0xbb
+    jne .alf_append_ptr
+    cmp byte ptr [rax + 2], 0xbf
+    jne .alf_append_ptr
+    add rax, 3
+    jmp .alf_append_ptr
+
+.alf_tail_window:
+    lea rcx, uiFileBuffer[rip]
+    mov edx, dword ptr uiBytesRead[rip]
+    call SkipPartialLogLine
+    mov rdi, rax
+    lea r8, uiFileBuffer[rip]
+    mov edx, dword ptr uiBytesRead[rip]
+    add r8, rdx
+    mov rdx, r8
+    sub rdx, rdi
+    mov rcx, rdi
+    call FindLastResultBegin
+    test rax, rax
+    jnz .alf_append_ptr
+    mov rax, rdi
+.alf_append_ptr:
+    mov rcx, rax
+    call AppendUiRaw
+    mov eax, 1
+    jmp .alf_done
+
+.alf_close_fail:
+    mov rcx, rbx
+    call CloseHandle
+    xor eax, eax
+.alf_done:
+    add rsp, 56
+    pop r12
+    pop rdi
+    pop rsi
+    pop rbx
+    ret
+
+FindLastResultBegin:
+    xor eax, eax
+    cmp rdx, 14
+    jb .flrb_done
+    mov r8, rcx
+    lea r9, [rcx + rdx - 14]
+.flrb_loop:
+    cmp byte ptr [r8], 91
+    jne .flrb_next
+    cmp byte ptr [r8 + 1], 114
+    jne .flrb_next
+    cmp byte ptr [r8 + 2], 101
+    jne .flrb_next
+    cmp byte ptr [r8 + 3], 115
+    jne .flrb_next
+    cmp byte ptr [r8 + 4], 117
+    jne .flrb_next
+    cmp byte ptr [r8 + 5], 108
+    jne .flrb_next
+    cmp byte ptr [r8 + 6], 116
+    jne .flrb_next
+    cmp byte ptr [r8 + 7], 93
+    jne .flrb_next
+    cmp byte ptr [r8 + 8], 32
+    jne .flrb_next
+    cmp byte ptr [r8 + 9], 98
+    jne .flrb_next
+    cmp byte ptr [r8 + 10], 101
+    jne .flrb_next
+    cmp byte ptr [r8 + 11], 103
+    jne .flrb_next
+    cmp byte ptr [r8 + 12], 105
+    jne .flrb_next
+    cmp byte ptr [r8 + 13], 110
+    jne .flrb_next
+    mov rax, r8
+.flrb_next:
+    cmp r8, r9
+    jae .flrb_done
+    inc r8
+    jmp .flrb_loop
+.flrb_done:
+    ret
+
+SkipPartialLogLine:
+    mov rax, rcx
+    test rdx, rdx
+    jz .spl_done
+    lea r8, [rcx + rdx]
+.spl_loop:
+    cmp rax, r8
+    jae .spl_no_lf
+    mov dl, byte ptr [rax]
+    inc rax
+    cmp dl, 10
+    jne .spl_loop
+    jmp .spl_done
+.spl_no_lf:
+    mov rax, rcx
+.spl_done:
+    ret
+
+FindLogTailStart:
+    lea r8, logBuffer[rip]
+    mov r9, qword ptr logPos[rip]
+    lea r10, [r8 + r9]
+    mov rax, r10
+    xor ecx, ecx
+.flts_line_loop:
+    cmp rax, r8
+    jbe .flts_line_done
+    dec rax
+    cmp byte ptr [rax], 10
+    jne .flts_line_loop
+    inc ecx
+    cmp ecx, UI_TAIL_LF_SCAN
+    jb .flts_line_loop
+    inc rax
+    jmp .flts_have_line_start
+.flts_line_done:
+    mov rax, r8
+.flts_have_line_start:
+    mov rdx, r10
+    sub rdx, rax
+    cmp rdx, UI_TAIL_BYTES
+    jbe .flts_done
+    mov rax, r10
+    sub rax, UI_TAIL_BYTES
+.flts_seek_lf:
+    cmp rax, r10
+    jae .flts_done
+    mov dl, byte ptr [rax]
+    test dl, dl
+    jz .flts_done
+    inc rax
+    cmp dl, 10
+    jne .flts_seek_lf
+.flts_done:
     ret
 
 RefreshProgressText:
@@ -3055,6 +3407,11 @@ statDirsText:      .asciz " | 目录 "
 statSkippedText:   .asciz " | 跳过 "
 statTruncatedText: .asciz " | 已截断"
 logLineFallback:   .asciz "[显示] 当前行包含无法转换的文本，已跳过原始内容。"
+uiPreviewTitle:    .asciz "界面仅显示摘要和最新结果尾部；完整结果以本次启动日志为准。"
+uiPreviewPathPrefix:.asciz "日志文件："
+uiPreviewPathMissing:.asciz "当前日志路径不可用或日志文件创建失败。"
+uiPreviewTailNote: .asciz "日志较小时显示最新完整结果；日志较大时显示最后约 300 行或最后约 180KB："
+uiPreviewMemoryFallback:.asciz "日志文件读取失败，下面显示内存结果尾部预览："
 zeroText:          .asciz "0"
 policyEnabledText: .asciz "默认清理:开"
 policyDisabledText:.asciz "默认清理:关"
@@ -4215,6 +4572,330 @@ nameDockerBuildx:  .asciz "Docker buildx cache"
 pathDockerBuildx:  .asciz "%USERPROFILE%\\.docker\\buildx\\cache"
 nameAndroidGradle: .asciz "Android Gradle cache"
 pathAndroidGradle: .asciz "%USERPROFILE%\\.android\\cache"
+nameVsCodeExtVsix:.asciz "VS Code extension VSIX cache"
+pathVsCodeExtVsix:.asciz "%APPDATA%\\Code\\CachedExtensionVSIXs"
+nameVsCodeSvcCache:.asciz "VS Code Service Worker cache"
+pathVsCodeSvcCache:.asciz "%APPDATA%\\Code\\Service Worker\\CacheStorage"
+nameVsCodeDawn:    .asciz "VS Code DawnCache"
+pathVsCodeDawn:    .asciz "%APPDATA%\\Code\\DawnCache"
+nameVsCodeBlob:    .asciz "VS Code blob storage cache"
+pathVsCodeBlob:    .asciz "%APPDATA%\\Code\\blob_storage"
+nameVsCodeInsidersCache:.asciz "VS Code Insiders Cache"
+pathVsCodeInsidersCache:.asciz "%APPDATA%\\Code - Insiders\\Cache"
+nameVsCodeInsidersExt:.asciz "VS Code Insiders extension VSIX cache"
+pathVsCodeInsidersExt:.asciz "%APPDATA%\\Code - Insiders\\CachedExtensionVSIXs"
+nameVSCodiumCache: .asciz "VSCodium Cache"
+pathVSCodiumCache: .asciz "%APPDATA%\\VSCodium\\Cache"
+nameVSCodiumExt:   .asciz "VSCodium extension VSIX cache"
+pathVSCodiumExt:   .asciz "%APPDATA%\\VSCodium\\CachedExtensionVSIXs"
+nameCursorExt:     .asciz "Cursor extension VSIX cache"
+pathCursorExt:     .asciz "%APPDATA%\\Cursor\\CachedExtensionVSIXs"
+nameCursorSvcCache:.asciz "Cursor Service Worker cache"
+pathCursorSvcCache:.asciz "%APPDATA%\\Cursor\\Service Worker\\CacheStorage"
+nameCursorCode:    .asciz "Cursor Code Cache"
+pathCursorCode:    .asciz "%APPDATA%\\Cursor\\Code Cache"
+nameCursorGpu:     .asciz "Cursor GPUCache"
+pathCursorGpu:     .asciz "%APPDATA%\\Cursor\\GPUCache"
+nameWindsurfExt:   .asciz "Windsurf extension VSIX cache"
+pathWindsurfExt:   .asciz "%APPDATA%\\Windsurf\\CachedExtensionVSIXs"
+nameWindsurfCode:  .asciz "Windsurf Code Cache"
+pathWindsurfCode:  .asciz "%APPDATA%\\Windsurf\\Code Cache"
+nameWindsurfGpu:   .asciz "Windsurf GPUCache"
+pathWindsurfGpu:   .asciz "%APPDATA%\\Windsurf\\GPUCache"
+nameTraeExt:       .asciz "Trae extension VSIX cache"
+pathTraeExt:       .asciz "%APPDATA%\\Trae\\CachedExtensionVSIXs"
+nameTraeCode:      .asciz "Trae Code Cache"
+pathTraeCode:      .asciz "%APPDATA%\\Trae\\Code Cache"
+nameTraeGpu:       .asciz "Trae GPUCache"
+pathTraeGpu:       .asciz "%APPDATA%\\Trae\\GPUCache"
+nameGradleModules: .asciz "Gradle modules cache"
+pathGradleModules: .asciz "%USERPROFILE%\\.gradle\\caches\\modules-2"
+nameGradleTransforms3:.asciz "Gradle transforms-3 cache"
+pathGradleTransforms3:.asciz "%USERPROFILE%\\.gradle\\caches\\transforms-3"
+nameGradleTransforms4:.asciz "Gradle transforms-4 cache"
+pathGradleTransforms4:.asciz "%USERPROFILE%\\.gradle\\caches\\transforms-4"
+nameGradleJars:    .asciz "Gradle generated jars cache"
+pathGradleJars:    .asciz "%USERPROFILE%\\.gradle\\caches\\jars-9"
+nameGradleKotlinDsl:.asciz "Gradle kotlin-dsl cache"
+pathGradleKotlinDsl:.asciz "%USERPROFILE%\\.gradle\\caches\\kotlin-dsl"
+nameGradleBuildCache:.asciz "Gradle build-cache-1"
+pathGradleBuildCache:.asciz "%USERPROFILE%\\.gradle\\caches\\build-cache-1"
+nameGradleJournal: .asciz "Gradle journal cache"
+pathGradleJournal: .asciz "%USERPROFILE%\\.gradle\\caches\\journal-1"
+nameGradleWorkers: .asciz "Gradle workers cache"
+pathGradleWorkers: .asciz "%USERPROFILE%\\.gradle\\workers"
+nameGradleTmp:     .asciz "Gradle tmp cache"
+pathGradleTmp:     .asciz "%USERPROFILE%\\.gradle\\.tmp"
+nameNpmUserCache:  .asciz "npm user cache"
+pathNpmUserCache:  .asciz "%USERPROFILE%\\.npm"
+nameNpmCacache:    .asciz "npm _cacache"
+pathNpmCacache:    .asciz "%APPDATA%\\npm-cache\\_cacache"
+nameNpmLogs:       .asciz "npm logs"
+pathNpmLogs:       .asciz "%APPDATA%\\npm-cache\\_logs"
+nameNpxCache:      .asciz "npx cache"
+pathNpxCache:      .asciz "%LOCALAPPDATA%\\npm-cache\\_npx"
+namePnpmStoreUser: .asciz "pnpm user store"
+pathPnpmStoreUser: .asciz "%USERPROFILE%\\.pnpm-store"
+namePnpmCache:     .asciz "pnpm cache"
+pathPnpmCache:     .asciz "%LOCALAPPDATA%\\pnpm-cache"
+nameYarnUserCache: .asciz "Yarn user cache"
+pathYarnUserCache: .asciz "%USERPROFILE%\\.yarn\\cache"
+nameYarnV6Cache:   .asciz "Yarn v6 cache"
+pathYarnV6Cache:   .asciz "%LOCALAPPDATA%\\Yarn\\Cache\\v6"
+nameCorepackCache: .asciz "Corepack cache"
+pathCorepackCache: .asciz "%LOCALAPPDATA%\\node\\corepack"
+nameVoltaCache:    .asciz "Volta tool cache"
+pathVoltaCache:    .asciz "%LOCALAPPDATA%\\Volta\\tools\\image"
+namePipUserCache:  .asciz "pip user cache"
+pathPipUserCache:  .asciz "%USERPROFILE%\\.cache\\pip"
+namePipToolsCache: .asciz "pip-tools cache"
+pathPipToolsCache: .asciz "%USERPROFILE%\\.cache\\pip-tools"
+namePdmCache:      .asciz "PDM cache"
+pathPdmCache:      .asciz "%LOCALAPPDATA%\\pdm\\Cache"
+namePoetryUserCache:.asciz "Poetry user cache"
+pathPoetryUserCache:.asciz "%USERPROFILE%\\.cache\\pypoetry"
+nameRyeLocalCache: .asciz "Rye local cache"
+pathRyeLocalCache: .asciz "%LOCALAPPDATA%\\rye\\cache"
+nameMavenWrapperDists:.asciz "Maven wrapper dists"
+pathMavenWrapperDists:.asciz "%USERPROFILE%\\.m2\\wrapper\\dists"
+nameIvyCache:      .asciz "Ivy2 cache"
+pathIvyCache:      .asciz "%USERPROFILE%\\.ivy2\\cache"
+nameSbtCache:      .asciz "sbt cache"
+pathSbtCache:      .asciz "%USERPROFILE%\\.sbt\\1.0"
+nameCoursierCache: .asciz "Coursier cache"
+pathCoursierCache: .asciz "%LOCALAPPDATA%\\Coursier\\Cache"
+nameKotlinCache:   .asciz "Kotlin cache"
+pathKotlinCache:   .asciz "%USERPROFILE%\\.kotlin\\cache"
+nameKonanCache:    .asciz "Kotlin Native konan cache"
+pathKonanCache:    .asciz "%USERPROFILE%\\.konan\\cache"
+nameSonarCache:    .asciz "Sonar cache"
+pathSonarCache:    .asciz "%USERPROFILE%\\.sonar\\cache"
+nameNugetHttpCache:.asciz "NuGet HTTP cache"
+pathNugetHttpCache:.asciz "%LOCALAPPDATA%\\NuGet\\v3-cache"
+nameNugetPlugins:  .asciz "NuGet plugins cache"
+pathNugetPlugins:  .asciz "%LOCALAPPDATA%\\NuGet\\plugins-cache"
+nameNugetScratch:  .asciz "NuGet scratch"
+pathNugetScratch:  .asciz "%TEMP%\\NuGetScratch"
+nameAndroidSdkTemp:.asciz "Android SDK temp"
+pathAndroidSdkTemp:.asciz "%LOCALAPPDATA%\\Android\\Sdk\\.temp"
+nameAndroidStudioSystem:.asciz "Android Studio system cache"
+pathAndroidStudioSystem:.asciz "%LOCALAPPDATA%\\Google\\AndroidStudio\\system\\caches"
+nameKubeCache:     .asciz "Kubernetes client cache"
+pathKubeCache:     .asciz "%USERPROFILE%\\.kube\\cache"
+nameHelmCache:     .asciz "Helm cache"
+pathHelmCache:     .asciz "%LOCALAPPDATA%\\helm\\cache"
+nameMinikubeCache: .asciz "minikube cache"
+pathMinikubeCache: .asciz "%USERPROFILE%\\.minikube\\cache"
+nameTerraformCache:.asciz "Terraform plugin cache"
+pathTerraformCache:.asciz "%APPDATA%\\HashiCorp\\Terraform\\plugin-cache"
+nameTerraformDCache:.asciz "Terraform dot cache"
+pathTerraformDCache:.asciz "%USERPROFILE%\\.terraform.d\\plugin-cache"
+nameHFHubCache:    .asciz "Hugging Face hub cache"
+pathHFHubCache:    .asciz "%USERPROFILE%\\.cache\\huggingface\\hub"
+nameHFDatasets:    .asciz "Hugging Face datasets cache"
+pathHFDatasets:    .asciz "%USERPROFILE%\\.cache\\huggingface\\datasets"
+nameModelScope:    .asciz "ModelScope cache"
+pathModelScope:    .asciz "%USERPROFILE%\\.cache\\modelscope"
+nameTorchExtensions:.asciz "PyTorch extensions cache"
+pathTorchExtensions:.asciz "%LOCALAPPDATA%\\torch_extensions"
+nameMatplotlibCache:.asciz "matplotlib cache"
+pathMatplotlibCache:.asciz "%USERPROFILE%\\.cache\\matplotlib"
+nameJupyterRuntime:.asciz "Jupyter runtime"
+pathJupyterRuntime:.asciz "%APPDATA%\\jupyter\\runtime"
+nameFlutterPubCache:.asciz "Flutter pub cache"
+pathFlutterPubCache:.asciz "%USERPROFILE%\\.pub-cache"
+nameFlutterBinCache:.asciz "Flutter bin cache"
+pathFlutterBinCache:.asciz "%LOCALAPPDATA%\\Flutter\\cache"
+nameFvmCache:      .asciz "FVM Flutter cache"
+pathFvmCache:      .asciz "%LOCALAPPDATA%\\fvm"
+nameVSCommonCache: .asciz "Visual Studio common cache"
+pathVSCommonCache: .asciz "%LOCALAPPDATA%\\Microsoft\\VSCommon"
+nameMSBuildCache:  .asciz "MSBuild cache"
+pathMSBuildCache:  .asciz "%LOCALAPPDATA%\\Microsoft\\MSBuild"
+nameVSComponentCache:.asciz "Visual Studio ComponentModelCache"
+pathVSComponentCache:.asciz "%LOCALAPPDATA%\\Microsoft\\VisualStudio\\17.0\\ComponentModelCache"
+nameVSInstallerCache:.asciz "Visual Studio Installer cache"
+pathVSInstallerCache:.asciz "%PROGRAMDATA%\\Microsoft\\VisualStudio\\Packages\\_Instances"
+nameVSLogs:        .asciz "Visual Studio logs"
+pathVSLogs:        .asciz "%TEMP%\\VSLogs"
+nameVsTestCache:   .asciz "VSTest cache"
+pathVsTestCache:   .asciz "%TEMP%\\VisualStudioTestExplorerExtensions"
+nameDBeaverCache:  .asciz "DBeaver cache"
+pathDBeaverCache:  .asciz "%APPDATA%\\DBeaverData\\workspace6\\.metadata\\.plugins\\org.jkiss.dbeaver.core\\temp"
+nameDBeaverLogs:   .asciz "DBeaver logs"
+pathDBeaverLogs:   .asciz "%APPDATA%\\DBeaverData\\workspace6\\.metadata\\.plugins\\org.jkiss.dbeaver.core\\logs"
+nameNavicatCache:  .asciz "Navicat cache"
+pathNavicatCache:  .asciz "%APPDATA%\\PremiumSoft\\Navicat\\Cache"
+nameNavicatLogs:   .asciz "Navicat logs"
+pathNavicatLogs:   .asciz "%APPDATA%\\PremiumSoft\\Navicat\\Logs"
+nameMongoCompassCache:.asciz "MongoDB Compass Cache"
+pathMongoCompassCache:.asciz "%APPDATA%\\MongoDB Compass\\Cache"
+nameMongoCompassCode:.asciz "MongoDB Compass Code Cache"
+pathMongoCompassCode:.asciz "%APPDATA%\\MongoDB Compass\\Code Cache"
+nameMongoCompassGpu:.asciz "MongoDB Compass GPUCache"
+pathMongoCompassGpu:.asciz "%APPDATA%\\MongoDB Compass\\GPUCache"
+nameRedisInsightCache:.asciz "RedisInsight Cache"
+pathRedisInsightCache:.asciz "%APPDATA%\\RedisInsight\\Cache"
+nameRedisInsightCode:.asciz "RedisInsight Code Cache"
+pathRedisInsightCode:.asciz "%APPDATA%\\RedisInsight\\Code Cache"
+nameRedisInsightGpu:.asciz "RedisInsight GPUCache"
+pathRedisInsightGpu:.asciz "%APPDATA%\\RedisInsight\\GPUCache"
+nameDbGateCache:   .asciz "DbGate Cache"
+pathDbGateCache:   .asciz "%APPDATA%\\DbGate\\Cache"
+nameDbGateCode:    .asciz "DbGate Code Cache"
+pathDbGateCode:    .asciz "%APPDATA%\\DbGate\\Code Cache"
+nameBeekeeperCache:.asciz "Beekeeper Studio Cache"
+pathBeekeeperCache:.asciz "%APPDATA%\\beekeeper-studio\\Cache"
+nameBeekeeperCode: .asciz "Beekeeper Studio Code Cache"
+pathBeekeeperCode: .asciz "%APPDATA%\\beekeeper-studio\\Code Cache"
+nameAzureLogs:     .asciz "Azure CLI logs"
+pathAzureLogs:     .asciz "%USERPROFILE%\\.azure\\logs"
+nameAzureCommands: .asciz "Azure CLI command cache"
+pathAzureCommands: .asciz "%USERPROFILE%\\.azure\\commands"
+nameAwsCliCache:   .asciz "AWS CLI cache"
+pathAwsCliCache:   .asciz "%USERPROFILE%\\.aws\\cli\\cache"
+nameGcloudLogs:    .asciz "gcloud logs"
+pathGcloudLogs:    .asciz "%APPDATA%\\gcloud\\logs"
+nameGcloudCache:   .asciz "gcloud cache"
+pathGcloudCache:   .asciz "%APPDATA%\\gcloud\\cache"
+nameAliyunCliCache:.asciz "Alibaba Cloud CLI cache"
+pathAliyunCliCache:.asciz "%USERPROFILE%\\.aliyun\\cache"
+nameAliyunCliLogs: .asciz "Alibaba Cloud CLI logs"
+pathAliyunCliLogs: .asciz "%USERPROFILE%\\.aliyun\\logs"
+nameTencentCloudCliCache:.asciz "Tencent Cloud CLI cache"
+pathTencentCloudCliCache:.asciz "%USERPROFILE%\\.tccli\\cache"
+nameTencentCloudCliLogs:.asciz "Tencent Cloud CLI logs"
+pathTencentCloudCliLogs:.asciz "%USERPROFILE%\\.tccli\\logs"
+nameHuaweiCloudCliCache:.asciz "Huawei Cloud CLI cache"
+pathHuaweiCloudCliCache:.asciz "%USERPROFILE%\\.huaweicloud\\cache"
+nameHuaweiCloudCliLogs:.asciz "Huawei Cloud CLI logs"
+pathHuaweiCloudCliLogs:.asciz "%USERPROFILE%\\.huaweicloud\\logs"
+nameRancherDesktopLogs:.asciz "Rancher Desktop logs"
+pathRancherDesktopLogs:.asciz "%LOCALAPPDATA%\\rancher-desktop\\logs"
+namePodmanCache:   .asciz "Podman cache"
+pathPodmanCache:   .asciz "%LOCALAPPDATA%\\containers\\cache"
+nameScoopCache:    .asciz "Scoop cache"
+pathScoopCache:    .asciz "%USERPROFILE%\\scoop\\cache"
+nameChocolateyCache:.asciz "Chocolatey cache"
+pathChocolateyCache:.asciz "%PROGRAMDATA%\\chocolatey\\cache"
+nameWingetCache:   .asciz "winget cache"
+pathWingetCache:   .asciz "%LOCALAPPDATA%\\Packages\\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\\LocalState\\DiagOutputDir"
+nameWeChatDevToolsLocal:.asciz "WeChat DevTools local cache"
+pathWeChatDevToolsLocal:.asciz "%LOCALAPPDATA%\\微信开发者工具\\User Data\\Default\\Cache"
+nameWeChatDevToolsCrash:.asciz "WeChat DevTools Crashpad"
+pathWeChatDevToolsCrash:.asciz "%APPDATA%\\微信开发者工具\\Crashpad"
+nameDevEcoSystem:  .asciz "DevEco Studio system cache"
+pathDevEcoSystem:  .asciz "%LOCALAPPDATA%\\Huawei\\DevEcoStudio\\system\\caches"
+nameDevEcoBuild:   .asciz "DevEco build cache"
+pathDevEcoBuild:   .asciz "%USERPROFILE%\\.deveco\\cache"
+nameHarmonySdkTemp:.asciz "HarmonyOS SDK temp"
+pathHarmonySdkTemp:.asciz "%LOCALAPPDATA%\\Huawei\\Sdk\\.temp"
+nameCloudBaseCache:.asciz "Tencent CloudBase cache"
+pathCloudBaseCache:.asciz "%USERPROFILE%\\.cloudbase\\cache"
+nameUniAppCliCache:.asciz "uni-app cli cache"
+pathUniAppCliCache:.asciz "%USERPROFILE%\\.uniapp\\cache"
+nameHBuilderXTemp: .asciz "HBuilderX temp"
+pathHBuilderXTemp: .asciz "%APPDATA%\\HBuilder X\\temp"
+nameApifoxLocalCache:.asciz "Apifox local cache"
+pathApifoxLocalCache:.asciz "%LOCALAPPDATA%\\Apifox\\Cache"
+namePostmanLocalCache:.asciz "Postman local cache"
+pathPostmanLocalCache:.asciz "%LOCALAPPDATA%\\Postman\\Cache"
+nameInsomniaLogs:  .asciz "Insomnia logs"
+pathInsomniaLogs:  .asciz "%APPDATA%\\Insomnia\\logs"
+nameEclipseP2Cache:.asciz "Eclipse p2 cache"
+pathEclipseP2Cache:.asciz "%USERPROFILE%\\.p2\\org.eclipse.equinox.p2.repository\\cache"
+nameEclipseUserCache:.asciz "Eclipse user cache"
+pathEclipseUserCache:.asciz "%USERPROFILE%\\.eclipse\\cache"
+nameNetBeansCache: .asciz "NetBeans cache"
+pathNetBeansCache: .asciz "%LOCALAPPDATA%\\NetBeans\\Cache"
+nameNetBeansLogs:  .asciz "NetBeans logs"
+pathNetBeansLogs:  .asciz "%APPDATA%\\NetBeans\\var\\log"
+nameCocosDashboardCache:.asciz "Cocos Dashboard Cache"
+pathCocosDashboardCache:.asciz "%APPDATA%\\CocosDashboard\\Cache"
+nameCocosDashboardCode:.asciz "Cocos Dashboard Code Cache"
+pathCocosDashboardCode:.asciz "%APPDATA%\\CocosDashboard\\Code Cache"
+nameCocosDashboardGpu:.asciz "Cocos Dashboard GPUCache"
+pathCocosDashboardGpu:.asciz "%APPDATA%\\CocosDashboard\\GPUCache"
+nameCocosCreatorCache:.asciz "Cocos Creator cache"
+pathCocosCreatorCache:.asciz "%LOCALAPPDATA%\\CocosCreator\\Cache"
+nameCocosCreatorLogs:.asciz "Cocos Creator logs"
+pathCocosCreatorLogs:.asciz "%APPDATA%\\CocosCreator\\logs"
+nameLayaAirCache:  .asciz "LayaAir cache"
+pathLayaAirCache:  .asciz "%APPDATA%\\LayaAirIDE\\Cache"
+nameLayaAirCode:   .asciz "LayaAir Code Cache"
+pathLayaAirCode:   .asciz "%APPDATA%\\LayaAirIDE\\Code Cache"
+nameEgretCache:    .asciz "Egret Launcher cache"
+pathEgretCache:    .asciz "%APPDATA%\\EgretLauncher\\Cache"
+nameEgretLogs:     .asciz "Egret Launcher logs"
+pathEgretLogs:     .asciz "%APPDATA%\\EgretLauncher\\logs"
+nameRStudioCache:  .asciz "RStudio cache"
+pathRStudioCache:  .asciz "%LOCALAPPDATA%\\RStudio\\cache"
+nameRStudioLogs:   .asciz "RStudio logs"
+pathRStudioLogs:   .asciz "%LOCALAPPDATA%\\RStudio\\log"
+nameJuliaCompiled: .asciz "Julia compiled cache"
+pathJuliaCompiled: .asciz "%USERPROFILE%\\.julia\\compiled"
+nameJuliaLogs:     .asciz "Julia logs"
+pathJuliaLogs:     .asciz "%USERPROFILE%\\.julia\\logs"
+nameJuliaScratch:  .asciz "Julia scratchspaces"
+pathJuliaScratch:  .asciz "%USERPROFILE%\\.julia\\scratchspaces"
+nameAnacondaPkgs:  .asciz "Anaconda pkgs cache"
+pathAnacondaPkgs:  .asciz "%USERPROFILE%\\anaconda3\\pkgs"
+nameMinicondaPkgs: .asciz "Miniconda pkgs cache"
+pathMinicondaPkgs: .asciz "%USERPROFILE%\\miniconda3\\pkgs"
+nameCondaCache:    .asciz "Conda cache"
+pathCondaCache:    .asciz "%USERPROFILE%\\.conda\\cache"
+nameJenkinsCache:  .asciz "Jenkins cache"
+pathJenkinsCache:  .asciz "%USERPROFILE%\\.jenkins\\cache"
+nameJenkinsWar:    .asciz "Jenkins war cache"
+pathJenkinsWar:    .asciz "%USERPROFILE%\\.jenkins\\war"
+nameGitLabRunnerCache:.asciz "GitLab Runner cache"
+pathGitLabRunnerCache:.asciz "%USERPROFILE%\\.gitlab-runner\\cache"
+nameFiddlerCache:  .asciz "Fiddler cache"
+pathFiddlerCache:  .asciz "%LOCALAPPDATA%\\Programs\\Fiddler Everywhere\\resources\\app\\out\\WebServer\\ClientApp\\.cache"
+nameFiddlerLogs:   .asciz "Fiddler logs"
+pathFiddlerLogs:   .asciz "%LOCALAPPDATA%\\Fiddler Everywhere\\Logs"
+nameCharlesCache:  .asciz "Charles cache"
+pathCharlesCache:  .asciz "%APPDATA%\\Charles\\cache"
+nameCharlesLogs:   .asciz "Charles logs"
+pathCharlesLogs:   .asciz "%APPDATA%\\Charles\\logs"
+nameWiresharkTemp: .asciz "Wireshark temp"
+pathWiresharkTemp: .asciz "%LOCALAPPDATA%\\Temp\\Wireshark"
+nameBurpLogs:      .asciz "Burp Suite logs"
+pathBurpLogs:      .asciz "%USERPROFILE%\\.BurpSuite\\logs"
+nameBurpTemp:      .asciz "Burp Suite temp"
+pathBurpTemp:      .asciz "%USERPROFILE%\\.BurpSuite\\tmp"
+nameNmapCache:     .asciz "Nmap cache"
+pathNmapCache:     .asciz "%LOCALAPPDATA%\\Nmap\\cache"
+nameVMwareTemp:    .asciz "VMware temp"
+pathVMwareTemp:    .asciz "%TEMP%\\vmware-%USERNAME%"
+nameVirtualBoxLogs:.asciz "VirtualBox logs"
+pathVirtualBoxLogs:.asciz "%USERPROFILE%\\.VirtualBox\\logs"
+nameGenymotionLogs:.asciz "Genymotion logs"
+pathGenymotionLogs:.asciz "%LOCALAPPDATA%\\Genymobile\\Genymotion\\logs"
+nameAndroidEmuTemp:.asciz "Android Emulator temp"
+pathAndroidEmuTemp:.asciz "%LOCALAPPDATA%\\Temp\\AndroidEmulator"
+nameUnityHubCache: .asciz "Unity Hub Cache"
+pathUnityHubCache: .asciz "%APPDATA%\\UnityHub\\Cache"
+nameUnityHubLogs:  .asciz "Unity Hub logs"
+pathUnityHubLogs:  .asciz "%APPDATA%\\UnityHub\\logs"
+nameGodotCache:    .asciz "Godot editor cache"
+pathGodotCache:    .asciz "%APPDATA%\\Godot\\cache"
+nameGodotLogs:     .asciz "Godot logs"
+pathGodotLogs:     .asciz "%APPDATA%\\Godot\\logs"
+nameAxureCache:    .asciz "Axure RP cache"
+pathAxureCache:    .asciz "%LOCALAPPDATA%\\Axure\\Axure-10-0\\cache"
+nameMockittCache:  .asciz "Wondershare Mockitt cache"
+pathMockittCache:  .asciz "%APPDATA%\\Mockitt\\Cache"
+nameModaoCache:    .asciz "MockingBot cache"
+pathModaoCache:    .asciz "%APPDATA%\\MockingBot\\Cache"
+nameLanhuLocalCache:.asciz "Lanhu local cache"
+pathLanhuLocalCache:.asciz "%LOCALAPPDATA%\\Lanhu\\Cache"
+namePixsoLocalCache:.asciz "Pixso local cache"
+pathPixsoLocalCache:.asciz "%LOCALAPPDATA%\\Pixso\\Cache"
+nameMasterGoLocalCache:.asciz "MasterGo local cache"
+pathMasterGoLocalCache:.asciz "%LOCALAPPDATA%\\MasterGo\\Cache"
+nameTencentDocsCode:.asciz "Tencent Docs Code Cache"
+pathTencentDocsCode:.asciz "%APPDATA%\\TencentDocs\\Code Cache"
 
 nameSteamShader:   .asciz "Steam shadercache"
 pathSteamShader:   .asciz "%PROGRAMFILES(X86)%\\Steam\\steamapps\\shadercache"
@@ -4923,6 +5604,68 @@ nameNodeJModules:  .asciz "J: node_modules cache"
 pathNodeJModules:  .asciz "J:\\node_modules\\.cache"
 nameAndroidJGradle:.asciz "J: Android Gradle cache"
 pathAndroidJGradle:.asciz "J:\\Android\\.gradle"
+nameDevCNodeCache: .asciz "C: dev node_modules cache"
+pathDevCNodeCache: .asciz "C:\\dev\\node_modules\\.cache"
+nameProjectsCNodeCache:.asciz "C: projects node_modules cache"
+pathProjectsCNodeCache:.asciz "C:\\projects\\node_modules\\.cache"
+nameWorkspaceCNodeCache:.asciz "C: workspace node_modules cache"
+pathWorkspaceCNodeCache:.asciz "C:\\workspace\\node_modules\\.cache"
+nameDevDNodeCache: .asciz "D: dev node_modules cache"
+pathDevDNodeCache: .asciz "D:\\dev\\node_modules\\.cache"
+nameProjectsDNodeCache:.asciz "D: projects node_modules cache"
+pathProjectsDNodeCache:.asciz "D:\\projects\\node_modules\\.cache"
+nameWorkspaceDNodeCache:.asciz "D: workspace node_modules cache"
+pathWorkspaceDNodeCache:.asciz "D:\\workspace\\node_modules\\.cache"
+nameDevENodeCache: .asciz "E: dev node_modules cache"
+pathDevENodeCache: .asciz "E:\\dev\\node_modules\\.cache"
+nameProjectsENodeCache:.asciz "E: projects node_modules cache"
+pathProjectsENodeCache:.asciz "E:\\projects\\node_modules\\.cache"
+nameWorkspaceENodeCache:.asciz "E: workspace node_modules cache"
+pathWorkspaceENodeCache:.asciz "E:\\workspace\\node_modules\\.cache"
+nameDevFNodeCache: .asciz "F: dev node_modules cache"
+pathDevFNodeCache: .asciz "F:\\dev\\node_modules\\.cache"
+nameProjectsFNodeCache:.asciz "F: projects node_modules cache"
+pathProjectsFNodeCache:.asciz "F:\\projects\\node_modules\\.cache"
+nameWorkspaceFNodeCache:.asciz "F: workspace node_modules cache"
+pathWorkspaceFNodeCache:.asciz "F:\\workspace\\node_modules\\.cache"
+nameDevGNodeCache: .asciz "G: dev node_modules cache"
+pathDevGNodeCache: .asciz "G:\\dev\\node_modules\\.cache"
+nameProjectsGNodeCache:.asciz "G: projects node_modules cache"
+pathProjectsGNodeCache:.asciz "G:\\projects\\node_modules\\.cache"
+nameWorkspaceGNodeCache:.asciz "G: workspace node_modules cache"
+pathWorkspaceGNodeCache:.asciz "G:\\workspace\\node_modules\\.cache"
+nameDevHNodeCache: .asciz "H: dev node_modules cache"
+pathDevHNodeCache: .asciz "H:\\dev\\node_modules\\.cache"
+nameProjectsHNodeCache:.asciz "H: projects node_modules cache"
+pathProjectsHNodeCache:.asciz "H:\\projects\\node_modules\\.cache"
+nameWorkspaceHNodeCache:.asciz "H: workspace node_modules cache"
+pathWorkspaceHNodeCache:.asciz "H:\\workspace\\node_modules\\.cache"
+nameDevINodeCache: .asciz "I: dev node_modules cache"
+pathDevINodeCache: .asciz "I:\\dev\\node_modules\\.cache"
+nameProjectsINodeCache:.asciz "I: projects node_modules cache"
+pathProjectsINodeCache:.asciz "I:\\projects\\node_modules\\.cache"
+nameWorkspaceINodeCache:.asciz "I: workspace node_modules cache"
+pathWorkspaceINodeCache:.asciz "I:\\workspace\\node_modules\\.cache"
+nameDevJNodeCache: .asciz "J: dev node_modules cache"
+pathDevJNodeCache: .asciz "J:\\dev\\node_modules\\.cache"
+nameProjectsJNodeCache:.asciz "J: projects node_modules cache"
+pathProjectsJNodeCache:.asciz "J:\\projects\\node_modules\\.cache"
+nameWorkspaceJNodeCache:.asciz "J: workspace node_modules cache"
+pathWorkspaceJNodeCache:.asciz "J:\\workspace\\node_modules\\.cache"
+nameGradleDUserCache:.asciz "D: Gradle user cache"
+pathGradleDUserCache:.asciz "D:\\.gradle\\caches"
+nameGradleEUserCache:.asciz "E: Gradle user cache"
+pathGradleEUserCache:.asciz "E:\\.gradle\\caches"
+nameGradleFUserCache:.asciz "F: Gradle user cache"
+pathGradleFUserCache:.asciz "F:\\.gradle\\caches"
+nameGradleGUserCache:.asciz "G: Gradle user cache"
+pathGradleGUserCache:.asciz "G:\\.gradle\\caches"
+nameGradleHUserCache:.asciz "H: Gradle user cache"
+pathGradleHUserCache:.asciz "H:\\.gradle\\caches"
+nameGradleIUserCache:.asciz "I: Gradle user cache"
+pathGradleIUserCache:.asciz "I:\\.gradle\\caches"
+nameGradleJUserCache:.asciz "J: Gradle user cache"
+pathGradleJUserCache:.asciz "J:\\.gradle\\caches"
 nameChromeCUserCache:.asciz "C: Chrome portable cache"
 pathChromeCUserCache:.asciz "C:\\Chrome\\User Data\\Default\\Cache"
 nameChromeDUserCache:.asciz "D: Chrome portable cache"
@@ -5713,6 +6456,168 @@ targetTable:
     .quad nameSccache,      pathSccache,      riskLow,    1, CAT_DEV
     .quad nameDockerBuildx, pathDockerBuildx, riskLow,    1, CAT_DEV
     .quad nameAndroidGradle,pathAndroidGradle,riskLow,    1, CAT_DEV
+    .quad nameVsCodeExtVsix,pathVsCodeExtVsix,riskLow,   1, CAT_DEV
+    .quad nameVsCodeSvcCache,pathVsCodeSvcCache,riskLow, 1, CAT_DEV
+    .quad nameVsCodeDawn,   pathVsCodeDawn,   riskLow,   1, CAT_DEV
+    .quad nameVsCodeBlob,   pathVsCodeBlob,   riskLow,   1, CAT_DEV
+    .quad nameVsCodeInsidersCache,pathVsCodeInsidersCache,riskLow,1,CAT_DEV
+    .quad nameVsCodeInsidersExt,pathVsCodeInsidersExt,riskLow,1,CAT_DEV
+    .quad nameVSCodiumCache,pathVSCodiumCache,riskLow,   1, CAT_DEV
+    .quad nameVSCodiumExt,  pathVSCodiumExt,  riskLow,   1, CAT_DEV
+    .quad nameCursorExt,    pathCursorExt,    riskLow,   1, CAT_DEV
+    .quad nameCursorSvcCache,pathCursorSvcCache,riskLow, 1, CAT_DEV
+    .quad nameCursorCode,   pathCursorCode,   riskLow,   1, CAT_DEV
+    .quad nameCursorGpu,    pathCursorGpu,    riskLow,   1, CAT_DEV
+    .quad nameWindsurfExt,  pathWindsurfExt,  riskLow,   1, CAT_DEV
+    .quad nameWindsurfCode, pathWindsurfCode, riskLow,   1, CAT_DEV
+    .quad nameWindsurfGpu,  pathWindsurfGpu,  riskLow,   1, CAT_DEV
+    .quad nameTraeExt,      pathTraeExt,      riskLow,   1, CAT_DEV
+    .quad nameTraeCode,     pathTraeCode,     riskLow,   1, CAT_DEV
+    .quad nameTraeGpu,      pathTraeGpu,      riskLow,   1, CAT_DEV
+    .quad nameGradleModules,pathGradleModules,riskLow,   1, CAT_DEV
+    .quad nameGradleTransforms3,pathGradleTransforms3,riskLow,1,CAT_DEV
+    .quad nameGradleTransforms4,pathGradleTransforms4,riskLow,1,CAT_DEV
+    .quad nameGradleJars,   pathGradleJars,   riskLow,   1, CAT_DEV
+    .quad nameGradleKotlinDsl,pathGradleKotlinDsl,riskLow,1,CAT_DEV
+    .quad nameGradleBuildCache,pathGradleBuildCache,riskLow,1,CAT_DEV
+    .quad nameGradleJournal,pathGradleJournal,riskLow,   1, CAT_DEV
+    .quad nameGradleWorkers,pathGradleWorkers,riskLow,   1, CAT_DEV
+    .quad nameGradleTmp,    pathGradleTmp,    riskLow,   1, CAT_DEV
+    .quad nameNpmUserCache, pathNpmUserCache, riskLow,   1, CAT_DEV
+    .quad nameNpmCacache,   pathNpmCacache,   riskLow,   1, CAT_DEV
+    .quad nameNpmLogs,      pathNpmLogs,      riskLow,   1, CAT_DEV
+    .quad nameNpxCache,     pathNpxCache,     riskLow,   1, CAT_DEV
+    .quad namePnpmStoreUser,pathPnpmStoreUser,riskLow,   1, CAT_DEV
+    .quad namePnpmCache,    pathPnpmCache,    riskLow,   1, CAT_DEV
+    .quad nameYarnUserCache,pathYarnUserCache,riskLow,   1, CAT_DEV
+    .quad nameYarnV6Cache,  pathYarnV6Cache,  riskLow,   1, CAT_DEV
+    .quad nameCorepackCache,pathCorepackCache,riskLow,   1, CAT_DEV
+    .quad nameVoltaCache,   pathVoltaCache,   riskLow,   1, CAT_DEV
+    .quad namePipUserCache, pathPipUserCache, riskLow,   1, CAT_DEV
+    .quad namePipToolsCache,pathPipToolsCache,riskLow,   1, CAT_DEV
+    .quad namePdmCache,     pathPdmCache,     riskLow,   1, CAT_DEV
+    .quad namePoetryUserCache,pathPoetryUserCache,riskLow,1,CAT_DEV
+    .quad nameRyeLocalCache,pathRyeLocalCache,riskLow,   1, CAT_DEV
+    .quad nameMavenWrapperDists,pathMavenWrapperDists,riskLow,1,CAT_DEV
+    .quad nameIvyCache,     pathIvyCache,     riskLow,   1, CAT_DEV
+    .quad nameSbtCache,     pathSbtCache,     riskLow,   1, CAT_DEV
+    .quad nameCoursierCache,pathCoursierCache,riskLow,   1, CAT_DEV
+    .quad nameKotlinCache,  pathKotlinCache,  riskLow,   1, CAT_DEV
+    .quad nameKonanCache,   pathKonanCache,   riskLow,   1, CAT_DEV
+    .quad nameSonarCache,   pathSonarCache,   riskLow,   1, CAT_DEV
+    .quad nameNugetHttpCache,pathNugetHttpCache,riskLow, 1, CAT_DEV
+    .quad nameNugetPlugins, pathNugetPlugins, riskLow,   1, CAT_DEV
+    .quad nameNugetScratch, pathNugetScratch, riskLow,   1, CAT_DEV
+    .quad nameAndroidSdkTemp,pathAndroidSdkTemp,riskLow, 1, CAT_DEV
+    .quad nameAndroidStudioSystem,pathAndroidStudioSystem,riskLow,1,CAT_DEV
+    .quad nameKubeCache,    pathKubeCache,    riskLow,   1, CAT_DEV
+    .quad nameHelmCache,    pathHelmCache,    riskLow,   1, CAT_DEV
+    .quad nameMinikubeCache,pathMinikubeCache,riskLow,   1, CAT_DEV
+    .quad nameTerraformCache,pathTerraformCache,riskLow, 1, CAT_DEV
+    .quad nameTerraformDCache,pathTerraformDCache,riskLow,1,CAT_DEV
+    .quad nameHFHubCache,   pathHFHubCache,   riskMedium,1, CAT_DEV
+    .quad nameHFDatasets,   pathHFDatasets,   riskMedium,1, CAT_DEV
+    .quad nameModelScope,   pathModelScope,   riskMedium,1, CAT_DEV
+    .quad nameTorchExtensions,pathTorchExtensions,riskLow,1,CAT_DEV
+    .quad nameMatplotlibCache,pathMatplotlibCache,riskLow,1,CAT_DEV
+    .quad nameJupyterRuntime,pathJupyterRuntime,riskLow, 1, CAT_DEV
+    .quad nameFlutterPubCache,pathFlutterPubCache,riskLow,1,CAT_DEV
+    .quad nameFlutterBinCache,pathFlutterBinCache,riskLow,1,CAT_DEV
+    .quad nameFvmCache,     pathFvmCache,     riskLow,   1, CAT_DEV
+    .quad nameVSCommonCache,pathVSCommonCache,riskLow,   1, CAT_DEV
+    .quad nameMSBuildCache, pathMSBuildCache, riskLow,   1, CAT_DEV
+    .quad nameVSComponentCache,pathVSComponentCache,riskLow,1,CAT_DEV
+    .quad nameVSInstallerCache,pathVSInstallerCache,riskLow,1,CAT_DEV
+    .quad nameVSLogs,       pathVSLogs,       riskLow,   1, CAT_DEV
+    .quad nameVsTestCache,  pathVsTestCache,  riskLow,   1, CAT_DEV
+    .quad nameDBeaverCache, pathDBeaverCache, riskLow,   1, CAT_DEV
+    .quad nameDBeaverLogs,  pathDBeaverLogs,  riskLow,   1, CAT_DEV
+    .quad nameNavicatCache, pathNavicatCache, riskLow,   1, CAT_DEV
+    .quad nameNavicatLogs,  pathNavicatLogs,  riskLow,   1, CAT_DEV
+    .quad nameMongoCompassCache,pathMongoCompassCache,riskLow,1,CAT_DEV
+    .quad nameMongoCompassCode,pathMongoCompassCode,riskLow,1,CAT_DEV
+    .quad nameMongoCompassGpu,pathMongoCompassGpu,riskLow,1,CAT_DEV
+    .quad nameRedisInsightCache,pathRedisInsightCache,riskLow,1,CAT_DEV
+    .quad nameRedisInsightCode,pathRedisInsightCode,riskLow,1,CAT_DEV
+    .quad nameRedisInsightGpu,pathRedisInsightGpu,riskLow,1,CAT_DEV
+    .quad nameDbGateCache,  pathDbGateCache,  riskLow,   1, CAT_DEV
+    .quad nameDbGateCode,   pathDbGateCode,   riskLow,   1, CAT_DEV
+    .quad nameBeekeeperCache,pathBeekeeperCache,riskLow, 1, CAT_DEV
+    .quad nameBeekeeperCode,pathBeekeeperCode,riskLow,   1, CAT_DEV
+    .quad nameAzureLogs,    pathAzureLogs,    riskLow,   1, CAT_DEV
+    .quad nameAzureCommands,pathAzureCommands,riskLow,   1, CAT_DEV
+    .quad nameAwsCliCache,  pathAwsCliCache,  riskLow,   1, CAT_DEV
+    .quad nameGcloudLogs,   pathGcloudLogs,   riskLow,   1, CAT_DEV
+    .quad nameGcloudCache,  pathGcloudCache,  riskLow,   1, CAT_DEV
+    .quad nameAliyunCliCache,pathAliyunCliCache,riskLow, 1, CAT_DEV
+    .quad nameAliyunCliLogs,pathAliyunCliLogs,riskLow,   1, CAT_DEV
+    .quad nameTencentCloudCliCache,pathTencentCloudCliCache,riskLow,1,CAT_DEV
+    .quad nameTencentCloudCliLogs,pathTencentCloudCliLogs,riskLow,1,CAT_DEV
+    .quad nameHuaweiCloudCliCache,pathHuaweiCloudCliCache,riskLow,1,CAT_DEV
+    .quad nameHuaweiCloudCliLogs,pathHuaweiCloudCliLogs,riskLow,1,CAT_DEV
+    .quad nameRancherDesktopLogs,pathRancherDesktopLogs,riskLow,1,CAT_DEV
+    .quad namePodmanCache,  pathPodmanCache,  riskLow,   1, CAT_DEV
+    .quad nameScoopCache,   pathScoopCache,   riskLow,   1, CAT_DEV
+    .quad nameChocolateyCache,pathChocolateyCache,riskLow,1,CAT_DEV
+    .quad nameWingetCache,  pathWingetCache,  riskLow,   1, CAT_DEV
+    .quad nameWeChatDevToolsLocal,pathWeChatDevToolsLocal,riskLow,1,CAT_DEV
+    .quad nameWeChatDevToolsCrash,pathWeChatDevToolsCrash,riskLow,1,CAT_DEV
+    .quad nameDevEcoSystem, pathDevEcoSystem, riskLow,   1, CAT_DEV
+    .quad nameDevEcoBuild,  pathDevEcoBuild,  riskLow,   1, CAT_DEV
+    .quad nameHarmonySdkTemp,pathHarmonySdkTemp,riskLow, 1, CAT_DEV
+    .quad nameCloudBaseCache,pathCloudBaseCache,riskLow, 1, CAT_DEV
+    .quad nameUniAppCliCache,pathUniAppCliCache,riskLow, 1, CAT_DEV
+    .quad nameHBuilderXTemp,pathHBuilderXTemp,riskLow,   1, CAT_DEV
+    .quad nameApifoxLocalCache,pathApifoxLocalCache,riskLow,1,CAT_DEV
+    .quad namePostmanLocalCache,pathPostmanLocalCache,riskLow,1,CAT_DEV
+    .quad nameInsomniaLogs, pathInsomniaLogs, riskLow,   1, CAT_DEV
+    .quad nameEclipseP2Cache,pathEclipseP2Cache,riskLow, 1, CAT_DEV
+    .quad nameEclipseUserCache,pathEclipseUserCache,riskLow,1,CAT_DEV
+    .quad nameNetBeansCache,pathNetBeansCache,riskLow,   1, CAT_DEV
+    .quad nameNetBeansLogs, pathNetBeansLogs, riskLow,   1, CAT_DEV
+    .quad nameCocosDashboardCache,pathCocosDashboardCache,riskLow,1,CAT_DEV
+    .quad nameCocosDashboardCode,pathCocosDashboardCode,riskLow,1,CAT_DEV
+    .quad nameCocosDashboardGpu,pathCocosDashboardGpu,riskLow,1,CAT_DEV
+    .quad nameCocosCreatorCache,pathCocosCreatorCache,riskLow,1,CAT_DEV
+    .quad nameCocosCreatorLogs,pathCocosCreatorLogs,riskLow,1,CAT_DEV
+    .quad nameLayaAirCache,pathLayaAirCache,riskLow,     1, CAT_DEV
+    .quad nameLayaAirCode, pathLayaAirCode, riskLow,     1, CAT_DEV
+    .quad nameEgretCache,  pathEgretCache,  riskLow,     1, CAT_DEV
+    .quad nameEgretLogs,   pathEgretLogs,   riskLow,     1, CAT_DEV
+    .quad nameRStudioCache,pathRStudioCache,riskLow,     1, CAT_DEV
+    .quad nameRStudioLogs, pathRStudioLogs, riskLow,     1, CAT_DEV
+    .quad nameJuliaCompiled,pathJuliaCompiled,riskLow,   1, CAT_DEV
+    .quad nameJuliaLogs,   pathJuliaLogs,   riskLow,     1, CAT_DEV
+    .quad nameJuliaScratch,pathJuliaScratch,riskLow,     1, CAT_DEV
+    .quad nameAnacondaPkgs,pathAnacondaPkgs,riskMedium,  1, CAT_DEV
+    .quad nameMinicondaPkgs,pathMinicondaPkgs,riskMedium,1,CAT_DEV
+    .quad nameCondaCache,  pathCondaCache,  riskLow,     1, CAT_DEV
+    .quad nameJenkinsCache,pathJenkinsCache,riskLow,     1, CAT_DEV
+    .quad nameJenkinsWar,  pathJenkinsWar,  riskLow,     1, CAT_DEV
+    .quad nameGitLabRunnerCache,pathGitLabRunnerCache,riskLow,1,CAT_DEV
+    .quad nameFiddlerCache,pathFiddlerCache,riskLow,     1, CAT_DEV
+    .quad nameFiddlerLogs, pathFiddlerLogs, riskLow,     1, CAT_DEV
+    .quad nameCharlesCache,pathCharlesCache,riskLow,     1, CAT_DEV
+    .quad nameCharlesLogs, pathCharlesLogs, riskLow,     1, CAT_DEV
+    .quad nameWiresharkTemp,pathWiresharkTemp,riskLow,   1, CAT_DEV
+    .quad nameBurpLogs,    pathBurpLogs,    riskLow,     1, CAT_DEV
+    .quad nameBurpTemp,    pathBurpTemp,    riskLow,     1, CAT_DEV
+    .quad nameNmapCache,   pathNmapCache,   riskLow,     1, CAT_DEV
+    .quad nameVMwareTemp,  pathVMwareTemp,  riskLow,     1, CAT_APP
+    .quad nameVirtualBoxLogs,pathVirtualBoxLogs,riskLow, 1, CAT_APP
+    .quad nameGenymotionLogs,pathGenymotionLogs,riskLow, 1, CAT_DEV
+    .quad nameAndroidEmuTemp,pathAndroidEmuTemp,riskLow, 1, CAT_DEV
+    .quad nameUnityHubCache,pathUnityHubCache,riskLow,   1, CAT_GAME
+    .quad nameUnityHubLogs,pathUnityHubLogs,riskLow,     1, CAT_GAME
+    .quad nameGodotCache,  pathGodotCache,  riskLow,     1, CAT_GAME
+    .quad nameGodotLogs,   pathGodotLogs,   riskLow,     1, CAT_GAME
+    .quad nameAxureCache,  pathAxureCache,  riskLow,     1, CAT_APP
+    .quad nameMockittCache,pathMockittCache,riskLow,     1, CAT_APP
+    .quad nameModaoCache,  pathModaoCache,  riskLow,     1, CAT_APP
+    .quad nameLanhuLocalCache,pathLanhuLocalCache,riskLow,1,CAT_APP
+    .quad namePixsoLocalCache,pathPixsoLocalCache,riskLow,1,CAT_APP
+    .quad nameMasterGoLocalCache,pathMasterGoLocalCache,riskLow,1,CAT_APP
+    .quad nameTencentDocsCode,pathTencentDocsCode,riskLow,1,CAT_APP
     .quad nameSteamShader,  pathSteamShader,  riskLow,    1, CAT_GAME
     .quad nameSteamHtmlCache,pathSteamHtmlCache,riskLow,  1, CAT_GAME
     .quad nameSteamAppCache,pathSteamAppCache,riskLow,    1, CAT_GAME
@@ -6081,6 +6986,37 @@ targetTable:
     .quad nameUnrealJLogs,  pathUnrealJLogs,  riskLow,    1, CAT_GAME
     .quad nameNodeJModules, pathNodeJModules, riskLow,    1, CAT_DEV
     .quad nameAndroidJGradle,pathAndroidJGradle,riskLow, 1, CAT_DEV
+    .quad nameDevCNodeCache,pathDevCNodeCache,riskLow,   1, CAT_DEV
+    .quad nameProjectsCNodeCache,pathProjectsCNodeCache,riskLow,1,CAT_DEV
+    .quad nameWorkspaceCNodeCache,pathWorkspaceCNodeCache,riskLow,1,CAT_DEV
+    .quad nameDevDNodeCache,pathDevDNodeCache,riskLow,   1, CAT_DEV
+    .quad nameProjectsDNodeCache,pathProjectsDNodeCache,riskLow,1,CAT_DEV
+    .quad nameWorkspaceDNodeCache,pathWorkspaceDNodeCache,riskLow,1,CAT_DEV
+    .quad nameDevENodeCache,pathDevENodeCache,riskLow,   1, CAT_DEV
+    .quad nameProjectsENodeCache,pathProjectsENodeCache,riskLow,1,CAT_DEV
+    .quad nameWorkspaceENodeCache,pathWorkspaceENodeCache,riskLow,1,CAT_DEV
+    .quad nameDevFNodeCache,pathDevFNodeCache,riskLow,   1, CAT_DEV
+    .quad nameProjectsFNodeCache,pathProjectsFNodeCache,riskLow,1,CAT_DEV
+    .quad nameWorkspaceFNodeCache,pathWorkspaceFNodeCache,riskLow,1,CAT_DEV
+    .quad nameDevGNodeCache,pathDevGNodeCache,riskLow,   1, CAT_DEV
+    .quad nameProjectsGNodeCache,pathProjectsGNodeCache,riskLow,1,CAT_DEV
+    .quad nameWorkspaceGNodeCache,pathWorkspaceGNodeCache,riskLow,1,CAT_DEV
+    .quad nameDevHNodeCache,pathDevHNodeCache,riskLow,   1, CAT_DEV
+    .quad nameProjectsHNodeCache,pathProjectsHNodeCache,riskLow,1,CAT_DEV
+    .quad nameWorkspaceHNodeCache,pathWorkspaceHNodeCache,riskLow,1,CAT_DEV
+    .quad nameDevINodeCache,pathDevINodeCache,riskLow,   1, CAT_DEV
+    .quad nameProjectsINodeCache,pathProjectsINodeCache,riskLow,1,CAT_DEV
+    .quad nameWorkspaceINodeCache,pathWorkspaceINodeCache,riskLow,1,CAT_DEV
+    .quad nameDevJNodeCache,pathDevJNodeCache,riskLow,   1, CAT_DEV
+    .quad nameProjectsJNodeCache,pathProjectsJNodeCache,riskLow,1,CAT_DEV
+    .quad nameWorkspaceJNodeCache,pathWorkspaceJNodeCache,riskLow,1,CAT_DEV
+    .quad nameGradleDUserCache,pathGradleDUserCache,riskLow,1,CAT_DEV
+    .quad nameGradleEUserCache,pathGradleEUserCache,riskLow,1,CAT_DEV
+    .quad nameGradleFUserCache,pathGradleFUserCache,riskLow,1,CAT_DEV
+    .quad nameGradleGUserCache,pathGradleGUserCache,riskLow,1,CAT_DEV
+    .quad nameGradleHUserCache,pathGradleHUserCache,riskLow,1,CAT_DEV
+    .quad nameGradleIUserCache,pathGradleIUserCache,riskLow,1,CAT_DEV
+    .quad nameGradleJUserCache,pathGradleJUserCache,riskLow,1,CAT_DEV
     .quad nameChromeCUserCache,pathChromeCUserCache,riskLow,1,CAT_BROWSER
     .quad nameChromeDUserCache,pathChromeDUserCache,riskLow,1,CAT_BROWSER
     .quad nameChromeEUserCache,pathChromeEUserCache,riskLow,1,CAT_BROWSER
@@ -6184,6 +7120,10 @@ hwndCatRecycle:.skip 8
 hwndLog:     .skip 8
 hUiFont:     .skip 8
 logPos:      .skip 8
+logResultReady:.skip 8
+uiLogPos:    .skip 8
+uiFileSize:  .skip 8
+uiBytesRead: .skip 4
 threadId:    .skip 4
 workerMode:  .skip 4
 targetExists:.skip 4
@@ -6265,6 +7205,8 @@ progressNumberBuffer:.skip 32
 progressBuffer:.skip 512
 progressWide:.skip 1024
 logBuffer:   .skip 2097152
+uiLogBuffer: .skip 262144
+uiFileBuffer:.skip 262144
 logWide:     .skip 4194304
 logLineBuffer:.skip 4096
 logLineWide:  .skip 8192
