@@ -26,7 +26,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path build | Out-Null
           $log = "build\actions-build-log.md"
-          @"
+          $initialLog = @"
           ## Actions build log
 
           ```text
@@ -71,19 +71,21 @@ jobs:
               Out-String -Width 240
           )
           ```
-          "@ | Set-Content -Path $log -Encoding utf8
+          "@
+          $initialLog | Set-Content -Path $log -Encoding utf8
 
       - name: Prepare MinGW-w64
         shell: pwsh
         run: |
           $log = "build\actions-build-log.md"
-          @"
+          $section = @"
 
           ## Prepare MinGW-w64
 
           ```text
           MinGW bin: C:\msys64\mingw64\bin
-          "@ | Add-Content -Path $log -Encoding utf8
+          "@
+          $section | Add-Content -Path $log -Encoding utf8
           $mingwBin = "C:\msys64\mingw64\bin"
           if (-not (Test-Path "$mingwBin\gcc.exe")) {
             "gcc.exe not found, installing mingw-w64-x86_64-gcc" | Tee-Object -FilePath $log -Append
@@ -117,13 +119,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $log = "build\actions-build-log.md"
-          @"
+          $section = @"
 
           ## Compute next release version
 
           ```text
           gh release list --limit 100 --json tagName --jq '.[].tagName'
-          "@ | Add-Content -Path $log -Encoding utf8
+          "@
+          $section | Add-Content -Path $log -Encoding utf8
           $maxPatch = -1
           $tags = gh release list --limit 100 --json tagName --jq '.[].tagName'
           if ($LASTEXITCODE -ne 0) {
@@ -152,7 +155,7 @@ jobs:
         shell: pwsh
         run: |
           $log = "build\actions-build-log.md"
-          @"
+          $section = @"
 
           ## Build static optimized executable
 
@@ -162,7 +165,8 @@ jobs:
           cd ..
           gcc -O2 -s -static -static-libgcc -nostdlib -mwindows "-Wl,-e,WinMainCRTStartup" -o winTempView.exe src/main.S src/app.res.o -luser32 -lgdi32 -lkernel32
 
-          "@ | Add-Content -Path $log -Encoding utf8
+          "@
+          $section | Add-Content -Path $log -Encoding utf8
           Push-Location src
           windres app.rc -O coff -o app.res.o 2>&1 | Tee-Object -FilePath "..\build\actions-build-log.md" -Append
           if ($LASTEXITCODE -ne 0) {
