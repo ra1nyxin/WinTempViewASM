@@ -92,6 +92,7 @@
 .extern FlushFileBuffers
 .extern SetFilePointerEx
 .extern GetModuleHandleW
+.extern GetCommandLineW
 .extern ExitProcess
 
 .equ CP_UTF8, 65001
@@ -165,6 +166,13 @@ WinMain:
     call InitWideStatics
     lea rcx, dbgWideReady[rip]
     call DebugLogRaw
+    call HasCleanAllArg
+    test eax, eax
+    jz .normal_gui_start
+    call RunCleanAllCli
+    jmp .winmain_exit
+
+.normal_gui_start:
 
     mov dword ptr wc[rip + 0], 80
     mov dword ptr wc[rip + 4], 0
@@ -768,7 +776,7 @@ CloseDebugLog:
     call CloseHandle
     mov qword ptr hDebugLog[rip], 0
 .cdl_done:
-    add rsp, 56
+    add rsp, 40
     ret
 
 StopWorkerForExit:
@@ -1187,6 +1195,119 @@ SetCheckIfHwnd:
     xor r9d, r9d
     call SendMessageW
 .scih_done:
+    add rsp, 40
+    ret
+
+HasCleanAllArg:
+    push rbx
+    push rsi
+    push rdi
+    sub rsp, 32
+    call GetCommandLineW
+    mov rbx, rax
+    test rbx, rbx
+    jz .hcaa_no
+.hcaa_skip_program:
+    mov ax, word ptr [rbx]
+    cmp ax, 34
+    je .hcaa_skip_quoted_program
+.hcaa_skip_plain_program:
+    mov ax, word ptr [rbx]
+    test ax, ax
+    jz .hcaa_no
+    cmp ax, 32
+    je .hcaa_skip_spaces
+    cmp ax, 9
+    je .hcaa_skip_spaces
+    add rbx, 2
+    jmp .hcaa_skip_plain_program
+.hcaa_skip_quoted_program:
+    add rbx, 2
+.hcaa_skip_quoted_loop:
+    mov ax, word ptr [rbx]
+    test ax, ax
+    jz .hcaa_no
+    cmp ax, 34
+    je .hcaa_after_quoted_program
+    add rbx, 2
+    jmp .hcaa_skip_quoted_loop
+.hcaa_after_quoted_program:
+    add rbx, 2
+.hcaa_skip_spaces:
+    mov ax, word ptr [rbx]
+    cmp ax, 32
+    je .hcaa_space_next
+    cmp ax, 9
+    jne .hcaa_scan
+.hcaa_space_next:
+    add rbx, 2
+    jmp .hcaa_skip_spaces
+.hcaa_scan:
+    mov ax, word ptr [rbx]
+    test ax, ax
+    jz .hcaa_no
+    cmp ax, 45
+    jne .hcaa_next
+    mov rsi, rbx
+    lea rdi, cleanAllArg[rip]
+.hcaa_match:
+    mov al, byte ptr [rdi]
+    test al, al
+    jz .hcaa_check_boundary
+    movzx edx, word ptr [rsi]
+    test edx, edx
+    jz .hcaa_next
+    movzx eax, al
+    cmp edx, eax
+    jne .hcaa_next
+    inc rdi
+    add rsi, 2
+    jmp .hcaa_match
+.hcaa_check_boundary:
+    mov ax, word ptr [rsi]
+    test ax, ax
+    jz .hcaa_yes
+    cmp ax, 32
+    je .hcaa_yes
+    cmp ax, 9
+    je .hcaa_yes
+    cmp ax, 34
+    je .hcaa_yes
+    jmp .hcaa_next
+.hcaa_next:
+    add rbx, 2
+    jmp .hcaa_scan
+.hcaa_yes:
+    mov eax, 1
+    jmp .hcaa_done
+.hcaa_no:
+    xor eax, eax
+.hcaa_done:
+    add rsp, 32
+    pop rdi
+    pop rsi
+    pop rbx
+    ret
+
+RunCleanAllCli:
+    sub rsp, 40
+    lea rcx, dbgCleanAllArg[rip]
+    call DebugLogRaw
+    mov dword ptr workerMode[rip], 3
+    mov qword ptr scanCancel[rip], 0
+    mov qword ptr catWindowsSelected[rip], 1
+    mov qword ptr catBrowserSelected[rip], 1
+    mov qword ptr catAppSelected[rip], 1
+    mov qword ptr catDevSelected[rip], 1
+    mov qword ptr catChatSelected[rip], 1
+    mov qword ptr catGameSelected[rip], 1
+    mov qword ptr catMediaSelected[rip], 1
+    mov qword ptr catRecycleSelected[rip], 1
+    call CountSelectedCleanTargets
+    call BuildCleanLog
+    call DebugDumpResultLog
+    lea rcx, dbgCleanAllDone[rip]
+    call DebugLogRaw
     add rsp, 40
     ret
 
@@ -3346,6 +3467,8 @@ utf8Bom:           .byte 0xef, 0xbb, 0xbf
 debugCrlf:         .asciz "\r\n"
 dbgWinMainEnter:   .asciz "[startup] WinMain enter"
 dbgWideReady:      .asciz "[startup] wide strings ready"
+dbgCleanAllArg:    .asciz "[cli] --clean-all detected"
+dbgCleanAllDone:   .asciz "[cli] --clean-all finished"
 dbgRegisterClassOk:.asciz "[startup] RegisterClassExW ok"
 dbgRegisterClassFail:.asciz "[startup] RegisterClassExW failed"
 dbgMainWindowOk:   .asciz "[startup] main window created"
@@ -3459,6 +3582,7 @@ catUnknownText:    .asciz "分类:未知"
 riskLow:           .asciz "常规"
 riskMedium:        .asciz "扩展"
 riskHigh:          .asciz "数据"
+cleanAllArg:       .asciz "--clean-all"
 
 nameUserTemp:      .asciz "Windows 用户临时目录"
 pathUserTemp:      .asciz "%TEMP%"

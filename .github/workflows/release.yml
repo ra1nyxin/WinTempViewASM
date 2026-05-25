@@ -128,6 +128,26 @@ jobs:
           "Finished UTC: $((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"))" | Tee-Object -FilePath $log -Append
           '```' | Add-Content -Path $log -Encoding utf8
 
+      - name: Smoke test clean-all argument
+        shell: pwsh
+        run: |
+          $proc = Start-Process -FilePath ".\winTempView.exe" -ArgumentList "--clean-all" -Wait -PassThru
+          if ($proc.ExitCode -ne 0) {
+            throw "winTempView.exe --clean-all failed with exit code $($proc.ExitCode)"
+          }
+          $latestLog = Get-ChildItem -Path . -Filter "winTempView-log-*.txt" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if (-not $latestLog) {
+            throw "winTempView.exe --clean-all did not create a log file"
+          }
+          $logText = Get-Content -LiteralPath $latestLog.FullName -Raw -Encoding utf8
+          if ($logText -notmatch '\[cli\] --clean-all detected') {
+            throw "clean-all log marker was not found"
+          }
+          if ($logText -notmatch '\[result\] begin' -or $logText -notmatch '\[result\] end') {
+            throw "clean-all result markers were not found"
+          }
+          Write-Host "clean-all smoke test passed with log $($latestLog.Name)"
+
       - name: Create GitHub Release
         shell: pwsh
         env:
