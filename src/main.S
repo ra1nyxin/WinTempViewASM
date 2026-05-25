@@ -270,6 +270,7 @@ WinMain:
     call DeleteUiFont
     call CloseDebugLog
 .winmain_skip_log_close:
+    xor eax, eax
     add rsp, 232
     pop rbx
     pop rbp

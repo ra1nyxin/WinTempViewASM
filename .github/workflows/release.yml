@@ -132,10 +132,14 @@ jobs:
         shell: pwsh
         run: |
           $proc = Start-Process -FilePath ".\winTempView.exe" -ArgumentList "--clean-all" -Wait -PassThru
+          $latestLog = Get-ChildItem -Path . -Filter "winTempView-log-*.txt" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
           if ($proc.ExitCode -ne 0) {
+            if ($latestLog) {
+              Write-Host "Latest winTempView log: $($latestLog.Name)"
+              Get-Content -LiteralPath $latestLog.FullName -Tail 80 -Encoding utf8
+            }
             throw "winTempView.exe --clean-all failed with exit code $($proc.ExitCode)"
           }
-          $latestLog = Get-ChildItem -Path . -Filter "winTempView-log-*.txt" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
           if (-not $latestLog) {
             throw "winTempView.exe --clean-all did not create a log file"
           }
