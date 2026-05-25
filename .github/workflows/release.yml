@@ -150,6 +150,32 @@ jobs:
           if ($logText -notmatch '\[result\] begin' -or $logText -notmatch '\[result\] end') {
             throw "clean-all result markers were not found"
           }
+          $summaryLine = ($logText -split "`r?`n" | Where-Object { $_ -like '总计：*' } | Select-Object -Last 1)
+          $cleanLine = ($logText -split "`r?`n" | Where-Object { $_ -like '清理总计：*' } | Select-Object -Last 1)
+          if (-not $summaryLine) {
+            $summaryLine = "总计：未在日志中找到"
+          }
+          if (-not $cleanLine) {
+            $cleanLine = "清理总计：未在日志中找到"
+          }
+          $releaseSize = "未知"
+          if ($summaryLine -match '预计可释放 ([^|]+)') {
+            $releaseSize = $Matches[1].Trim()
+          }
+          @(
+            '## clean-all 清理统计'
+            ''
+            "预计可释放：$releaseSize"
+            ''
+            '```text'
+            $summaryLine
+            $cleanLine
+            '```'
+          ) | Set-Content -Path "build\clean-all-summary.md" -Encoding utf8
+          Write-Host "clean-all summary:"
+          Write-Host "预计可释放：$releaseSize"
+          Write-Host $summaryLine
+          Write-Host $cleanLine
           Write-Host "clean-all smoke test passed with log $($latestLog.Name)"
 
       - name: Create GitHub Release
@@ -160,5 +186,10 @@ jobs:
           RELEASE_NAME: ${{ steps.version.outputs.release_name }}
         run: |
           $buildLog = Get-Content "build\actions-build-log.md" -Raw
-          $buildLog | Set-Content -Path "build\release-notes.md" -Encoding utf8
+          $cleanSummary = Get-Content "build\clean-all-summary.md" -Raw
+          @(
+            $buildLog
+            ''
+            $cleanSummary
+          ) | Set-Content -Path "build\release-notes.md" -Encoding utf8
           gh release create $env:VERSION winTempView.exe --title "$env:RELEASE_NAME" --notes-file "build\release-notes.md" --target "$env:GITHUB_SHA"
